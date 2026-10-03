@@ -67,3 +67,59 @@
   TLN: 2026-11-04 AMC estimat  →  2026-11-04 AMC confirmat
   XE: 2026-11-16 ? estimat  →  2026-11-16 BMO confirmat
   MA: 2026-10-29 BMO estimat  →  2026-10-29 BMO confirmat
+
+=== 2026-10-03 12:14 | ai-stack-map-mobile-17.html → ai-stack-map-mobile-18.html | rânduri 146 | fără date: -
+  NVDA: 2026-11-17 AMC confirmat(Yahoo)  →  2026-11-17 AMC estimat
+  AVGO: 2026-12-09 AMC confirmat(Yahoo)  →  2026-12-09 AMC estimat
+  QCOM: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  AMAT: 2026-11-12 AMC confirmat(Yahoo)  →  2026-11-12 AMC estimat
+  KLAC: 2026-10-28 AMC confirmat(Yahoo)  →  2026-10-28 AMC estimat
+  TXN: 2026-10-21 AMC confirmat(Yahoo)  →  2026-10-21 AMC estimat
+  MPWR: 2026-10-29 AMC confirmat(Yahoo)  →  2026-10-29 AMC estimat
+  ONTO: 2026-11-05 AMC confirmat(Yahoo)  →  2026-11-05 AMC estimat
+  WOLF: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  CBRS: 2026-11-10 ? confirmat(Yahoo)  →  2026-11-10 ? estimat
+  ARM: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  TER: 2026-10-21 AMC confirmat(Yahoo)  →  2026-10-21 AMC estimat
+  ADI: 2026-11-24 BMO confirmat(Yahoo)  →  2026-11-24 BMO estimat
+  GFS: 2026-11-04 BMO confirmat(Yahoo)  →  2026-11-04 BMO estimat
+  MTSI: 2026-11-05 BMO confirmat(Yahoo)  →  2026-11-05 BMO estimat
+  ENTG: 2026-10-29 BMO confirmat(Yahoo)  →  2026-10-29 BMO estimat
+  WDC: 2026-11-05 AMC confirmat(Yahoo)  →  2026-11-05 AMC estimat
+  STX: 2026-10-27 AMC confirmat(Yahoo)  →  2026-10-27 AMC estimat
+  NTAP: 2026-12-01 AMC confirmat(Yahoo)  →  2026-12-01 AMC estimat
+  COHR: 2026-11-04 ? confirmat(Yahoo)  →  2026-11-04 ? estimat
+  SNDK: 2026-10-29 AMC confirmat(Yahoo)  →  2026-10-29 AMC estimat
+  GOOGL: 2026-10-28 AMC confirmat(Yahoo)  →  2026-10-28 AMC estimat
+  CRWV: 2026-11-11 ? confirmat(Yahoo)  →  2026-11-11 ? estimat
+  NBIS: 2026-11-10 BMO confirmat(Yahoo)  →  2026-11-10 BMO estimat
+  EQIX: 2026-10-28 AMC confirmat(Yahoo)  →  2026-10-28 AMC estimat
+  CSCO: 2026-11-12 AMC confirmat(Yahoo)  →  2026-11-12 AMC estimat
+  OKLO: 2026-11-10 BMO confirmat(Yahoo)  →  2026-11-10 BMO estimat
+  VST: 2026-11-06 BMO confirmat(Yahoo)  →  2026-11-06 BMO estimat
+  HOOD: 2026-10-27 AMC confirmat(Yahoo)  →  2026-10-27 AMC estimat
+  CIFR: 2026-11-02 BMO confirmat(Yahoo)  →  2026-11-02 BMO estimat
+  CLS: 2026-10-26 AMC confirmat(Yahoo)  →  2026-10-26 AMC estimat
+  GEV: 2026-10-28 BMO confirmat(Yahoo)  →  2026-10-28 BMO estimat
+  PWR: 2026-10-29 BMO confirmat(Yahoo)  →  2026-10-29 BMO estimat
+  NOW: 2026-10-28 AMC confirmat(Yahoo)  →  2026-10-28 AMC estimat
+  ADBE: 2026-12-09 AMC confirmat(Yahoo)  →  2026-12-09 AMC estimat
+  CRWD: 2026-12-01 AMC confirmat(Yahoo)  →  2026-12-01 AMC estimat
+  DUOL: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  AAPL: 2026-10-29 AMC confirmat(Yahoo)  →  2026-10-29 AMC estimat
+  TSLA: 2026-10-21 AMC confirmat(Yahoo)  →  2026-10-21 AMC estimat
+  IBM: 2026-10-21 AMC confirmat(Yahoo)  →  2026-10-21 AMC estimat
+  APP: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  FTNT: 2026-10-28 AMC confirmat(Yahoo)  →  2026-10-28 AMC estimat
+  SOUN: 2026-11-05 AMC confirmat(Yahoo)  →  2026-11-05 AMC estimat
+  RDDT: 2026-10-29 AMC confirmat(Yahoo)  →  2026-10-29 AMC estimat
+  XOM: 2026-10-30 BMO confirmat(Yahoo)  →  2026-10-30 BMO estimat
+  CVX: 2026-10-30 BMO confirmat(Yahoo)  →  2026-10-30 BMO estimat
+  COP: 2026-11-05 BMO confirmat(Yahoo)  →  2026-11-05 BMO estimat
+  EQT: 2026-10-20 AMC confirmat(Yahoo)  →  2026-10-20 AMC estimat
+  CCJ: 2026-10-30 BMO confirmat(Yahoo)  →  2026-10-30 BMO estimat
+  SMR: 2026-11-05 AMC confirmat(Yahoo)  →  2026-11-05 AMC estimat
+  BWXT: 2026-11-02 AMC confirmat(Yahoo)  →  2026-11-02 AMC estimat
+  TLN: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
+  XE: 2026-11-16 BMO confirmat(Yahoo)  →  2026-11-16 BMO estimat
+  MA: 2026-10-29 BMO confirmat(Yahoo)  →  2026-10-29 BMO estimat
