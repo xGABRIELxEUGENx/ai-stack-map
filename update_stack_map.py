@@ -14,9 +14,10 @@ Reguli pentru earnings (ca să nu strice ce e verificat):
   - O dată 'confirmat' din fișier NU e suprascrisă cât timp e în viitor; dacă Yahoo arată altă dată,
     doar se notează în log ca AVERTISMENT, ca s-o verifici.
   - După ce data a trecut (compania a raportat), se ia următoarea dată de la Yahoo.
-  - Tickerii 'estimat' / 'neverificat' primesc data Yahoo. Status 'confirmat' DOAR dacă Yahoo
-    o marchează ca neestimată (isEarningsDateEstimate = False); altfel 'estimat'.
-  - Sesiunea BMO/AMC se ia din ora Yahoo doar când data e neestimată; altfel rămâne cea existentă.
+  - Tickerii 'estimat' / 'neverificat' primesc data Yahoo, MEREU cu status 'estimat'.
+    'confirmat' se pune doar manual, după anunțul oficial al companiei (IR / comunicat).
+    Un 'confirmat' care provine de la Yahoo (src începe cu 'Yahoo Finance') e retrogradat la 'estimat'.
+  - Sesiunea BMO/AMC se ia din Yahoo doar dacă lipsește ('?') sau data s-a schimbat; altfel rămâne cea existentă.
 
 Instalare (o singură dată):   pip install yfinance
 Rulare manuală:               python update_stack_map.py
@@ -185,16 +186,19 @@ def main():
             return m.group(0)
         ydate, yses, yest = y
         upcoming = bool(date) and date >= today.isoformat()
+        if st == "confirmat" and srcx.startswith("Yahoo Finance"):
+            st = "yahoo-confirmat"          # nu e anunț oficial → îl tratăm ca estimat
         if st == "confirmat" and upcoming:
             if ydate != date:
                 log.append(f"AVERTISMENT {t}: confirmat {date} în fișier, Yahoo arată {ydate} — verifică pe IR")
             return m.group(0)
-        new_st = "estimat" if yest else "confirmat"
-        new_ses = yses if yses != "?" else ses
+        new_st = "estimat"                 # Yahoo nu e sursă oficială
+        new_ses = yses if (ses == "?" or ydate != date) and yses != "?" else ses   # nu suprascrie o sesiune deja știută
         new_tm = "" if (ydate != date) else tm
-        new_src = f"Yahoo Finance {today.isoformat()}" + ("" if yest else " (dată neestimată)")
+        new_src = f"Yahoo Finance {today.isoformat()}" + ("" if yest else " (Yahoo: dată neestimată — verifică IR)")
         if (ydate, new_ses, new_st) == (date, ses, st):
             return m.group(0)
+        st = "confirmat(Yahoo)" if st == "yahoo-confirmat" else st
         log.append(f"{t}: {date or '—'} {ses} {st}  →  {ydate} {new_ses} {new_st}")
         return f"{ind}'{t}': {{ date:'{ydate}', session:'{new_ses}', status:'{new_st}', time:'{new_tm}', src:'{js_str(new_src)}' }},"
     html = EARN_LINE_RE.sub(upd_earn, html)
