@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>U.S. Equity Intelligence - AI Stack Map</title>
+    <style>
+        body {
+            background-color: #03050d;
+            color: #d8e4f0;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Mono", "Fira Code", monospace;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 60px;
+        }
+        h1 { text-align: center; color: #ffffff; font-size: 1.4rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: -0.02em; }
+        .subtitle { text-align: center; color: #4a5e7a; font-size: 0.8rem; margin-top: 0; margin-bottom: 20px; letter-spacing: 0.15em; text-transform: uppercase; }
+
+        .admin-box {
+            background: #070b16; border: 1px solid #1a2840; border-radius: 8px;
+            padding: 15px; margin-bottom: 25px;
+        }
+        .admin-title { color: #f59e0b; font-weight: bold; font-size: 0.95rem; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .admin-box input, .admin-box select {
+            background: #03050d; border: 1px solid #1a2840; color: #d8e4f0;
+            padding: 10px; border-radius: 6px; width: 100%; box-sizing: border-box;
+            margin-bottom: 10px; font-size: 0.9rem; outline: none;
+        }
+        .admin-box input:focus, .admin-box select:focus { border-color: #00c8f0; }
+        .admin-box button {
+            background: #10b981; color: white; border: none; padding: 12px;
+            border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;
+            font-size: 0.95rem; margin-top: 5px;
+        }
+        .admin-box button:active { background: #059669; }
+
+        .search-box { margin-bottom: 18px; }
+        .search-box input {
+            background: #070b16; border: 1px solid #1a2840; color: #d8e4f0;
+            padding: 11px 14px; border-radius: 8px; width: 100%; box-sizing: border-box;
+            font-size: 0.9rem; outline: none;
+        }
+        .search-box input:focus { border-color: #10b981; }
+
+        .board-section-title {
+            font-size: 1.15rem; color: #ffffff; font-weight: bold;
+            margin-top: 30px; margin-bottom: 15px; padding-bottom: 5px;
+            border-bottom: 2px solid #0f1828; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .layer-box { background: #070b16; border: 1px solid #0f1828; border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+        .layer-header {
+            padding: 12px 15px; border-bottom: 1px solid #0f1828;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+        }
+        .layer-header-left { display: flex; align-items: center; }
+        .layer-id { font-weight: bold; font-size: 0.9rem; margin-right: 8px; text-transform: uppercase; }
+        .layer-name { font-weight: bold; color: #d8e4f0; font-size: 0.95rem; }
+        .layer-count { font-size: 0.72rem; color: #4a5e7a; font-weight: normal; margin-left: 6px; }
+        .layer-arrow { color: #4a5e7a; font-size: 0.7rem; transition: transform .2s; }
+        .layer-box.collapsed .layer-arrow { transform: rotate(-90deg); }
+        .layer-box.collapsed .ticker-grid { display: none; }
+
+        .ticker-grid { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .ticker-row {
+            background: #0c1224; border: 1px solid #0f1828; border-radius: 6px; padding: 12px;
+            display: flex; justify-content: space-between; align-items: center; position: relative; cursor: pointer;
+        }
+        .ticker-row:active { background: #121b33; }
+
+        .ticker-meta { display: flex; flex-direction: column; gap: 4px; }
+        .ticker-symbol-wrapper { display: flex; align-items: center; gap: 6px; }
+        .ticker-symbol { font-weight: bold; font-size: 1.1rem; }
+        .ticker-company { font-size: 0.8rem; color: #4a5e7a; }
+
+        .badge-new { font-size: 0.6rem; font-weight: bold; padding: 1px 5px; border-radius: 3px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-multi { font-size: 0.6rem; font-weight: bold; padding: 1px 5px; border-radius: 3px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+
+        .tag-container { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+        .strategy-tag { font-size: 0.65rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; border: 1px solid #0f1828; color: #7a90aa; background: #070b16; }
+
+        .ticker-perf { text-align: right; flex-shrink: 0; padding-left: 8px; }
+        .row-live { width: 170px; flex-shrink: 0; pointer-events: none; display: none; }
+        .row-live.on { display: block; }
+        .row-live.on + .ticker-perf { display: none; }
+        .price-badge { font-weight: bold; font-size: 1rem; color: #ffffff; }
+        .change-badge { font-size: 0.8rem; font-weight: bold; display: block; margin-top: 2px; }
+
+        .drawer {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: #070b16; transition: right 0.25s ease-out; z-index: 10000;
+            display: flex; flex-direction: column; box-sizing: border-box;
+        }
+        .drawer.open { right: 0; }
+        .drawer-header { padding: 20px; border-bottom: 1px solid #0f1828; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-close { background: #0f1828; border: none; color: white; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .drawer-content { padding: 20px; flex: 1; overflow-y: auto; }
+
+        .data-card { background: #03050d; border: 1px solid #0f1828; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #0f1828; }
+        .data-row:last-child { border-bottom: none; }
+        .data-label { color: #4a5e7a; }
+        .data-value { font-weight: bold; color: #d8e4f0; }
+
+        .drawer-role { background: #0c1224; border: 1px solid #0f1828; border-radius: 8px; padding: 14px; font-size: 0.85rem; line-height: 1.6; color: #b8c4d8; margin-bottom: 15px; }
+        .drawer-layers { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 15px; }
+        .drawer-layer-tag { font-size: 0.68rem; font-weight: bold; padding: 3px 8px; border-radius: 4px; border: 1px solid; text-transform: uppercase; letter-spacing: 0.04em; }
+
+        .drawer-links { display: flex; flex-direction: column; gap: 8px; }
+        .drawer-link { display: flex; align-items: center; justify-content: space-between; background: #0c1224; border: 1px solid #0f1828; border-radius: 8px; padding: 12px 14px; text-decoration: none; color: #d8e4f0; font-size: 0.85rem; font-weight: bold; }
+        .drawer-link:active { background: #121b33; }
+        .drawer-link-arrow { color: #4a5e7a; font-size: 0.9rem; }
+
+        .section-label { font-size: 0.7rem; color: #4a5e7a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; margin-top: 4px; font-weight: bold; }
+
+        .earnings-card { background: #03050d; border: 1px solid #0f1828; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .earnings-left { display: flex; flex-direction: column; gap: 4px; }
+        .earnings-label { font-size: 0.7rem; color: #4a5e7a; text-transform: uppercase; letter-spacing: 0.08em; font-weight: bold; }
+        .earnings-date { font-size: 1.05rem; font-weight: bold; color: #d8e4f0; }
+        .earnings-status { font-size: 0.68rem; color: #4a5e7a; }
+        .session-badge { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: bold; padding: 7px 12px; border-radius: 20px; border: 1px solid; }
+        .session-bmo { color: #f59e0b; border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
+        .session-amc { color: #818cf8; border-color: rgba(129,140,248,0.35); background: rgba(129,140,248,0.08); }
+        .session-na { color: #4a5e7a; border-color: #0f1828; background: #070b16; }
+
+        /* ===== CALENDAR EARNINGS ===== */
+        .clock-bar { display:flex; justify-content:space-between; align-items:center; gap:10px; background:#070b16; border:1px solid #1a2840; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:0.8rem; }
+        .clock-bar b { color:#fff; font-size:1rem; }
+        .clock-col { display:flex; flex-direction:column; gap:2px; }
+        .clock-lbl { color:#4a5e7a; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.08em; font-weight:bold; }
+        .alert-banner { display:none; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35); border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:0.82rem; line-height:1.55; }
+        .alert-banner.show { display:block; }
+        .alert-banner .ab-title { color:#f59e0b; font-weight:bold; margin-bottom:4px; }
+        .cal-wrap { padding:12px; }
+        .cal-actions { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+        .cal-btn { background:#0c1224; border:1px solid #1a2840; color:#d8e4f0; padding:9px 11px; border-radius:6px; font-size:0.78rem; font-weight:bold; cursor:pointer; font-family:inherit; }
+        .cal-btn:active { background:#121b33; }
+        .cal-btn.on { border-color:#10b981; color:#10b981; }
+        .cal-note { font-size:0.7rem; color:#4a5e7a; line-height:1.5; margin:-4px 0 12px; }
+        .cal-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .cal-nav b { color:#fff; font-size:0.95rem; text-transform:capitalize; }
+        .cal-nav button { background:#0c1224; border:1px solid #1a2840; color:#d8e4f0; width:38px; height:32px; border-radius:6px; font-size:1rem; cursor:pointer; }
+        .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+        .cal-dow { font-size:0.62rem; color:#4a5e7a; text-align:center; padding:3px 0; font-weight:bold; }
+        .cal-day { min-height:54px; background:#0c1224; border:1px solid #0f1828; border-radius:5px; padding:3px; cursor:pointer; overflow:hidden; display:flex; flex-direction:column; gap:2px; }
+        .cal-day.out { opacity:0.25; }
+        .cal-day.today { border-color:#00c8f0; }
+        .cal-day.sel { background:#121b33; border-color:#10b981; }
+        .cal-day .dn { font-size:0.68rem; color:#7a90aa; font-weight:bold; }
+        .cal-day.past .dn { color:#2a3a52; }
+        .cal-chip { font-size:0.55rem; font-weight:bold; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .cal-more { font-size:0.52rem; color:#4a5e7a; }
+        .cal-list-title { font-size:0.7rem; color:#4a5e7a; text-transform:uppercase; letter-spacing:0.1em; font-weight:bold; margin:14px 0 8px; }
+        .ev-row { display:flex; align-items:center; justify-content:space-between; gap:8px; background:#0c1224; border:1px solid #0f1828; border-radius:6px; padding:9px 11px; margin-bottom:6px; cursor:pointer; }
+        .ev-row.past { opacity:0.45; }
+        .ev-left { display:flex; flex-direction:column; gap:2px; min-width:0; }
+        .ev-sym { font-weight:bold; font-size:0.95rem; }
+        .ev-sub { font-size:0.7rem; color:#7a90aa; }
+        .ev-right { text-align:right; flex-shrink:0; font-size:0.72rem; }
+        .ev-time { color:#fff; font-weight:bold; font-size:0.85rem; }
+        .ev-cd { color:#4a5e7a; }
+        .st-conf { color:#10b981; } .st-est { color:#f59e0b; } .st-nv { color:#ef4444; }
+        .earn-chip { font-size:0.62rem; font-weight:bold; padding:2px 6px; border-radius:4px; border:1px dashed #1a2840; color:#7a90aa; background:#070b16; }
+        .earn-chip.soon { color:#f59e0b; border-color:rgba(245,158,11,0.5); border-style:solid; }
+        .earn-chip.conf { color:#10b981; border-color:rgba(16,185,129,0.4); }
+        .earn-extra { background:#03050d; border:1px solid #0f1828; border-radius:8px; padding:12px 15px; margin:-8px 0 15px; font-size:0.78rem; line-height:1.6; color:#b8c4d8; }
+        .earn-extra:empty { display:none; }
+        .earn-extra .cal-btn { margin-top:8px; width:100%; }
+        .toast { position:fixed; left:12px; right:12px; bottom:14px; background:#0c1224; border:1px solid #f59e0b; color:#d8e4f0; border-radius:8px; padding:12px 14px; font-size:0.85rem; z-index:20000; box-shadow:0 6px 24px rgba(0,0,0,0.6); display:none; }
+        .toast.show { display:block; }
+
+
+        /* ===== LIVE TRADINGVIEW ===== */
+        .live-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+        .live-lbl { font-size:0.65rem; color:#10b981; text-transform:uppercase; letter-spacing:0.1em; font-weight:bold; }
+        .live-btn { background:#0c1224; border:1px solid #1a2840; color:#d8e4f0; padding:6px 10px; border-radius:6px; font-size:0.75rem; font-weight:bold; cursor:pointer; font-family:inherit; }
+        #tvTape { min-height:46px; background:#070b16; border:1px solid #1a2840; border-radius:8px; overflow:hidden; margin-bottom:14px; }
+        #tvLive { min-height:190px; background:#03050d; border:1px solid #0f1828; border-radius:8px; overflow:hidden; margin-bottom:15px; }
+        .tv-fail { padding:14px; font-size:0.78rem; color:#7a90aa; line-height:1.5; }
+    </style>
+</head>
+<body>
+
+    <h1>U.S. Equity Intelligence</h1>
+    <p class="subtitle">AI Infrastructure Stack & Energy v2 2026</p>
+
+    <div class="admin-box">
+        <div class="admin-title"><span>🆕</span> Adaugă Ticker nou în Sistem:</div>
+        <input type="text" id="insTicker" placeholder="Ticker (Ex: TSLA)" style="text-transform: uppercase;">
+        <input type="text" id="insName" placeholder="Nume Companie (Ex: Tesla Inc.)">
+        <select id="insLayer">
+            <option value="ai-l1">AI Stack -> L1. Semiconductori</option>
+            <option value="ai-l2">AI Stack -> L2. Data Storage</option>
+            <option value="ai-l3">AI Stack -> L3. Infrastructură</option>
+            <option value="ai-l4">AI Stack -> L4. Software / AI</option>
+            <option value="en-l1">Energy -> L1. Petrol & Gaze (Clasic)</option>
+            <option value="en-l2">Energy -> L2. Energie Nucleară</option>
+            <option value="mf-l1">Macro & Finance -> M1. Indici, ETF-uri & Financiare</option>
+        </select>
+        <input type="text" id="insTag" placeholder="Tag strategic (Ex: GPU CLOUD, SMR)">
+        <input type="number" id="insChange" placeholder="Evoluție % (Ex: 3.4 sau -1.5)" step="0.01">
+        <button onclick="insertCustomTicker()">Injectează în Planșă</button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Caută ticker, companie sau tag (ex: HBM, SMR, Nuclear)..." oninput="filterTickers(this.value)">
+    </div>
+
+    <div class="live-bar"><span class="live-lbl">● Live · TradingView <span id="liveStamp" style="color:#4a5e7a;font-weight:normal;"></span></span><button class="live-btn" onclick="refreshLive()">🔄 Refresh</button></div>
+    <div id="tvTape"></div>
+    <!-- CEAS + ALERTE EARNINGS -->
+    <div class="clock-bar">
+        <div class="clock-col"><span class="clock-lbl">Ora ta</span><b id="clkLocal">--:--:--</b><span id="clkDate" style="color:#4a5e7a;font-size:0.7rem;"></span></div>
+        <div class="clock-col" style="text-align:center;"><span class="clock-lbl">New York (ET)</span><b id="clkNY">--:--</b><span id="clkMkt" style="font-size:0.7rem;"></span></div>
+        <div class="clock-col" style="text-align:right;"><span class="clock-lbl">Următor</span><b id="clkNext" style="font-size:0.9rem;">—</b><span id="clkNextCd" style="color:#4a5e7a;font-size:0.7rem;"></span></div>
+    </div>
+    <div class="alert-banner" id="alertBanner"></div>
+
+    <div class="board-section-title">📅 CALENDAR EARNINGS</div>
+    <div class="layer-box" id="box-cal">
+        <div class="layer-header" onclick="toggleLayer('box-cal')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#00c8f0;">CAL</span><span class="layer-name">· Raportări &amp; notificări<span class="layer-count" id="calCount"></span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid cal-wrap">
+            <div class="cal-actions">
+                <button class="cal-btn" id="btnNotif" onclick="enableNotifications()">🔔 Activează notificări</button>
+                <button class="cal-btn" onclick="downloadICS('all')">📥 Toate în calendar (.ics)</button>
+                <button class="cal-btn" onclick="downloadICS('conf')">✅ Doar confirmate (.ics)</button>
+                <button class="cal-btn" id="btnConfOnly" onclick="toggleConfOnly()">Filtru: toate</button>
+            </div>
+            <div class="cal-note">Alerte: cu o zi înainte și cu 1h înainte de raport. 🔔 funcționează doar cât pagina e deschisă. Fișierul .ics importat în calendarul telefonului (iPhone/Android/Google) te anunță și cu pagina închisă. Orele sunt în ora ta locală; ~ = oră aproximativă (BMO ≈ 07:00 ET, AMC ≈ 16:05 ET) până când compania anunță ora exactă.</div>
+            <div class="cal-nav"><button onclick="calShift(-1)">‹</button><b id="calTitle"></b><button onclick="calShift(1)">›</button></div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-list-title" id="calListTitle"></div>
+            <div id="calList"></div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <div class="board-section-title">PLANȘA AI STACK MAP</div>
+
+    <!-- L1 · SEMICONDUCTORI -->
+    <div class="layer-box" id="box-ai-l1">
+        <div class="layer-header" onclick="toggleLayer('box-ai-l1')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#ff5c35;">L1</span><span class="layer-name">· Semiconductori (Baza Fizică AI)<span class="layer-count">(32)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-ai-l1">
+
+            <div class="ticker-row" onclick="openDetails('NVDA','NVIDIA','$233.95','+1.34%','#10b981','5.65T','135.3M','29.58',['chips','infra'],'Lider absolut GPU AI. H100/H200/B200 alimentează toate LLM-urile majore. 80%+ piață GPU datacenter.')">
+                <div class="ticker-meta">
+                    <div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">NVDA</span><span class="badge-multi">MULTI</span></div>
+                    <span class="ticker-company">NVIDIA</span>
+                    <div class="tag-container"><span class="strategy-tag">GPU AI</span><span class="strategy-tag">Data Center</span></div>
+                </div>
+                <div class="ticker-perf"><span class="price-badge">$233.95</span><span class="change-badge" style="color:#10b981;">+1.34%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AMD','Advanced Micro Devices','$633.91','+2.95%','#10b981','1.03T','19.9M','161.80',['chips'],'Al 2-lea furnizor GPU AI. MI300X concurează H100. CPU EPYC dominant în serverele cloud.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">AMD</span><span class="ticker-company">AMD</span><div class="tag-container"><span class="strategy-tag">GPU</span><span class="strategy-tag">MI300X</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$633.91</span><span class="change-badge" style="color:#10b981;">+2.95%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AVGO','Broadcom','$355.14','+3.35%','#10b981','1.70T','24.7M','45.33',['chips','infra'],'Custom AI chips (TPU Google, Meta, ByteDance). Dominant networking AI datacenter.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">AVGO</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Broadcom</span><div class="tag-container"><span class="strategy-tag">ASIC</span><span class="strategy-tag">Networking</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$355.14</span><span class="change-badge" style="color:#10b981;">+3.35%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('INTC','Intel','$119.33','-0.56%','#ef4444','627.02B','95.4M','—',['chips'],'CPU x86 dominant, Gaudi 3 pentru inferență AI, IFS foundry în construcție.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">INTC</span><span class="ticker-company">Intel</span><div class="tag-container"><span class="strategy-tag">CPU x86</span><span class="strategy-tag">Gaudi AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$119.33</span><span class="change-badge" style="color:#ef4444;">-0.56%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MRVL','Marvell Technology','$272.29','+1.57%','#10b981','238.78B','17.0M','91.48',['chips','infra'],'ASIC AI custom pentru Amazon, Microsoft. Cipuri de interconectare 800G pentru AI clusters.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">MRVL</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Marvell Technology</span><div class="tag-container"><span class="strategy-tag">ASIC custom</span><span class="strategy-tag">Optics 800G</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$272.29</span><span class="change-badge" style="color:#10b981;">+1.57%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('QCOM','Qualcomm','$184.87','+1.53%','#10b981','197.41B','10.1M','21.51',['chips'],'AI la edge: NPU Snapdragon inferență on-device. Creștere AI PC și automotive.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">QCOM</span><span class="ticker-company">Qualcomm</span><div class="tag-container"><span class="strategy-tag">Edge AI</span><span class="strategy-tag">Mobile NPU</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$184.87</span><span class="change-badge" style="color:#10b981;">+1.53%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AMAT','Applied Materials','$540.04','+2.03%','#10b981','428.57B','6.4M','46.58',['chips'],'Cel mai mare furnizor echipamente fabricare cipuri. Esențial pentru HBM și noduri avansate.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">AMAT</span><span class="ticker-company">Applied Materials</span><div class="tag-container"><span class="strategy-tag">Fab Equipment</span><span class="strategy-tag">HBM</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$540.04</span><span class="change-badge" style="color:#10b981;">+2.03%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('LRCX','Lam Research','$347.49','+2.17%','#10b981','434.86B','7.5M','60.33',['chips'],'Lider global gravare și depunere. Critice pentru producția HBM (memorie AI training).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">LRCX</span><span class="ticker-company">Lam Research</span><div class="tag-container"><span class="strategy-tag">Etch</span><span class="strategy-tag">HBM Production</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$347.49</span><span class="change-badge" style="color:#10b981;">+2.17%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('KLAC','KLA Corporation','$206.89','+3.27%','#10b981','269.99B','7.4M','56.53',['chips'],'Inspecție și control procese în fabrici cipuri. Randament mai mare = mai mulți chipuri AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">KLAC</span><span class="ticker-company">KLA Corporation</span><div class="tag-container"><span class="strategy-tag">Process Control</span><span class="strategy-tag">Yield</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$206.89</span><span class="change-badge" style="color:#10b981;">+3.27%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TSM','Taiwan Semiconductor','$472.78','+2.96%','#10b981','2.04T','9.9M','29.21',['chips'],'Cel mai mare foundry global — produce cipurile AI pentru NVDA, AMD, AAPL, AVGO. Monopol pe procese sub 3nm.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">TSM</span><span class="ticker-company">Taiwan Semiconductor</span><div class="tag-container"><span class="strategy-tag">Foundry</span><span class="strategy-tag">Advanced Node</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$472.78</span><span class="change-badge" style="color:#10b981;">+2.96%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ASML','ASML','$1,867.31','+3.25%','#10b981','714.50B','1.3M','58.89',['chips'],'Singurul producător de mașini EUV — fără ASML nu există cipuri sub 7nm. Monopol absolut global.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ASML</span><span class="ticker-company">ASML</span><div class="tag-container"><span class="strategy-tag">EUV</span><span class="strategy-tag">Monopol</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,867.31</span><span class="change-badge" style="color:#10b981;">+3.25%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TXN','Texas Instruments','$293.80','+4.44%','#10b981','268.31B','5.1M','44.63',['chips'],'Cipuri analogice și embedded. Expunere AI mai redusă dar ubiquitar în edge computing.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">TXN</span><span class="ticker-company">Texas Instruments</span><div class="tag-container"><span class="strategy-tag">Analog</span><span class="strategy-tag">Embedded</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$293.80</span><span class="change-badge" style="color:#10b981;">+4.44%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ON','ON Semiconductor','$84.89','+6.01%','#10b981','33.05B','23.0M','54.39',['chips'],'Senzori și cipuri pentru AI în mașini autonome și IoT.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ON</span><span class="ticker-company">ON Semiconductor</span><div class="tag-container"><span class="strategy-tag">Automotive AI</span><span class="strategy-tag">Sensing</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$84.89</span><span class="change-badge" style="color:#10b981;">+6.01%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MPWR','Monolithic Power Systems','$1,439.73','+5.79%','#10b981','70.75B','706K','87.83',['chips'],'Management putere pentru GPU / AI server racks. Critice pentru eficiența energetică DC.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">MPWR</span><span class="ticker-company">Monolithic Power Systems</span><div class="tag-container"><span class="strategy-tag">Power Mgmt</span><span class="strategy-tag">VRM GPU</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,439.73</span><span class="change-badge" style="color:#10b981;">+5.79%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SMCI','Super Micro Computer','$43.69','+4.22%','#10b981','28.70B','46.1M','13.42',['chips','infra'],'Sisteme server complete pentru GPU NVDA. Lider rack-uri AI dense și liquid cooling.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">SMCI</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Super Micro</span><div class="tag-container"><span class="strategy-tag">AI Servers</span><span class="strategy-tag">GPU Racks</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$43.69</span><span class="change-badge" style="color:#10b981;">+4.22%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ONTO','Onto Innovation','$327.77','+4.09%','#10b981','16.09B','1.0M','122.44',['chips'],'Inspecție packaging avansat (CoWoS, HBM). Beneficiază direct de volumele NVDA.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ONTO</span><span class="ticker-company">Onto Innovation</span><div class="tag-container"><span class="strategy-tag">Advanced Packaging</span><span class="strategy-tag">CoWoS</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$327.77</span><span class="change-badge" style="color:#10b981;">+4.09%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ACLS','Axcelis Technologies','$147.77','+8.09%','#10b981','4.56B','453K','49.54',['chips'],'Implantat ionic pentru fabricarea cipurilor de putere și semiconductori avansați.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ACLS</span><span class="ticker-company">Axcelis Technologies</span><div class="tag-container"><span class="strategy-tag">Ion Implant</span><span class="strategy-tag">Process</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$147.77</span><span class="change-badge" style="color:#10b981;">+8.09%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('FORM','FormFactor','$149.15','+0.48%','#10b981','11.65B','2.0M','102.88',['chips'],'Carduri de probă pentru testarea chipurilor AI — mai mulți cipuri = mai mult test.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">FORM</span><span class="ticker-company">FormFactor</span><div class="tag-container"><span class="strategy-tag">Test</span><span class="strategy-tag">Probe Cards</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$149.15</span><span class="change-badge" style="color:#10b981;">+0.48%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WOLF','Wolfspeed','$35.28','+13.19%','#10b981','1.87B','7.3M','237.44',['chips'],'Silicon carbide pentru alimentarea eficientă a datacenterelor AI și EV.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">WOLF</span><span class="ticker-company">Wolfspeed</span><div class="tag-container"><span class="strategy-tag">SiC</span><span class="strategy-tag">Power Efficiency</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$35.28</span><span class="change-badge" style="color:#10b981;">+13.19%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ALAB','Astera Labs','$350.33','-1.71%','#ef4444','60.78B','4.1M','172.57',['chips'],'Connectivity chips pentru AI datacenter (CXL, PCIe). +93% revenue YoY. Intrat Nasdaq-100 iun 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">ALAB</span><span class="badge-new">NDX Jun'26</span></div><span class="ticker-company">Astera Labs</span><div class="tag-container"><span class="strategy-tag">CXL</span><span class="strategy-tag">PCIe</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$350.33</span><span class="change-badge" style="color:#ef4444;">-1.71%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CBRS','Cerebras Systems','$166.43','-1.82%','#ef4444','39.54B','12.5M','—',['chips'],'Wafer-Scale Engine (WSE) — cel mai mare chip AI din lume, 4 trilioane transistori. IPO mai 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#ff5c35;">CBRS</span><span class="badge-new">IPO Mai'26</span></div><span class="ticker-company">Cerebras Systems</span><div class="tag-container"><span class="strategy-tag">Wafer-Scale</span><span class="strategy-tag">LLM</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$166.43</span><span class="change-badge" style="color:#ef4444;">-1.82%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ARM','Arm Holdings','$307.49','+5.18%','#10b981','328.42B','5.9M','314.58',['chips'],'Arhitectura CPU care alimentează edge AI și mobile NPU la nivel global.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ARM</span><span class="ticker-company">Arm Holdings</span><div class="tag-container"><span class="strategy-tag">CPU Arch</span><span class="strategy-tag">Edge AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$307.49</span><span class="change-badge" style="color:#10b981;">+5.18%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SNPS','Synopsys','$489.90','-0.13%','#ef4444','93.88B','3.6M','86.86',['chips'],'Software EDA + IP pentru proiectarea cipurilor AI. Duopol cu Cadence — fiecare GPU/ASIC trece prin uneltele lor.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">SNPS</span><span class="ticker-company">Synopsys</span><div class="tag-container"><span class="strategy-tag">EDA</span><span class="strategy-tag">Chip Design</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$489.90</span><span class="change-badge" style="color:#ef4444;">-0.13%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CDNS','Cadence Design Systems','$351.35','+0.18%','#10b981','96.76B','2.1M','69.85',['chips'],'EDA + hardware de emulare (Palladium) folosit de NVDA/AVGO pentru validarea cipurilor AI înainte de tape-out.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">CDNS</span><span class="ticker-company">Cadence Design Systems</span><div class="tag-container"><span class="strategy-tag">EDA</span><span class="strategy-tag">Emulare AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$351.35</span><span class="change-badge" style="color:#10b981;">+0.18%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CRDO','Credo Technology','$218.64','+4.03%','#10b981','41.09B','10.7M','77.21',['chips'],'Cabluri AEC și SerDes de mare viteză pentru conectarea GPU-urilor în rack-urile AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">CRDO</span><span class="ticker-company">Credo Technology</span><div class="tag-container"><span class="strategy-tag">AEC Cables</span><span class="strategy-tag">SerDes</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$218.64</span><span class="change-badge" style="color:#10b981;">+4.03%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TER','Teradyne','$449.04','+8.00%','#10b981','70.20B','3.4M','61.64',['chips'],'Echipamente de testare pentru GPU/ASIC AI și memorie HBM. Volumul de test crește cu complexitatea cipurilor.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">TER</span><span class="ticker-company">Teradyne</span><div class="tag-container"><span class="strategy-tag">Test Chips</span><span class="strategy-tag">HBM Test</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$449.04</span><span class="change-badge" style="color:#10b981;">+8.00%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AMKR','Amkor Technology','$56.02','+5.90%','#10b981','13.92B','4.4M','25.15',['chips'],'Cel mai mare OSAT din SUA — advanced packaging pentru cipuri AI, capacitate nouă în Arizona.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">AMKR</span><span class="ticker-company">Amkor Technology</span><div class="tag-container"><span class="strategy-tag">Packaging</span><span class="strategy-tag">CoWoS OSAT</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$56.02</span><span class="change-badge" style="color:#10b981;">+5.90%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ADI','Analog Devices','$417.15','+3.10%','#10b981','202.14B','2.6M','49.54',['chips'],'Analog/mixed-signal și power management pentru servere și rack-uri AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ADI</span><span class="ticker-company">Analog Devices</span><div class="tag-container"><span class="strategy-tag">Analog</span><span class="strategy-tag">Power DC</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$417.15</span><span class="change-badge" style="color:#10b981;">+3.10%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GFS','GlobalFoundries','$50.17','+3.06%','#10b981','27.53B','3.7M','39.19',['chips'],'Foundry US pe noduri mature + silicon photonics pentru interconectări optice în datacentere.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">GFS</span><span class="ticker-company">GlobalFoundries</span><div class="tag-container"><span class="strategy-tag">Foundry</span><span class="strategy-tag">Photonics</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$50.17</span><span class="change-badge" style="color:#10b981;">+3.06%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MTSI','MACOM Technology','$321.60','+6.62%','#10b981','24.56B','1.4M','102.42',['chips'],'Circuite analogice/optice pentru transceivere 800G/1.6T din datacenterele AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">MTSI</span><span class="ticker-company">MACOM Technology</span><div class="tag-container"><span class="strategy-tag">Optical ICs</span><span class="strategy-tag">RF/Analog</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$321.60</span><span class="change-badge" style="color:#10b981;">+6.62%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ENTG','Entegris','$166.47','+5.04%','#10b981','25.44B','2.2M','83.18',['chips'],'Materiale ultra-pure și filtrare pentru fab-uri — crește cu fiecare nod avansat și cu HBM.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">ENTG</span><span class="ticker-company">Entegris</span><div class="tag-container"><span class="strategy-tag">Materiale</span><span class="strategy-tag">Fab Supplies</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$166.47</span><span class="change-badge" style="color:#10b981;">+5.04%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NVTS','Navitas Semiconductor','$12.40','+2.31%','#10b981','3.24B','24.7M','—',['chips'],'Cipuri de putere GaN/SiC pentru arhitectura 800V HVDC din rack-urile AI de nouă generație.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ff5c35;">NVTS</span><span class="ticker-company">Navitas Semiconductor</span><div class="tag-container"><span class="strategy-tag">GaN/SiC</span><span class="strategy-tag">800V HVDC</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$12.40</span><span class="change-badge" style="color:#10b981;">+2.31%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- L2 · DATA STORAGE -->
+    <div class="layer-box" id="box-ai-l2">
+        <div class="layer-header" onclick="toggleLayer('box-ai-l2')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#00c8f0;">L2</span><span class="layer-name">· Data Storage (Memorie & Stocare)<span class="layer-count">(14)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-ai-l2">
+
+            <div class="ticker-row" onclick="openDetails('MU','Micron Technology','$1,074.89','-2.05%','#ef4444','1.21T','27.8M','14.46',['storage'],'Al 3-lea producător global DRAM. HBM3E pentru AI GPUs (H100/B200). Expunere directă AI training.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">MU</span><span class="ticker-company">Micron Technology</span><div class="tag-container"><span class="strategy-tag">DRAM</span><span class="strategy-tag">HBM3E</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,074.89</span><span class="change-badge" style="color:#ef4444;">-2.05%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WDC','Western Digital','$415.29','-10.22%','#ef4444','149.73B','24.8M','17.11',['storage'],'SSD-uri NAND pentru stocare modele AI și datasets. HDD pentru stocare rece.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">WDC</span><span class="ticker-company">Western Digital</span><div class="tag-container"><span class="strategy-tag">NAND SSD</span><span class="strategy-tag">HDD</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$415.29</span><span class="change-badge" style="color:#ef4444;">-10.22%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('STX','Seagate Technology','$848.99','-10.21%','#ef4444','193.05B','13.6M','61.08',['storage'],'Lider HDD. Stocare nearline pentru training datasets masive. AI cere volume uriașe.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">STX</span><span class="ticker-company">Seagate Technology</span><div class="tag-container"><span class="strategy-tag">HDD NearLine</span><span class="strategy-tag">Mass Storage</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$848.99</span><span class="change-badge" style="color:#ef4444;">-10.21%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NTAP','NetApp','$226.27','+5.22%','#10b981','44.44B','5.4M','31.93',['storage'],'Storage enterprise și management date AI. Integrare cu cloud-urile majore.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">NTAP</span><span class="ticker-company">NetApp</span><div class="tag-container"><span class="strategy-tag">Enterprise Storage</span><span class="strategy-tag">AI Data</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$226.27</span><span class="change-badge" style="color:#10b981;">+5.22%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('P','Everpure (ex-Pure Storage)','$140.14','+4.48%','#10b981','46.70B','4.9M','193.24',['storage'],'Flash storage all-NVMe pentru AI/ML. FlashBlade utilizat în clustere AI high-performance.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">P</span><span class="ticker-company">Everpure (ex-Pure Storage)</span><div class="tag-container"><span class="strategy-tag">All-Flash</span><span class="strategy-tag">NVMe</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$140.14</span><span class="change-badge" style="color:#10b981;">+4.48%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('COHR','Coherent Corp','$337.04','+5.59%','#10b981','66.00B','9.8M','81.81',['storage','infra'],'Transceivere 400G/800G critice pentru interconectarea GPU-urilor în clustere AI mari.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#00c8f0;">COHR</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Coherent Corp</span><div class="tag-container"><span class="strategy-tag">Optics 800G</span><span class="strategy-tag">Transceivers</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$337.04</span><span class="change-badge" style="color:#10b981;">+5.59%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NTNX','Nutanix','$72.29','+1.08%','#10b981','19.56B','2.0M','13.98',['storage','infra'],'Infrastructură hiperconvergentă pentru AI hybrid cloud. Gestionare storage și compute on-prem.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#00c8f0;">NTNX</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Nutanix</span><div class="tag-container"><span class="strategy-tag">HCI</span><span class="strategy-tag">Hybrid Cloud AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$72.29</span><span class="change-badge" style="color:#10b981;">+1.08%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ESTC','Elastic NV','$93.94','+1.77%','#10b981','9.86B','1.8M','26.73',['storage'],'Motor de căutare și vector database. Elasticsearch folosit în RAG (Retrieval Augmented Generation).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">ESTC</span><span class="ticker-company">Elastic NV</span><div class="tag-container"><span class="strategy-tag">Vector DB</span><span class="strategy-tag">RAG Search</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$93.94</span><span class="change-badge" style="color:#10b981;">+1.77%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MDB','MongoDB','$357.96','+1.77%','#10b981','28.84B','2.7M','489.60',['storage'],'Baza de date document + vector search. Atlas Vector Search pentru aplicații AI și RAG.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">MDB</span><span class="ticker-company">MongoDB</span><div class="tag-container"><span class="strategy-tag">NoSQL</span><span class="strategy-tag">Vector Search AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$357.96</span><span class="change-badge" style="color:#10b981;">+1.77%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SNOW','Snowflake','$341.04','-0.28%','#ef4444','120.20B','3.3M','—',['storage','soft'],'Data cloud pentru antrenarea și servirea modelelor AI. Cortex AI nativ în platformă.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#00c8f0;">SNOW</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Snowflake</span><div class="tag-container"><span class="strategy-tag">Data Cloud</span><span class="strategy-tag">Cortex AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$341.04</span><span class="change-badge" style="color:#ef4444;">-0.28%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SLAB','Silicon Labs','$222.76','+0.11%','#10b981','7.43B','362K','—',['storage'],'Cipuri de conectivitate IoT. Expunere la AI la edge prin senzori și dispozitive conectate.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">SLAB</span><span class="ticker-company">Silicon Labs</span><div class="tag-container"><span class="strategy-tag">IoT</span><span class="strategy-tag">Edge Connectivity</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$222.76</span><span class="change-badge" style="color:#10b981;">+0.11%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IRM','Iron Mountain','$113.39','+2.03%','#10b981','33.76B','2.1M','80.83',['storage','infra'],'Tranziție spre datacenter AI. Gestionare date și stocare fizică + expansiune cloud DC.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#00c8f0;">IRM</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Iron Mountain</span><div class="tag-container"><span class="strategy-tag">Datacenter REIT</span><span class="strategy-tag">Storage</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$113.39</span><span class="change-badge" style="color:#10b981;">+2.03%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SNDK','SanDisk','$1,719.99','-3.79%','#ef4444','251.84B','8.2M','23.32',['storage'],'NAND/SSD enterprise, separat din Western Digital (2025). Stocare flash pentru inferență și data lakes AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#00c8f0;">SNDK</span><span class="ticker-company">SanDisk</span><div class="tag-container"><span class="strategy-tag">NAND Flash</span><span class="strategy-tag">Enterprise SSD</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,719.99</span><span class="change-badge" style="color:#ef4444;">-3.79%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SKHY','SK hynix (ADR)','$195.13','+0.84%','#10b981','996.35B','15.8M','9.53',['storage'],'Liderul global HBM, furnizor principal de memorie pentru GPU-urile NVIDIA. ADR listat pe Nasdaq la 10 iulie 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#00c8f0;">SKHY</span><span class="badge-new">ADR 2026</span></div><span class="ticker-company">SK hynix (ADR)</span><div class="tag-container"><span class="strategy-tag">HBM Lider</span><span class="strategy-tag">DRAM</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$195.13</span><span class="change-badge" style="color:#10b981;">+0.84%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- L3 · INFRASTRUCTURĂ -->
+    <div class="layer-box" id="box-ai-l3">
+        <div class="layer-header" onclick="toggleLayer('box-ai-l3')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#7c3aed;">L3</span><span class="layer-name">· Infrastructură (Cloud, Neocloud & Rețea)<span class="layer-count">(35)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-ai-l3">
+
+            <div class="ticker-row" onclick="openDetails('MSFT','Microsoft','$517.53','+0.92%','#10b981','3.84T','18.3M','28.83',['infra','soft'],'Azure cloud #2 global + parteneriat OpenAI. Azure AI Studio, OpenAI Service, Copilot ecosystem.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">MSFT</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Microsoft</span><div class="tag-container"><span class="strategy-tag">Azure AI</span><span class="strategy-tag">OpenAI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$517.53</span><span class="change-badge" style="color:#10b981;">+0.92%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AMZN','Amazon','$251.52','+1.33%','#10b981','2.71T','33.6M','20.23',['infra','soft'],'AWS cloud #1 global. Trainium2 (AI training), Inferentia2 (inferență), Bedrock AI platform.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">AMZN</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Amazon</span><div class="tag-container"><span class="strategy-tag">AWS</span><span class="strategy-tag">Trainium2</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$251.52</span><span class="change-badge" style="color:#10b981;">+1.33%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GOOGL','Alphabet / Google','$343.50','+1.56%','#10b981','4.20T','24.9M','17.23',['infra','soft'],'GCP cloud, TPU custom chips, Gemini LLM, Vertex AI. Cercetare AI fundamentală (DeepMind).')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">GOOGL</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Alphabet / Google</span><div class="tag-container"><span class="strategy-tag">GCP</span><span class="strategy-tag">TPU v5</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$343.50</span><span class="change-badge" style="color:#10b981;">+1.56%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('META','Meta Platforms','$728.08','+0.30%','#10b981','1.85T','13.0M','27.44',['infra','soft'],'Investiții masive AI infra. LLaMA open-source, MTIA custom chip, AI ad targeting.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">META</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Meta Platforms</span><div class="tag-container"><span class="strategy-tag">LLaMA</span><span class="strategy-tag">$65B capex</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$728.08</span><span class="change-badge" style="color:#10b981;">+0.30%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SPCX','SpaceX','$158.96','+7.35%','#10b981','2.16T','119.5M','—',['infra'],'Starlink AI + xAI compute infrastructure. IPO iunie 2026, cel mai mare IPO din istorie ($75B).')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">SPCX</span><span class="badge-new">IPO Iun'26</span></div><span class="ticker-company">SpaceX</span><div class="tag-container"><span class="strategy-tag">Starlink AI</span><span class="strategy-tag">xAI Compute</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$158.96</span><span class="change-badge" style="color:#10b981;">+7.35%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CRWV','CoreWeave','$89.62','+1.19%','#10b981','49.43B','23.6M','—',['infra'],'GPU Cloud pur-play, AI Neocloud. IPO martie 2025. Intrat Nasdaq-100 iunie 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">CRWV</span><span class="badge-new">NDX Jun'26</span></div><span class="ticker-company">CoreWeave</span><div class="tag-container"><span class="strategy-tag">GPU Cloud</span><span class="strategy-tag">AI Neocloud</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$89.62</span><span class="change-badge" style="color:#10b981;">+1.19%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NBIS','Nebius Group','$242.81','+4.53%','#10b981','66.55B','12.3M','1,569.67',['infra'],'AI Neocloud, GPU Cloud. +240% YTD 2026. Intrat în Nasdaq-100 pe 22 iunie 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">NBIS</span><span class="badge-new">NDX Jun'26</span></div><span class="ticker-company">Nebius Group</span><div class="tag-container"><span class="strategy-tag">AI Neocloud</span><span class="strategy-tag">GPU Cloud</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$242.81</span><span class="change-badge" style="color:#10b981;">+4.53%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('EQIX','Equinix','$1,025.72','+1.32%','#10b981','101.21B','331K','65.96',['infra'],'Cel mai mare operator colocation datacenter global. Nod central pentru AI cloud interconnects.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">EQIX</span><span class="ticker-company">Equinix</span><div class="tag-container"><span class="strategy-tag">Colocation</span><span class="strategy-tag">Interconnect</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,025.72</span><span class="change-badge" style="color:#10b981;">+1.32%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('DLR','Digital Realty','$178.55','+1.17%','#10b981','67.43B','1.7M','85.92',['infra'],'REIT datacenter hyperscale. Construiește campusuri pentru AI workloads cloud providers.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">DLR</span><span class="ticker-company">Digital Realty</span><div class="tag-container"><span class="strategy-tag">Hyperscale DC</span><span class="strategy-tag">REIT</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$178.55</span><span class="change-badge" style="color:#10b981;">+1.17%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('VRT','Vertiv Holdings','$252.18','+2.46%','#10b981','97.09B','3.4M','57.07',['infra'],'Infrastructură critică datacentere: răcire lichid, UPS, distribuție putere AI racks.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">VRT</span><span class="ticker-company">Vertiv Holdings</span><div class="tag-container"><span class="strategy-tag">Cooling AI</span><span class="strategy-tag">Liquid Cool</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$252.18</span><span class="change-badge" style="color:#10b981;">+2.46%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ETN','Eaton Corporation','$436.11','-0.27%','#ef4444','169.39B','2.1M','44.40',['infra'],'Management putere electrică pentru datacentere. AI cere mai multă energie → mai mult Eaton.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">ETN</span><span class="ticker-company">Eaton Corporation</span><div class="tag-container"><span class="strategy-tag">Power Mgmt</span><span class="strategy-tag">Grid</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$436.11</span><span class="change-badge" style="color:#ef4444;">-0.27%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NEE','NextEra Energy','$76.83','+0.63%','#10b981','160.27B','18.2M','17.27',['infra'],'Cel mai mare producător renewable. AI datacentere cumpără energie curată pe contracte lungi.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">NEE</span><span class="ticker-company">NextEra Energy</span><div class="tag-container"><span class="strategy-tag">Renewable</span><span class="strategy-tag">AI Power PPA</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$76.83</span><span class="change-badge" style="color:#10b981;">+0.63%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CEG','Constellation Energy','$257.49','-0.55%','#ef4444','91.23B','3.7M','24.93',['infra'],'Nuclear baseload pentru AI DC. Reactivare Three Mile Island pentru Microsoft/AI datacentere.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CEG</span><span class="ticker-company">Constellation Energy</span><div class="tag-container"><span class="strategy-tag">Nuclear AI</span><span class="strategy-tag">Baseload TMI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$257.49</span><span class="change-badge" style="color:#ef4444;">-0.55%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ANET','Arista Networks','$207.35','+1.40%','#10b981','261.51B','4.1M','65.62',['infra'],'Lider switch-uri Ethernet pentru AI clusters. Ultra-Ethernet Consortium. Alternativă InfiniBand.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">ANET</span><span class="ticker-company">Arista Networks</span><div class="tag-container"><span class="strategy-tag">Ethernet AI</span><span class="strategy-tag">800G</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$207.35</span><span class="change-badge" style="color:#10b981;">+1.40%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CSCO','Cisco Systems','$112.20','+3.56%','#10b981','442.36B','18.5M','33.69',['infra'],'Echipamente rețea pentru AI datacenter. Silicon One, AI-native networking, securitate AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CSCO</span><span class="ticker-company">Cisco Systems</span><div class="tag-container"><span class="strategy-tag">Networking</span><span class="strategy-tag">AI Switching</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$112.20</span><span class="change-badge" style="color:#10b981;">+3.56%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('OKLO','Oklo Inc','$35.87','-0.75%','#ef4444','6.67B','9.5M','—',['infra'],'Reactoare nucleare mici modulare (SMR) pentru alimentarea datacenterelor AI. Energie baseload.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">OKLO</span><span class="badge-new">2024</span></div><span class="ticker-company">Oklo Inc</span><div class="tag-container"><span class="strategy-tag">SMR Nuclear</span><span class="strategy-tag">AI Power</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$35.87</span><span class="change-badge" style="color:#ef4444;">-0.75%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('DELL','Dell Technologies','$562.52','+3.84%','#10b981','357.66B','5.5M','32.82',['infra'],'Servere AI complete (PowerEdge XE) integrate cu GPU NVDA. Concurent direct SMCI pe rack-uri AI dense.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">DELL</span><span class="ticker-company">Dell Technologies</span><div class="tag-container"><span class="strategy-tag">AI Servers</span><span class="strategy-tag">PowerEdge</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$562.52</span><span class="change-badge" style="color:#10b981;">+3.84%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('FSLR','First Solar','$174.61','+1.45%','#10b981','18.77B','1.9M','10.77',['infra','energy'],'Producător panouri solare utility-scale. Sursă de energie curată pentru contracte PPA ale datacenterelor AI.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">FSLR</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">First Solar</span><div class="tag-container"><span class="strategy-tag">Solar</span><span class="strategy-tag">Clean Power AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$174.61</span><span class="change-badge" style="color:#10b981;">+1.45%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('VST','Vistra Corp','$140.02','+0.19%','#10b981','47.00B','12.7M','23.87',['infra','energy'],'Producător independent de energie (gaz + nuclear). Contracte directe de alimentare cu datacentere AI.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">VST</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Vistra Corp</span><div class="tag-container"><span class="strategy-tag">Power Gen</span><span class="strategy-tag">AI Baseload</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$140.02</span><span class="change-badge" style="color:#10b981;">+0.19%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MSTR','Strategy (MicroStrategy)','$160.01','-0.31%','#ef4444','61.48B','27.5M','—',['infra'],'Cea mai mare trezorerie corporativă de BTC. Proxy pentru expunerea instituțională la Bitcoin prin equity.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">MSTR</span><span class="ticker-company">Strategy (MicroStrategy)</span><div class="tag-container"><span class="strategy-tag">BTC Treasury</span><span class="strategy-tag">Corporate BTC</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$160.01</span><span class="change-badge" style="color:#ef4444;">-0.31%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('COIN','Coinbase Global','$183.00','-3.32%','#ef4444','48.28B','12.9M','—',['infra'],'Cel mai mare exchange crypto reglementat din SUA. Infrastructură centrală pentru accesul instituțional la BTC/ETH.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">COIN</span><span class="ticker-company">Coinbase Global</span><div class="tag-container"><span class="strategy-tag">Crypto Exchange</span><span class="strategy-tag">Digital Assets</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$183.00</span><span class="change-badge" style="color:#ef4444;">-3.32%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('HOOD','Robinhood Markets','$112.74','+1.43%','#10b981','101.36B','29.4M','49.93',['infra'],'Platformă retail trading equities + crypto. Expansiune rapidă în derivate și servicii pentru trader activi.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">HOOD</span><span class="ticker-company">Robinhood Markets</span><div class="tag-container"><span class="strategy-tag">Retail Trading</span><span class="strategy-tag">Crypto+Equities</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$112.74</span><span class="change-badge" style="color:#10b981;">+1.43%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CORZ','Core Scientific','$16.45','+0.61%','#10b981','5.29B','10.3M','—',['infra'],'Fost miner BTC transformat în colocare AI de mare densitate (CoreWeave, AMD).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CORZ</span><span class="ticker-company">Core Scientific</span><div class="tag-container"><span class="strategy-tag">AI Colocation</span><span class="strategy-tag">HPC Hosting</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$16.45</span><span class="change-badge" style="color:#10b981;">+0.61%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IREN','IREN Ltd','$41.76','+2.73%','#10b981','16.46B','42.0M','—',['infra'],'Miner BTC cu energie regenerabilă care pivotează spre cloud GPU și datacentere AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">IREN</span><span class="ticker-company">IREN Ltd</span><div class="tag-container"><span class="strategy-tag">GPU Cloud</span><span class="strategy-tag">BTC → AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$41.76</span><span class="change-badge" style="color:#10b981;">+2.73%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('APLD','Applied Digital','$25.38','+5.05%','#10b981','7.40B','26.4M','—',['infra'],'Dezvoltator de campusuri datacenter pentru HPC/AI, închiriate hyperscalerilor și neocloud-urilor.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">APLD</span><span class="ticker-company">Applied Digital</span><div class="tag-container"><span class="strategy-tag">AI Datacenter</span><span class="strategy-tag">HPC Campus</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$25.38</span><span class="change-badge" style="color:#10b981;">+5.05%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CIFR','Cipher Mining','$15.71','+1.62%','#10b981','6.52B','30.2M','—',['infra'],'Miner BTC care convertește capacitatea de putere în hosting HPC/AI pe contracte lungi.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CIFR</span><span class="ticker-company">Cipher Mining</span><div class="tag-container"><span class="strategy-tag">HPC Hosting</span><span class="strategy-tag">BTC → AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$15.71</span><span class="change-badge" style="color:#10b981;">+1.62%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WULF','TeraWulf','$15.49','+3.89%','#10b981','7.73B','27.9M','—',['infra'],'Miner BTC cu energie zero-carbon, contracte de colocare HPC/AI pe termen lung.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">WULF</span><span class="ticker-company">TeraWulf</span><div class="tag-container"><span class="strategy-tag">HPC Hosting</span><span class="strategy-tag">Zero-Carbon</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$15.49</span><span class="change-badge" style="color:#10b981;">+3.89%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('LITE','Lumentum','$1,085.42','+3.79%','#10b981','97.36B','4.8M','—',['infra'],'Lasere și componente optice pentru transceivere 800G/1.6T și switch-uri optice în clusterele AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">LITE</span><span class="ticker-company">Lumentum</span><div class="tag-container"><span class="strategy-tag">Optical</span><span class="strategy-tag">Transceivers</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$1,085.42</span><span class="change-badge" style="color:#10b981;">+3.79%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CIEN','Ciena','$391.34','+3.22%','#10b981','55.50B','2.5M','87.45',['infra'],'Rețele optice de transport — interconectare între datacentere (DCI) pentru antrenare distribuită.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CIEN</span><span class="ticker-company">Ciena</span><div class="tag-container"><span class="strategy-tag">Optical Net</span><span class="strategy-tag">DCI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$391.34</span><span class="change-badge" style="color:#10b981;">+3.22%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CLS','Celestica','$387.32','+3.81%','#10b981','44.50B','2.6M','39.86',['infra'],'Producător (ODM/EMS) de switch-uri și servere AI pentru hyperscaleri.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">CLS</span><span class="ticker-company">Celestica</span><div class="tag-container"><span class="strategy-tag">AI Servers</span><span class="strategy-tag">Switch ODM</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$387.32</span><span class="change-badge" style="color:#10b981;">+3.81%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('HPE','Hewlett Packard Enterprise','$69.33','+7.36%','#10b981','92.03B','29.1M','35.33',['infra'],'Servere AI (Cray/ProLiant) + rețelistică Juniper. Infrastructură on-prem pentru AI enterprise.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">HPE</span><span class="ticker-company">Hewlett Packard Enterprise</span><div class="tag-container"><span class="strategy-tag">AI Servers</span><span class="strategy-tag">Networking</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$69.33</span><span class="change-badge" style="color:#10b981;">+7.36%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GEV','GE Vernova','$988.70','+0.13%','#10b981','263.32B','2.2M','28.30',['infra'],'Turbine pe gaz și echipamente de rețea electrică — backlog record din cererea datacenterelor AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">GEV</span><span class="ticker-company">GE Vernova</span><div class="tag-container"><span class="strategy-tag">Gas Turbines</span><span class="strategy-tag">Grid</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$988.70</span><span class="change-badge" style="color:#10b981;">+0.13%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('PWR','Quanta Services','$676.56','+2.11%','#10b981','101.72B','869K','77.45',['infra'],'Construiește rețele electrice și conexiuni de putere pentru datacentere — gâtul de sticlă al AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">PWR</span><span class="ticker-company">Quanta Services</span><div class="tag-container"><span class="strategy-tag">Grid Build</span><span class="strategy-tag">DC Power</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$676.56</span><span class="change-badge" style="color:#10b981;">+2.11%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MOD','Modine Manufacturing','$178.20','-5.82%','#ef4444','9.46B','1.3M','66.42',['infra'],'Sisteme de răcire (inclusiv lichidă) pentru datacentere AI de mare densitate.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">MOD</span><span class="ticker-company">Modine Manufacturing</span><div class="tag-container"><span class="strategy-tag">Cooling</span><span class="strategy-tag">Liquid Cool</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$178.20</span><span class="change-badge" style="color:#ef4444;">-5.82%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('BE','Bloom Energy','$289.15','+4.17%','#10b981','85.16B','12.9M','347.68',['infra'],'Celule de combustie pentru putere on-site la datacentere, ocolind așteptarea conectării la rețea.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7c3aed;">BE</span><span class="ticker-company">Bloom Energy</span><div class="tag-container"><span class="strategy-tag">Fuel Cells</span><span class="strategy-tag">On-site Power</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$289.15</span><span class="change-badge" style="color:#10b981;">+4.17%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- L4 · SOFTWARE / AI APPS -->
+    <div class="layer-box" id="box-ai-l4">
+        <div class="layer-header" onclick="toggleLayer('box-ai-l4')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#10b981;">L4</span><span class="layer-name">· Software / AI Apps (Modele & Platforme)<span class="layer-count">(30)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-ai-l4">
+
+            <div class="ticker-row" onclick="openDetails('CRM','Salesforce','$234.69','-0.84%','#ef4444','193.15B','7.9M','21.75',['soft'],'Agentforce (AI agents enterprise), Einstein AI nativ în CRM. Lider agenți B2B.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">CRM</span><span class="ticker-company">Salesforce</span><div class="tag-container"><span class="strategy-tag">Agentforce</span><span class="strategy-tag">Einstein AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$234.69</span><span class="change-badge" style="color:#ef4444;">-0.84%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NOW','ServiceNow','$134.38','-2.45%','#ef4444','138.93B','8.9M','83.96',['soft'],'Platforma AI Workflow enterprise. Now Assist LLM, automatizare IT processes.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">NOW</span><span class="ticker-company">ServiceNow</span><div class="tag-container"><span class="strategy-tag">Now Assist</span><span class="strategy-tag">AI Workflows</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$134.38</span><span class="change-badge" style="color:#ef4444;">-2.45%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ADBE','Adobe','$237.69','-1.49%','#ef4444','92.51B','3.1M','13.27',['soft'],'Firefly (generative media AI), Sensei AI în Creative Cloud. Lider AI creativ enterprise.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">ADBE</span><span class="ticker-company">Adobe</span><div class="tag-container"><span class="strategy-tag">Firefly AI</span><span class="strategy-tag">Creative Gen</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$237.69</span><span class="change-badge" style="color:#ef4444;">-1.49%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ORCL','Oracle','$142.30','+3.06%','#10b981','431.38B','40.3M','22.31',['soft','infra'],'OCI cloud cu GPU clusters mari, Autonomous Database AI, generative AI enterprise.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">ORCL</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Oracle</span><div class="tag-container"><span class="strategy-tag">OCI AI</span><span class="strategy-tag">Autonomous DB</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$142.30</span><span class="change-badge" style="color:#10b981;">+3.06%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SAP','SAP SE','$208.57','-1.05%','#ef4444','238.92B','1.4M','26.82',['soft'],'Joule AI nativ în ERP/SCM/HR. AI business process automation la scară enterprise globală.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">SAP</span><span class="ticker-company">SAP SE</span><div class="tag-container"><span class="strategy-tag">Joule AI</span><span class="strategy-tag">ERP AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$208.57</span><span class="change-badge" style="color:#ef4444;">-1.05%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WDAY','Workday','$186.14','-0.33%','#ef4444','44.86B','1.4M','38.34',['soft'],'AI nativ în HR și finance planning. Skills Intelligence, AI hiring, workforce analytics.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">WDAY</span><span class="ticker-company">Workday</span><div class="tag-container"><span class="strategy-tag">HR AI</span><span class="strategy-tag">Finance AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$186.14</span><span class="change-badge" style="color:#ef4444;">-0.33%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('PLTR','Palantir','$188.75','-0.68%','#ef4444','453.58B','18.0M','161.43',['soft'],'AIP (AI Platform) govtech și enterprise. Rule-of-40: 130%. AI operațional pentru date complexe.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">PLTR</span><span class="ticker-company">Palantir Technologies</span><div class="tag-container"><span class="strategy-tag">AIP</span><span class="strategy-tag">AI Defense</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$188.75</span><span class="change-badge" style="color:#ef4444;">-0.68%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AI','C3.ai','$11.01','-0.90%','#ef4444','1.77B','5.5M','—',['soft'],'Aplicații AI enterprise verticale (energie, manufacturing, govtech). Pură-play AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">AI</span><span class="ticker-company">C3.ai</span><div class="tag-container"><span class="strategy-tag">Enterprise AI</span><span class="strategy-tag">Verticale</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$11.01</span><span class="change-badge" style="color:#ef4444;">-0.90%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('PATH','UiPath','$13.12','-1.50%','#ef4444','6.84B','19.7M','19.40',['soft'],'RPA + AI agents pentru automatizare procese. Integrare LLM în workflow-uri enterprise.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">PATH</span><span class="ticker-company">UiPath</span><div class="tag-container"><span class="strategy-tag">RPA + AI</span><span class="strategy-tag">Agentic Auto</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$13.12</span><span class="change-badge" style="color:#ef4444;">-1.50%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GTLB','GitLab','$49.78','-0.34%','#ef4444','8.29B','3.0M','—',['soft'],'Duo AI nativ în DevOps pipeline. Alternativă GitHub Copilot pentru enterprise.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">GTLB</span><span class="ticker-company">GitLab</span><div class="tag-container"><span class="strategy-tag">Duo AI</span><span class="strategy-tag">DevSecOps</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$49.78</span><span class="change-badge" style="color:#ef4444;">-0.34%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('DDOG','Datadog','$277.22','+0.27%','#10b981','99.54B','2.1M','560.54',['soft','infra'],'Monitoring și observability pentru AI/ML în producție. LLMOps — monitorizare modele live.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">DDOG</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Datadog</span><div class="tag-container"><span class="strategy-tag">LLMOps</span><span class="strategy-tag">Observability AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$277.22</span><span class="change-badge" style="color:#10b981;">+0.27%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('S','SentinelOne','$25.06','+1.58%','#10b981','8.72B','11.3M','—',['soft'],'AI-native cybersecurity. Purple AI (threat hunting), autonomous response.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">S</span><span class="ticker-company">SentinelOne</span><div class="tag-container"><span class="strategy-tag">Purple AI</span><span class="strategy-tag">EDR AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$25.06</span><span class="change-badge" style="color:#10b981;">+1.58%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('CRWD','CrowdStrike','$270.04','+1.48%','#10b981','277.10B','5.9M','6,158.38',['soft'],'Charlotte AI pentru SOC automation. Falcon platform AI-first. Lider endpoint security.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">CRWD</span><span class="ticker-company">CrowdStrike</span><div class="tag-container"><span class="strategy-tag">Charlotte AI</span><span class="strategy-tag">SOC Auto</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$270.04</span><span class="change-badge" style="color:#10b981;">+1.48%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('ZS','Zscaler','$196.60','-1.10%','#ef4444','32.06B','1.8M','—',['soft','infra'],'Zero Trust + AI pentru securitate cloud-first. Protection AI-powered pentru trafic enterprise.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">ZS</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Zscaler</span><div class="tag-container"><span class="strategy-tag">Zero Trust AI</span><span class="strategy-tag">SASE</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$196.60</span><span class="change-badge" style="color:#ef4444;">-1.10%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('PANW','Palo Alto Networks','$403.24','+1.76%','#10b981','329.85B','5.0M','1,074.43',['soft'],'Precision AI în Cortex XSIAM. SOC automation, AI-native security platform.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">PANW</span><span class="ticker-company">Palo Alto Networks</span><div class="tag-container"><span class="strategy-tag">XSIAM AI</span><span class="strategy-tag">Precision AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$403.24</span><span class="change-badge" style="color:#10b981;">+1.76%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('VEEV','Veeva Systems','$273.33','-3.05%','#ef4444','44.25B','1.1M','44.81',['soft'],'AI vertical pentru pharma și life sciences. Vault AI, AI clinical trial management.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">VEEV</span><span class="ticker-company">Veeva Systems</span><div class="tag-container"><span class="strategy-tag">Life Sciences AI</span><span class="strategy-tag">Vault</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$273.33</span><span class="change-badge" style="color:#ef4444;">-3.05%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NET','Cloudflare','$349.07','-0.55%','#ef4444','124.30B','2.8M','—',['soft','infra'],'AI Gateway pentru routing LLM traffic, Workers AI pentru inferență la edge global.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">NET</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Cloudflare</span><div class="tag-container"><span class="strategy-tag">AI Gateway</span><span class="strategy-tag">Workers AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$349.07</span><span class="change-badge" style="color:#ef4444;">-0.55%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('HUBS','HubSpot','$214.53','-1.34%','#ef4444','10.70B','1.2M','77.15',['soft'],'AI nativ în CRM și marketing automation. Breeze AI assistant pentru SMB.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">HUBS</span><span class="ticker-company">HubSpot</span><div class="tag-container"><span class="strategy-tag">AI CRM</span><span class="strategy-tag">Marketing AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$214.53</span><span class="change-badge" style="color:#ef4444;">-1.34%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TTD','Trade Desk','$11.95','-1.24%','#ef4444','5.65B','22.6M','14.06',['soft'],'AI advertising — Kokai platform, optimizare programmatic media cu machine learning.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">TTD</span><span class="ticker-company">Trade Desk</span><div class="tag-container"><span class="strategy-tag">AI Advertising</span><span class="strategy-tag">Kokai</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$11.95</span><span class="change-badge" style="color:#ef4444;">-1.24%</span></div>
+            </div>
+
+
+            <div class="ticker-row" onclick="openDetails('DUOL','Duolingo','$144.27','-1.57%','#ef4444','6.75B','776K','17.20',['soft'],'AI tutor generativ pentru învățare limbi. Max tier AI-first, modele proprii de generare exerciții.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">DUOL</span><span class="ticker-company">Duolingo</span><div class="tag-container"><span class="strategy-tag">AI Tutor</span><span class="strategy-tag">EdTech</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$144.27</span><span class="change-badge" style="color:#ef4444;">-1.57%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('UPST','Upstart Holdings','$22.81','-0.61%','#ef4444','2.22B','4.1M','43.61',['soft'],'Model de credit scoring bazat pe AI/ML. Underwriting automat pentru împrumuturi personale și auto.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">UPST</span><span class="ticker-company">Upstart Holdings</span><div class="tag-container"><span class="strategy-tag">AI Lending</span><span class="strategy-tag">Credit Model</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$22.81</span><span class="change-badge" style="color:#ef4444;">-0.61%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AAPL','Apple','$333.69','+1.02%','#10b981','4.87T','34.1M','38.28',['soft','infra'],'Apple Intelligence — AI on-device via silicon propriu (M/A-series NPU). Parteneriat Gemini pentru Siri.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">AAPL</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Apple</span><div class="tag-container"><span class="strategy-tag">Apple Intelligence</span><span class="strategy-tag">On-device AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$333.69</span><span class="change-badge" style="color:#10b981;">+1.02%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TSLA','Tesla','$370.59','+4.65%','#10b981','1.46T','55.3M','384.57',['soft','infra'],'FSD/Optimus AI stack propriu. Dojo/AI5 compute pentru condus autonom și robotică.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#10b981;">TSLA</span><span class="badge-multi">MULTI</span></div><span class="ticker-company">Tesla</span><div class="tag-container"><span class="strategy-tag">FSD AI</span><span class="strategy-tag">Optimus/Dojo</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$370.59</span><span class="change-badge" style="color:#10b981;">+4.65%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IBM','IBM','$222.64','-1.32%','#ef4444','209.76B','7.7M','19.80',['soft'],'watsonx + Red Hat + Confluent (achiziționat mar 2026). AI enterprise și hybrid cloud.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">IBM</span><span class="ticker-company">IBM</span><div class="tag-container"><span class="strategy-tag">watsonx</span><span class="strategy-tag">Hybrid Cloud</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$222.64</span><span class="change-badge" style="color:#ef4444;">-1.32%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('APP','AppLovin','$268.22','-4.65%','#ef4444','89.76B','9.0M','20.62',['soft'],'Motor de publicitate bazat pe AI (Axon). Unul dintre cele mai clare cazuri de monetizare AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">APP</span><span class="ticker-company">AppLovin</span><div class="tag-container"><span class="strategy-tag">AI AdTech</span><span class="strategy-tag">Axon Engine</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$268.22</span><span class="change-badge" style="color:#ef4444;">-4.65%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('INTU','Intuit','$281.08','-0.60%','#ef4444','75.11B','2.7M','17.08',['soft'],'TurboTax/QuickBooks/Credit Karma cu agenți AI integrați (Intuit Assist).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">INTU</span><span class="ticker-company">Intuit</span><div class="tag-container"><span class="strategy-tag">AI Agents</span><span class="strategy-tag">FinTech SaaS</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$281.08</span><span class="change-badge" style="color:#ef4444;">-0.60%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('FTNT','Fortinet','$180.95','+1.25%','#10b981','132.77B','3.4M','63.94',['soft'],'Securitate de rețea + SASE; cicluri de upgrade firewall pe măsură ce traficul AI crește.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">FTNT</span><span class="ticker-company">Fortinet</span><div class="tag-container"><span class="strategy-tag">Cybersecurity</span><span class="strategy-tag">SASE</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$180.95</span><span class="change-badge" style="color:#10b981;">+1.25%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TEM','Tempus AI','$76.63','+0.17%','#10b981','13.83B','5.7M','—',['soft'],'AI aplicat în medicina de precizie — date clinice și moleculare pentru diagnostic.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">TEM</span><span class="ticker-company">Tempus AI</span><div class="tag-container"><span class="strategy-tag">Health AI</span><span class="strategy-tag">Precision Med</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$76.63</span><span class="change-badge" style="color:#10b981;">+0.17%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SOUN','SoundHound AI','$5.84','-3.47%','#ef4444','2.59B','23.7M','—',['soft'],'AI conversațional vocal pentru auto, restaurante și customer service.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">SOUN</span><span class="ticker-company">SoundHound AI</span><div class="tag-container"><span class="strategy-tag">Voice AI</span><span class="strategy-tag">Agentic</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$5.84</span><span class="change-badge" style="color:#ef4444;">-3.47%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('RDDT','Reddit','$147.86','-1.12%','#ef4444','28.45B','3.1M','34.47',['soft'],'Licențiază date conversaționale pentru antrenarea LLM (Google, OpenAI) + ads cu AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#10b981;">RDDT</span><span class="ticker-company">Reddit</span><div class="tag-container"><span class="strategy-tag">AI Data</span><span class="strategy-tag">Licensing</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$147.86</span><span class="change-badge" style="color:#ef4444;">-1.12%</span></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PLANȘA 2: ENERGY MAP -->
+    <div class="board-section-title">PLANȘA ENERGY MAP</div>
+
+    <div class="layer-box" id="box-en-l1">
+        <div class="layer-header" onclick="toggleLayer('box-en-l1')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#7a90aa;">L1</span><span class="layer-name">· Petrol & Gaze (Clasic)<span class="layer-count">(6)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-en-l1">
+            <div class="ticker-row" onclick="openDetails('XOM','Exxon Mobil Corp.','$164.01','+0.12%','#10b981','674.39B','11.3M','21.15',['energy'],'Major petrolier integrat. Producție și explorare globală, expunere indirectă la cererea energetică AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">XOM</span><span class="ticker-company">Exxon Mobil Corp.</span><div class="tag-container"><span class="strategy-tag">PRODUCȚIE</span><span class="strategy-tag">EXPLORARE</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$164.01</span><span class="change-badge" style="color:#10b981;">+0.12%</span></div>
+            </div>
+            <div class="ticker-row" onclick="openDetails('CVX','Chevron','$206.69','-0.20%','#ef4444','405.44B','6.7M','19.85',['energy'],'Major integrat; dezvoltă centrale pe gaz dedicate alimentării datacenterelor AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">CVX</span><span class="ticker-company">Chevron</span><div class="tag-container"><span class="strategy-tag">Integrat</span><span class="strategy-tag">Gas-to-Power</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$206.69</span><span class="change-badge" style="color:#ef4444;">-0.20%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('COP','ConocoPhillips','$126.75','-0.24%','#ef4444','152.27B','5.3M','16.84',['energy'],'Cel mai mare E&amp;P independent din SUA. Expunere la gaz natural și LNG.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">COP</span><span class="ticker-company">ConocoPhillips</span><div class="tag-container"><span class="strategy-tag">E&amp;P</span><span class="strategy-tag">Gaz / LNG</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$126.75</span><span class="change-badge" style="color:#ef4444;">-0.24%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('EQT','EQT Corp','$50.17','+0.16%','#10b981','31.38B','7.6M','11.63',['energy'],'Cel mai mare producător de gaz natural din SUA; contracte directe de furnizare pentru datacentere.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">EQT</span><span class="ticker-company">EQT Corp</span><div class="tag-container"><span class="strategy-tag">Gaz Natural</span><span class="strategy-tag">Appalachia</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$50.17</span><span class="change-badge" style="color:#10b981;">+0.16%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('KMI','Kinder Morgan','$31.07','+1.77%','#10b981','69.19B','11.7M','20.04',['energy'],'Cea mai mare rețea de conducte de gaz din SUA — transportă combustibilul pentru centralele datacenterelor.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">KMI</span><span class="ticker-company">Kinder Morgan</span><div class="tag-container"><span class="strategy-tag">Pipelines</span><span class="strategy-tag">Midstream Gaz</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$31.07</span><span class="change-badge" style="color:#10b981;">+1.77%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WMB','Williams Companies','$70.54','+1.91%','#10b981','86.28B','8.3M','28.10',['energy'],'Conducte de gaz (Transco) + proiecte de generare dedicate pentru datacentere AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">WMB</span><span class="ticker-company">Williams Companies</span><div class="tag-container"><span class="strategy-tag">Pipelines</span><span class="strategy-tag">Behind-the-Meter</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$70.54</span><span class="change-badge" style="color:#10b981;">+1.91%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layer-box" id="box-en-l2">
+        <div class="layer-header" onclick="toggleLayer('box-en-l2')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#f59e0b;">L2</span><span class="layer-name">· Energie Nucleară & SMR<span class="layer-count">(9)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-en-l2">
+            <div class="ticker-row" onclick="openDetails('CEG','Constellation Energy','$257.49','-0.55%','#ef4444','91.23B','3.7M','24.93',['energy'],'Nuclear baseload pentru AI DC. Reactivare Three Mile Island pentru Microsoft/AI datacentere.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">CEG</span><span class="ticker-company">Constellation Energy</span><div class="tag-container"><span class="strategy-tag">NUCLEAR AI</span><span class="strategy-tag">BASELOAD</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$257.49</span><span class="change-badge" style="color:#ef4444;">-0.55%</span></div>
+            </div>
+            <div class="ticker-row" onclick="openDetails('OKLO','Oklo Inc','$35.87','-0.75%','#ef4444','6.67B','9.5M','—',['energy'],'Reactoare nucleare mici modulare (SMR) pentru alimentarea datacenterelor AI.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#f59e0b;">OKLO</span><span class="badge-new">2024</span></div><span class="ticker-company">Oklo Inc</span><div class="tag-container"><span class="strategy-tag">SMR Nuclear</span><span class="strategy-tag">AI Power</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$35.87</span><span class="change-badge" style="color:#ef4444;">-0.75%</span></div>
+            </div>
+            <div class="ticker-row" onclick="openDetails('CCJ','Cameco','$85.18','-0.60%','#ef4444','37.09B','2.9M','148.42',['energy'],'Cel mai mare producător de uraniu listat în SUA + participație în Westinghouse (reactoare AP1000).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">CCJ</span><span class="ticker-company">Cameco</span><div class="tag-container"><span class="strategy-tag">Uraniu</span><span class="strategy-tag">Westinghouse</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$85.18</span><span class="change-badge" style="color:#ef4444;">-0.60%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SMR','NuScale Power','$7.75','-0.51%','#ef4444','3.33B','26.0M','—',['energy'],'Singurul design SMR cu aprobare NRC în SUA. Parteneriate pentru alimentarea datacenterelor.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">SMR</span><span class="ticker-company">NuScale Power</span><div class="tag-container"><span class="strategy-tag">SMR</span><span class="strategy-tag">NRC Approved</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$7.75</span><span class="change-badge" style="color:#ef4444;">-0.51%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('NNE','NANO Nuclear Energy','$15.62','-0.70%','#ef4444','838.77M','1.7M','—',['energy'],'Microreactoare nucleare portabile — stadiu incipient, volatilitate mare.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">NNE</span><span class="ticker-company">NANO Nuclear Energy</span><div class="tag-container"><span class="strategy-tag">Micro-reactoare</span><span class="strategy-tag">Early Stage</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$15.62</span><span class="change-badge" style="color:#ef4444;">-0.70%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('LEU','Centrus Energy','$139.27','+0.12%','#10b981','2.85B','494K','64.08',['energy'],'Singurul producător US de HALEU — combustibilul necesar reactoarelor SMR avansate.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">LEU</span><span class="ticker-company">Centrus Energy</span><div class="tag-container"><span class="strategy-tag">HALEU</span><span class="strategy-tag">Combustibil</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$139.27</span><span class="change-badge" style="color:#10b981;">+0.12%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('BWXT','BWX Technologies','$134.86','-1.41%','#ef4444','12.36B','1.7M','34.94',['energy'],'Componente și combustibil nuclear (US Navy), microreactoare și lanț de aprovizionare SMR.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">BWXT</span><span class="ticker-company">BWX Technologies</span><div class="tag-container"><span class="strategy-tag">Reactoare</span><span class="strategy-tag">Naval/SMR</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$134.86</span><span class="change-badge" style="color:#ef4444;">-1.41%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TLN','Talen Energy','$320.77','-0.72%','#ef4444','15.37B','1.1M','—',['energy'],'Centrala nucleară Susquehanna — contract de putere directă cu Amazon pentru datacentere AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#f59e0b;">TLN</span><span class="ticker-company">Talen Energy</span><div class="tag-container"><span class="strategy-tag">Nuclear</span><span class="strategy-tag">PPA AWS</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$320.77</span><span class="change-badge" style="color:#ef4444;">-0.72%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('XE','X-Energy','$14.38','+3.08%','#10b981','5.84B','4.4M','—',['energy'],'Reactor SMR răcit cu gaz (Xe-100), susținut de Amazon. IPO pe 24 aprilie 2026.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#f59e0b;">XE</span><span class="badge-new">IPO 2026</span></div><span class="ticker-company">X-Energy</span><div class="tag-container"><span class="strategy-tag">SMR Xe-100</span><span class="strategy-tag">Amazon-backed</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$14.38</span><span class="change-badge" style="color:#10b981;">+3.08%</span></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- PLANȘA 3: INDICI MACRO & FINANCE -->
+    <div class="board-section-title">PLANȘA INDICI MACRO & FINANCE</div>
+
+    <div class="layer-box" id="box-mf-l1">
+        <div class="layer-header" onclick="toggleLayer('box-mf-l1')">
+            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(20)</span></span></div>
+            <span class="layer-arrow">▼</span>
+        </div>
+        <div class="ticker-grid" id="grid-mf-l1">
+
+            <div class="ticker-row" onclick="openDetails('NDX','Nasdaq-100 Index','30,807.93','+1.00%','#10b981','—','—','—',['macro'],'Indice tech-heavy, benchmark principal pentru USTEC.f / MNQ. Ponderat de Mag7 + semiconductori.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">NDX</span><span class="ticker-company">Nasdaq-100 Index</span><div class="tag-container"><span class="strategy-tag">Tech Index</span><span class="strategy-tag">Futures Benchmark</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">30,807.93</span><span class="change-badge" style="color:#10b981;">+1.00%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SPY','SPDR S&amp;P 500 ETF','$769.64','+0.74%','#10b981','—','46.3M','—',['macro'],'Cel mai tranzacționat ETF din lume. Proxy larg de piață pentru risc-on / risc-off.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SPY</span><span class="ticker-company">SPDR S&amp;P 500 ETF</span><div class="tag-container"><span class="strategy-tag">Broad Market</span><span class="strategy-tag">ETF</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$769.64</span><span class="change-badge" style="color:#10b981;">+0.74%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('QQQ','Invesco QQQ Trust','$749.58','+1.02%','#10b981','—','34.5M','—',['macro'],'ETF care urmărește Nasdaq-100. Vehicul principal pentru expunere retail la mega-cap tech AI.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">QQQ</span><span class="ticker-company">Invesco QQQ Trust</span><div class="tag-container"><span class="strategy-tag">Nasdaq ETF</span><span class="strategy-tag">Mega-cap Tech</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$749.58</span><span class="change-badge" style="color:#10b981;">+1.02%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IWM','iShares Russell 2000 ETF','$281.52','+0.90%','#10b981','—','29.8M','—',['macro'],'Small-caps. Divergența IWM vs QQQ arată rotația risc / breadth-ul pieței.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">IWM</span><span class="ticker-company">iShares Russell 2000 ETF</span><div class="tag-container"><span class="strategy-tag">Small Caps</span><span class="strategy-tag">Breadth</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$281.52</span><span class="change-badge" style="color:#10b981;">+0.90%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('VIX','CBOE Volatility Index','15.31','-6.59%','#ef4444','—','—','—',['macro'],'Indicele fricii. Nivel scăzut = complacency; spike-uri corelate cu vânzări de gamma dealer.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">VIX</span><span class="ticker-company">CBOE Volatility Index</span><div class="tag-container"><span class="strategy-tag">Fear Gauge</span><span class="strategy-tag">Vol Regime</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">15.31</span><span class="change-badge" style="color:#ef4444;">-6.59%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SOXX','iShares Semiconductor ETF','$588.90','+2.18%','#10b981','—','6.9M','—',['macro'],'Coș semiconductori. Lead/lag indicator pentru apetitul de risc pe AI hardware.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SOXX</span><span class="ticker-company">iShares Semiconductor ETF</span><div class="tag-container"><span class="strategy-tag">Chips ETF</span><span class="strategy-tag">AI Hardware</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$588.90</span><span class="change-badge" style="color:#10b981;">+2.18%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IGV','iShares Expanded Tech-Software ETF','$108.43','+0.18%','#10b981','—','6.3M','—',['macro'],'Coș software enterprise. Proxy pentru sănătatea segmentului AI Apps / SaaS.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">IGV</span><span class="ticker-company">iShares Expanded Tech-Software ETF</span><div class="tag-container"><span class="strategy-tag">Software ETF</span><span class="strategy-tag">SaaS AI</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$108.43</span><span class="change-badge" style="color:#10b981;">+0.18%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('TLT','iShares 20+ Year Treasury Bond ETF','$77.48','-0.30%','#ef4444','—','61.4M','—',['macro'],'Proxy pentru randamentele pe termen lung. Corelat invers cu multiple-urile de growth/tech.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">TLT</span><span class="ticker-company">iShares 20+ Year Treasury Bond ETF</span><div class="tag-container"><span class="strategy-tag">Long Bonds</span><span class="strategy-tag">Rates Proxy</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$77.48</span><span class="change-badge" style="color:#ef4444;">-0.30%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GLD','SPDR Gold Shares','$380.14','-0.68%','#ef4444','—','9.3M','—',['macro'],'Refugiu clasic. Divergență GLD vs BTC arată apetitul relativ pentru hedge digital vs. fizic.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">GLD</span><span class="ticker-company">SPDR Gold Shares</span><div class="tag-container"><span class="strategy-tag">Gold</span><span class="strategy-tag">Safe Haven</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$380.14</span><span class="change-badge" style="color:#ef4444;">-0.68%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('UUP','Invesco DB US Dollar Bullish ETF','$28.89','-0.24%','#ef4444','—','3.0M','—',['macro'],'Proxy DXY tranzacționabil. Dolar puternic = presiune pe multiple-uri growth și pe BTC.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">UUP</span><span class="ticker-company">Invesco DB US Dollar Bullish ETF</span><div class="tag-container"><span class="strategy-tag">DXY Proxy</span><span class="strategy-tag">USD Strength</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$28.89</span><span class="change-badge" style="color:#ef4444;">-0.24%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('JPM','JPMorgan Chase','$332.38','-0.24%','#ef4444','883.53B','6.7M','14.27',['macro'],'Cea mai mare bancă US. Barometru pentru credit, IPO-uri (incl. SPCX) și sănătatea sistemului financiar.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">JPM</span><span class="ticker-company">JPMorgan Chase</span><div class="tag-container"><span class="strategy-tag">Money Center Bank</span><span class="strategy-tag">Credit Barometer</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$332.38</span><span class="change-badge" style="color:#ef4444;">-0.24%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('GS','Goldman Sachs','$902.56','+0.66%','#10b981','273.26B','1.6M','13.96',['macro'],'Lider investment banking. Volumul de underwriting IPO/M&amp;A reflectă apetitul de risc instituțional.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">GS</span><span class="ticker-company">Goldman Sachs</span><div class="tag-container"><span class="strategy-tag">Investment Bank</span><span class="strategy-tag">IPO Underwriting</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$902.56</span><span class="change-badge" style="color:#10b981;">+0.66%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('V','Visa Inc','$360.66','+0.23%','#10b981','662.03B','4.0M','30.70',['macro'],'Rețea de plăți globală. Volumul de tranzacții e proxy pentru consum și sănătatea economică reală.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">V</span><span class="ticker-company">Visa Inc</span><div class="tag-container"><span class="strategy-tag">Payments</span><span class="strategy-tag">Consumer Proxy</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$360.66</span><span class="change-badge" style="color:#10b981;">+0.23%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MA','Mastercard','$552.26','+0.41%','#10b981','483.79B','2.5M','30.37',['macro'],'Al doilea rețea de plăți globală. Corelat strâns cu Visa ca indicator de consum discreționar.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">MA</span><span class="ticker-company">Mastercard</span><div class="tag-container"><span class="strategy-tag">Payments</span><span class="strategy-tag">Consumer Proxy</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$552.26</span><span class="change-badge" style="color:#10b981;">+0.41%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SMH','VanEck Semiconductor ETF','$630.60','+2.07%','#10b981','—','7.3M','—',['macro'],'Cel mai lichid ETF de semiconductori, ponderat concentrat pe NVDA/TSM/AVGO.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SMH</span><span class="ticker-company">VanEck Semiconductor ETF</span><div class="tag-container"><span class="strategy-tag">Chips ETF</span><span class="strategy-tag">NVDA-heavy</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$630.60</span><span class="change-badge" style="color:#10b981;">+2.07%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('XLK','Technology Select Sector SPDR','$199.81','+1.01%','#10b981','—','8.9M','—',['macro'],'Sectorul tech din S&amp;P 500. Comparat cu QQQ arată concentrarea pe mega-cap.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">XLK</span><span class="ticker-company">Technology Select Sector SPDR</span><div class="tag-container"><span class="strategy-tag">Tech Sector</span><span class="strategy-tag">S&amp;P Tech</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$199.81</span><span class="change-badge" style="color:#10b981;">+1.01%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('IBIT','iShares Bitcoin Trust','$47.73','-0.48%','#ef4444','—','48.7M','—',['macro'],'Cel mai mare ETF spot BTC. Fluxurile zilnice sunt proxy pentru cererea instituțională de BTC.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">IBIT</span><span class="ticker-company">iShares Bitcoin Trust</span><div class="tag-container"><span class="strategy-tag">BTC ETF</span><span class="strategy-tag">Crypto Flows</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$47.73</span><span class="change-badge" style="color:#ef4444;">-0.48%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('HYG','iShares iBoxx High Yield Corp Bond','$76.91','+0.01%','#10b981','—','82.5M','—',['macro'],'Credit junk. Divergența HYG vs SPY semnalează stres de credit înaintea equity.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">HYG</span><span class="ticker-company">iShares iBoxx High Yield Corp Bond</span><div class="tag-container"><span class="strategy-tag">High Yield</span><span class="strategy-tag">Credit Risk</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$76.91</span><span class="change-badge" style="color:#10b981;">+0.01%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('DIA','SPDR Dow Jones Industrial Avg','$511.10','+0.49%','#10b981','—','4.0M','—',['macro'],'Dow Jones 30. Rotația DIA vs QQQ arată fuga din tech spre value/cyclicals.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">DIA</span><span class="ticker-company">SPDR Dow Jones Industrial Avg</span><div class="tag-container"><span class="strategy-tag">Dow 30</span><span class="strategy-tag">Blue Chips</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$511.10</span><span class="change-badge" style="color:#10b981;">+0.49%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('MS','Morgan Stanley','$190.31','+1.22%','#10b981','298.89B','6.3M','15.38',['macro'],'Investment banking + wealth management. Co-lead pe IPO-urile mega-cap AI (SPCX).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">MS</span><span class="ticker-company">Morgan Stanley</span><div class="tag-container"><span class="strategy-tag">Investment Bank</span><span class="strategy-tag">Wealth Mgmt</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$190.31</span><span class="change-badge" style="color:#10b981;">+1.22%</span></div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Sertar Detalii Glisant (Drawer) -->
+    <div id="detailsDrawer" class="drawer">
+        <div class="drawer-header">
+            <div><span id="drawSymbol" style="font-size: 1.5rem; font-weight: bold; color: #00c8f0;">TICKER</span><div id="drawCompanyName" style="font-size: 0.85rem; color: #4a5e7a;">Nume Companie</div></div>
+            <button class="drawer-close" onclick="closeDrawer()">Închide</button>
+        </div>
+        <div class="drawer-content">
+
+            <div id="drawLayers" class="drawer-layers"></div>
+
+            <div id="drawRole" class="drawer-role">—</div>
+
+            <div class="section-label" style="color:#10b981;">● Live · <span id="tvLiveSym"></span></div>
+            <div id="tvLive"></div>
+
+            <div class="section-label">Date statice din fișier (nu live)</div>
+            <div class="data-card">
+                <div class="data-row"><span class="data-label">Preț Acțiune</span><span class="data-value" id="dPrice">-</span></div>
+                <div class="data-row"><span class="data-label">Modificare zi</span><span class="data-value" id="dChange">-</span></div>
+                <div class="data-row"><span class="data-label">Market Cap</span><span class="data-value" id="dCap">-</span></div>
+                <div class="data-row"><span class="data-label">Volum</span><span class="data-value" id="dVol">-</span></div>
+                <div class="data-row"><span class="data-label">P/E Ratio</span><span class="data-value" id="dPE">-</span></div>
+            </div>
+
+            <div class="earnings-card" id="earningsCard">
+                <div class="earnings-left">
+                    <span class="earnings-label">📅 Următor Earnings</span>
+                    <span class="earnings-date" id="dEarnDate">-</span>
+                    <span class="earnings-status" id="dEarnStatus">-</span>
+                </div>
+                <span class="session-badge" id="dEarnSession">-</span>
+            </div>
+            <div id="dEarnExtra" class="earn-extra"></div>
+
+            <div class="section-label">Deschide în sursă externă</div>
+            <div class="drawer-links" id="drawLinks"></div>
+
+        </div>
+    </div>
+
+    <script>
+        const LAYER_COLORS = {
+            'chips': '#ff5c35', 'storage': '#00c8f0', 'infra': '#7c3aed',
+            'soft': '#10b981', 'energy': '#f59e0b', 'macro': '#ec4899',
+            'ai-l1': '#ff5c35', 'ai-l2': '#00c8f0', 'ai-l3': '#7c3aed', 'ai-l4': '#10b981',
+            'en-l1': '#7a90aa', 'en-l2': '#f59e0b', 'mf-l1': '#ec4899'
+        };
+        const LAYER_LABELS = { 'chips':'Chips', 'storage':'Storage', 'infra':'Infra', 'soft':'Software', 'energy':'Energy', 'macro':'Macro & Finance' };
+
+        // Linkuri oficiale de investor relations — fiecare verificat prin căutare pe 27 Sep 2026 (fără adrese ghicite).
+        const IR_LINKS = {
+            'NVDA':'https://investor.nvidia.com/home/default.aspx',
+            'AMD':'https://ir.amd.com/',
+            'AVGO':'https://investors.broadcom.com/',
+            'INTC':'https://www.intc.com/',
+            'MRVL':'https://investor.marvell.com/',
+            'QCOM':'https://investor.qualcomm.com/overview/default.aspx',
+            'AMAT':'https://ir.appliedmaterials.com/',
+            'LRCX':'https://investor.lamresearch.com/',
+            'KLAC':'https://ir.kla.com/',
+            'TSM':'https://investor.tsmc.com/english',
+            'ASML':'https://www.asml.com/en/investors',
+            'TXN':'https://investor.ti.com/',
+            'ON':'https://investor.onsemi.com/',
+            'MPWR':'https://www.monolithicpower.com/en/about-mps/investor-relations.html',
+            'SMCI':'https://ir.supermicro.com/ir-overview/default.aspx',
+            'ONTO':'https://investors.ontoinnovation.com/overview/default.aspx',
+            'ACLS':'https://investor.axcelis.com/',
+            'FORM':'https://investors.formfactor.com/',
+            'WOLF':'https://investor.wolfspeed.com/overview/default.aspx',
+            'ALAB':'https://ir.asteralabs.com/investor-relations/',
+            'CBRS':'https://investors.cerebras.ai/investor-relations/',
+            'ARM':'https://investors.arm.com/investor-relations/',
+            'SNPS':'https://investor.synopsys.com/overview/default.aspx',
+            'CDNS':'https://investor.cadence.com/overview/default.aspx',
+            'CRDO':'https://investors.credosemi.com/overview/default.aspx',
+            'TER':'https://investors.teradyne.com/',
+            'AMKR':'https://ir.amkor.com/',
+            'ADI':'https://investor.analog.com/',
+            'GFS':'https://investors.gf.com/',
+            'MTSI':'https://ir.macom.com/overview/',
+            'ENTG':'https://investor.entegris.com/overview/default.aspx',
+            'NVTS':'https://ir.navitassemi.com/',
+            'MU':'https://investors.micron.com/',
+            'WDC':'https://investor.wdc.com/',
+            'STX':'https://investors.seagate.com/overview/default.aspx',
+            'NTAP':'https://investors.netapp.com/overview/default.aspx',
+            'P':'https://investor.everpuredata.com/investor-home/default.aspx',
+            'COHR':'https://ir.coherent.com/',
+            'NTNX':'https://ir.nutanix.com/',
+            'ESTC':'https://ir.elastic.co/overview/default.aspx',
+            'MDB':'https://investors.mongodb.com/',
+            'SNOW':'https://investors.snowflake.com/overview/default.aspx',
+            'SLAB':'https://investor.silabs.com/',
+            'IRM':'https://investors.ironmountain.com/overview/default.aspx',
+            'SNDK':'https://investor.sandisk.com/',
+            'SKHY':'https://www.skhynix.com/ir/UI-FR-IR01/',
+            'MSFT':'https://www.microsoft.com/en-us/investor',
+            'AMZN':'https://ir.aboutamazon.com/',
+            'GOOGL':'https://abc.xyz/investor/',
+            'META':'https://investor.atmeta.com/home/default.aspx',
+            'SPCX':'https://ir.spacex.com/investors/default.aspx',
+            'CRWV':'https://investors.coreweave.com/overview/default.aspx',
+            'NBIS':'https://nebius.com/investor-hub',
+            'EQIX':'https://investor.equinix.com/',
+            'DLR':'https://investor.digitalrealty.com/',
+            'VRT':'https://investors.vertiv.com/overview/default.aspx',
+            'ETN':'https://www.eaton.com/us/en-us/company/investor-relations.html',
+            'NEE':'https://www.investor.nexteraenergy.com/',
+            'CEG':'https://investors.constellationenergy.com/investor-relations/',
+            'ANET':'https://investors.arista.com/Home/default.aspx',
+            'CSCO':'https://investor.cisco.com/overview/default.aspx',
+            'OKLO':'https://oklo.com/investors/overview/default.aspx',
+            'DELL':'https://investors.delltechnologies.com/',
+            'FSLR':'https://investor.firstsolar.com/overview/default.aspx',
+            'VST':'https://investor.vistracorp.com/',
+            'MSTR':'https://www.strategy.com/investor-relations',
+            'COIN':'https://investor.coinbase.com/',
+            'HOOD':'https://investors.robinhood.com/investor-relations/',
+            'CORZ':'https://investors.corescientific.com/',
+            'IREN':'https://iren.com/investors',
+            'APLD':'https://ir.applieddigital.com/',
+            'CIFR':'https://investors.cipherdigital.com/',
+            'WULF':'https://investors.terawulf.com/',
+            'LITE':'https://investor.lumentum.com/overview/default.aspx',
+            'CIEN':'https://investor.ciena.com/overview/default.aspx',
+            'CLS':'https://corporate.celestica.com/news-releases',
+            'HPE':'https://investors.hpe.com/',
+            'GEV':'https://www.gevernova.com/investors',
+            'PWR':'https://investors.quantaservices.com/',
+            'MOD':'https://investors.modine.com/overview/default.aspx',
+            'BE':'https://investor.bloomenergy.com/overview/default.aspx',
+            'CRM':'https://investor.salesforce.com/overview/default.aspx',
+            'NOW':'https://investor.servicenow.com/overview/default.aspx',
+            'ADBE':'https://www.adobe.com/investor-relations.html',
+            'ORCL':'https://investor.oracle.com/home/default.aspx',
+            'SAP':'https://www.sap.com/investors/en.html',
+            'WDAY':'https://investor.workday.com/home/default.aspx',
+            'PLTR':'https://investors.palantir.com/',
+            'AI':'https://ir.c3.ai/',
+            'PATH':'https://ir.uipath.com/',
+            'GTLB':'https://ir.gitlab.com/overview/default.aspx',
+            'DDOG':'https://investors.datadoghq.com/',
+            'S':'https://investors.sentinelone.com/overview/default.aspx',
+            'CRWD':'https://ir.crowdstrike.com/',
+            'ZS':'https://ir.zscaler.com/',
+            'PANW':'https://investors.paloaltonetworks.com/investor-relations/',
+            'VEEV':'https://ir.veeva.com/overview/default.aspx',
+            'NET':'https://www.cloudflare.net/',
+            'HUBS':'https://ir.hubspot.com/investor-relations/',
+            'TTD':'https://investors.thetradedesk.com/overview/default.aspx',
+            'DUOL':'https://investors.duolingo.com/investor-relations',
+            'UPST':'https://ir.upstart.com/',
+            'AAPL':'https://investor.apple.com/investor-relations/default.aspx',
+            'TSLA':'https://ir.tesla.com/',
+            'IBM':'https://www.ibm.com/investor',
+            'APP':'https://investors.applovin.com/',
+            'INTU':'https://investors.intuit.com/',
+            'FTNT':'https://investor.fortinet.com/',
+            'TEM':'https://investors.tempus.com/',
+            'SOUN':'https://investors.soundhound.com/',
+            'XOM':'https://investor.exxonmobil.com/',
+            'CVX':'https://www.chevron.com/investors',
+            'COP':'https://www.conocophillips.com/investor-relations/',
+            'EQT':'https://ir.eqt.com/investor-relations/overview/default.aspx',
+            'KMI':'https://ir.kindermorgan.com/home/default.aspx',
+            'WMB':'https://investor.williams.com/',
+            'CCJ':'https://www.cameco.com/invest',
+            'SMR':'https://www.nuscalepower.com/investors/stocks',
+            'NNE':'https://ir.nanonuclearenergy.com/investor-relations/',
+            'LEU':'https://investors.centrusenergy.com/',
+            'BWXT':'https://investors.bwxt.com/',
+            'TLN':'https://ir.talenenergy.com/investor-relations/',
+            'XE':'https://investors.x-energy.com/',
+            'JPM':'https://www.jpmorganchase.com/ir',
+            'GS':'https://www.goldmansachs.com/investor-relations',
+            'V':'https://investor.visa.com/',
+            'MA':'https://investor.mastercard.com/overview/default.aspx',
+            'MS':'https://www.morganstanley.com/about-us-ir',
+        };
+        const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA"];
+        const SOURCES = [
+            { id:'tv', label:'📈 TradingView',   url: t => `https://www.tradingview.com/chart/?symbol=${t}` },
+            { id:'yf', label:'💹 Yahoo Finance', url: t => `https://finance.yahoo.com/quote/${t}` },
+            { id:'fv', label:'🔭 Finviz',        url: t => `https://finviz.com/quote.ashx?t=${t}` },
+            { id:'sa', label:'📰 Seeking Alpha', url: t => `https://seekingalpha.com/symbol/${t}` },
+            { id:'mw', label:'📊 MarketWatch',   url: t => `https://www.marketwatch.com/investing/stock/${t.toLowerCase()}` },
+        ];
+
+        // Calendar earnings — verificat 27 Sep 2026. date = zi ET; session BMO/AMC/? ; time = oră ET exactă doar dacă e anunțată de companie.
+        // status: 'confirmat' = anunțat oficial de companie · 'estimat' = MarketBeat/Yahoo, neconfirmat · 'neverificat' = nicio dată publică.
+        const EARNINGS = {
+            'NVDA': { date:'2026-11-18', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AMD': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AVGO': { date:'2026-12-09', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'INTC': { date:'2026-10-22', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026 (call 17:00 ET)' },
+            'MRVL': { date:'2026-12-01', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'QCOM': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AMAT': { date:'2026-11-12', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'LRCX': { date:'2026-10-21', session:'AMC', status:'confirmat', time:'', src:'Lam Research newsroom 30 Sep 2026 – call 17:00 ET' },
+            'KLAC': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'TSM': { date:'2026-10-15', session:'BMO', status:'confirmat', time:'02:00', src:'TSMC IR – conferință 15 Oct, 14:00 ora Taipei' },
+            'ASML': { date:'2026-10-14', session:'BMO', status:'confirmat', time:'', src:'ASML financial calendar (Q3 2026 results 14-Oct-26)' },
+            'TXN': { date:'2026-10-21', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'ON': { date:'2026-11-02', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'MPWR': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SMCI': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ONTO': { date:'2026-11-05', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ACLS': { date:'2026-11-03', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'FORM': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'WOLF': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'ALAB': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CBRS': { date:'2026-11-19', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'ARM': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SNPS': { date:'2026-12-09', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CDNS': { date:'2026-10-26', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CRDO': { date:'2026-12-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'TER': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AMKR': { date:'2026-10-26', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ADI': { date:'2026-11-24', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'GFS': { date:'2026-11-04', session:'BMO', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'MTSI': { date:'2026-11-05', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ENTG': { date:'2026-10-29', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'NVTS': { date:'2026-11-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'MU': { date:'2026-12-16', session:'AMC', status:'estimat', time:'', src:'Wall Street Horizon 1 Oct 2026 (proiectat; Q4 FY26 raportat 30 Sep)' },
+            'WDC': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'STX': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'NTAP': { date:'2026-12-01', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'COHR': { date:'2026-11-04', session:'?', status:'estimat', time:'', src:'Yahoo Finance 27 Sep 2026 (sesiune neanunțată)' },
+            'NTNX': { date:'2026-11-24', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ESTC': { date:'2026-11-19', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'MDB': { date:'2026-12-07', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SNOW': { date:'2026-12-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SLAB': { date:'2026-11-03', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'IRM': { date:'2026-11-04', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SNDK': { date:'2026-10-29', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'SKHY': { date:'2026-11-13', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'MSFT': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AMZN': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'GOOGL': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'META': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SPCX': { date:'2026-11-17', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'CRWV': { date:'2026-11-09', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'NBIS': { date:'2026-11-10', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'EQIX': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'DLR': { date:'2026-10-29', session:'AMC', status:'confirmat', time:'', src:'Digital Realty IR 1 Oct 2026 – rezultate după închidere, call 17:00 ET' },
+            'VRT': { date:'2026-10-21', session:'BMO', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'ETN': { date:'2026-11-03', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'NEE': { date:'2026-10-27', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CEG': { date:'2026-11-06', session:'BMO', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'ANET': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CSCO': { date:'2026-11-11', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'OKLO': { date:'2026-11-10', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'DELL': { date:'2026-11-24', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'FSLR': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'VST': { date:'2026-11-06', session:'BMO', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'MSTR': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'COIN': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'HOOD': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'CORZ': { date:'2026-10-23', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'IREN': { date:'2026-11-05', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'APLD': { date:'2026-10-07', session:'AMC', status:'confirmat', time:'', src:'Applied Digital IR 28 Sep 2026 – rezultate după închidere, call 17:00 ET' },
+            'CIFR': { date:'2026-11-02', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'WULF': { date:'2026-11-09', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'LITE': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CIEN': { date:'2026-12-10', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CLS': { date:'2026-10-26', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'HPE': { date:'2026-12-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'GEV': { date:'2026-10-28', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'PWR': { date:'2026-10-29', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'MOD': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'BE': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CRM': { date:'2026-12-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'NOW': { date:'2026-10-28', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ADBE': { date:'2026-12-09', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ORCL': { date:'2026-12-09', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SAP': { date:'2026-10-21', session:'AMC', status:'confirmat', time:'16:05', src:'SAP IR – publicare 22:05 CET, call 23:00 CET' },
+            'WDAY': { date:'2026-11-24', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'PLTR': { date:'2026-11-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AI': { date:'2026-12-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'PATH': { date:'2026-12-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'GTLB': { date:'2026-12-01', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'DDOG': { date:'2026-11-05', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'S': { date:'2026-12-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CRWD': { date:'2026-12-01', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'ZS': { date:'2026-11-24', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'PANW': { date:'2026-11-18', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'VEEV': { date:'2026-11-19', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'NET': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'HUBS': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'TTD': { date:'2026-11-05', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'DUOL': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'UPST': { date:'2026-11-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'AAPL': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'TSLA': { date:'2026-10-21', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'IBM': { date:'2026-10-21', session:'AMC', status:'estimat', time:'', src:'IBM IR – dată preliminară 21 Oct (oră neanunțată)' },
+            'APP': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'INTU': { date:'2026-11-19', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'FTNT': { date:'2026-10-28', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'TEM': { date:'2026-11-03', session:'?', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026 (sesiune neanunțată)' },
+            'SOUN': { date:'2026-11-05', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'RDDT': { date:'2026-10-29', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'XOM': { date:'2026-10-30', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CVX': { date:'2026-10-30', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'COP': { date:'2026-11-05', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'EQT': { date:'2026-10-20', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'KMI': { date:'2026-10-21', session:'AMC', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'WMB': { date:'2026-11-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'CCJ': { date:'2026-10-30', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'SMR': { date:'2026-11-05', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'LEU': { date:'2026-11-04', session:'?', status:'estimat', time:'', src:'Yahoo Finance 27 Sep 2026 (est.)' },
+            'BWXT': { date:'2026-11-02', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'TLN': { date:'2026-11-04', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'XE': { date:'2026-11-16', session:'?', status:'estimat', time:'', src:'Yahoo Finance 27 Sep 2026 (sesiune neanunțată)' },
+            'JPM': { date:'2026-10-13', session:'BMO', status:'confirmat', time:'07:00', src:'JPMorganChase IR 17 Sep 2026 – call 08:30 ET' },
+            'GS': { date:'2026-10-13', session:'BMO', status:'confirmat', time:'07:30', src:'Goldman Sachs IR – call 09:30 ET' },
+            'MS': { date:'2026-10-14', session:'BMO', status:'confirmat', time:'07:30', src:'Morgan Stanley IR – call 09:30 ET' },
+            'V': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'MA': { date:'2026-10-29', session:'BMO', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
+            'P': { date:'2026-11-18', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
+            'NNE': { date:'', session:'?', status:'neverificat', time:'', src:'Nicio dată publicată (MarketBeat/Yahoo)' },
+            'NDX': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'SPY': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'QQQ': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'IWM': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'VIX': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'SOXX': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'IGV': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'TLT': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'GLD': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'UUP': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'SMH': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'XLK': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'IBIT': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'HYG': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+            'DIA': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+        };
+
+        function openDetails(ticker, name, price, change, color, mcap, vol, pe, layers, role) {
+            document.getElementById('drawSymbol').innerText = ticker;
+            document.getElementById('drawSymbol').style.color = color;
+            document.getElementById('drawCompanyName').innerText = name;
+            document.getElementById('dPrice').innerText = price;
+            document.getElementById('dChange').innerText = change;
+            document.getElementById('dChange').style.color = color;
+            document.getElementById('dCap').innerText = mcap || '—';
+            document.getElementById('dVol').innerText = vol || '—';
+            document.getElementById('dPE').innerText = pe || '—';
+
+            document.getElementById('drawRole').innerText = role || 'Fără descriere disponibilă.';
+
+            renderEarningsCard(ticker);
+            loadDrawerLive(ticker);
+
+            const layersEl = document.getElementById('drawLayers');
+            layersEl.innerHTML = (layers || []).map(l =>
+                `<span class="drawer-layer-tag" style="color:${LAYER_COLORS[l]};border-color:${LAYER_COLORS[l]}55;background:${LAYER_COLORS[l]}15">${LAYER_LABELS[l] || l}</span>`
+            ).join('');
+
+            const linksEl = document.getElementById('drawLinks');
+            const official = [];
+            if (IR_LINKS[ticker]) official.push({ label:'🏛️ IR oficial (comunicate, dată earnings)', url: IR_LINKS[ticker] });
+            if (!NO_EDGAR.includes(ticker)) official.push({ label:'📄 SEC EDGAR (toate raportările oficiale)', url:`https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${encodeURIComponent(ticker)}&owner=include&count=40` });
+            linksEl.innerHTML = official.map(o =>
+                `<a class="drawer-link" href="${o.url}" target="_blank" rel="noopener noreferrer" style="border-color:rgba(16,185,129,0.35);">
+                    <span>${o.label}</span><span class="drawer-link-arrow">↗</span>
+                </a>`).join('') + SOURCES.map(s =>
+                `<a class="drawer-link" href="${s.url(ticker)}" target="_blank" rel="noopener noreferrer">
+                    <span>${s.label}</span><span class="drawer-link-arrow">↗</span>
+                </a>`
+            ).join('');
+
+            document.getElementById('detailsDrawer').classList.add('open');
+        }
+
+        function closeDrawer() {
+            document.getElementById('detailsDrawer').classList.remove('open'); const tl=document.getElementById('tvLive'); if(tl) tl.innerHTML='';
+        }
+
+        function toggleLayer(boxId) {
+            document.getElementById(boxId).classList.toggle('collapsed');
+        }
+
+        function filterTickers(query) {
+            const q = query.toLowerCase().trim();
+            document.querySelectorAll('.ticker-row').forEach(row => {
+                const match = !q || row.innerText.toLowerCase().includes(q);
+                row.style.display = match ? 'flex' : 'none';
+            });
+            if(q) {
+                document.querySelectorAll('.layer-box').forEach(box => box.classList.remove('collapsed'));
+            }
+        }
+
+        function insertCustomTicker() {
+            const ticker = document.getElementById('insTicker').value.toUpperCase().trim();
+            const name = document.getElementById('insName').value.trim();
+            const selectedLayer = document.getElementById('insLayer').value;
+            const targetGridId = 'grid-' + selectedLayer;
+            const tag = document.getElementById('insTag').value.trim().toUpperCase();
+            const changeVal = parseFloat(document.getElementById('insChange').value) || 0.0;
+
+            if(!ticker || !name) {
+                alert("Introdu tickerul și numele companiei!");
+                return;
+            }
+            if ([...document.querySelectorAll('.ticker-symbol')].some(e => e.innerText.trim() === ticker)) {
+                alert(`${ticker} există deja în planșă.`);
+                return;
+            }
+
+            const formattedChange = (changeVal >= 0 ? '+' : '') + changeVal.toFixed(2) + '%';
+            const colorCode = changeVal >= 0 ? '#10b981' : '#ef4444';
+            const symbolColor = LAYER_COLORS[selectedLayer] || '#ffffff';
+            const generatedPrice = '—'; // fără preț inventat; prețul live apare în fișă (TradingView)
+
+            const layerMap = {
+                'ai-l1':['chips'], 'ai-l2':['storage'], 'ai-l3':['infra'], 'ai-l4':['soft'],
+                'en-l1':['energy'], 'en-l2':['energy'], 'mf-l1':['macro']
+            };
+            const layersArr = JSON.stringify(layerMap[selectedLayer] || []);
+
+            let tagHtml = tag ? `<span class="strategy-tag">${tag}</span>` : '<span class="strategy-tag">CUSTOM</span>';
+
+            const newRow = document.createElement('div');
+            newRow.className = 'ticker-row';
+            newRow.setAttribute('onclick', `openDetails('${ticker}', '${name}', '${generatedPrice}', '${formattedChange}', '${colorCode}', '—', '—', '—', ${layersArr}, 'Ticker adăugat manual de utilizator.')`);
+            newRow.innerHTML = `
+                <div class="ticker-meta">
+                    <div class="ticker-symbol-wrapper">
+                        <span class="ticker-symbol" style="color:${symbolColor};">${ticker}</span>
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <span class="ticker-company">${name}</span>
+                    <div class="tag-container">${tagHtml}</div>
+                </div>
+                <div class="ticker-perf">
+                    <span class="price-badge">${generatedPrice}</span>
+                    <span class="change-badge" style="color: ${colorCode};">${formattedChange}</span>
+                </div>
+            `;
+
+            document.getElementById(targetGridId).prepend(newRow);
+            rowLiveObserve(newRow);
+            const countEl = document.querySelector('#box-' + selectedLayer + ' .layer-count');
+            if (countEl) countEl.innerText = '(' + document.querySelectorAll('#' + targetGridId + ' .ticker-row').length + ')';
+
+            document.getElementById('insTicker').value = '';
+            document.getElementById('insName').value = '';
+            document.getElementById('insTag').value = '';
+            document.getElementById('insChange').value = '';
+
+            alert(`✅ ${ticker} a fost adăugat cu succes!`);
+        }
+
+        // ================= CALENDAR EARNINGS + CEAS + NOTIFICĂRI =================
+        const NY_TZ = 'America/New_York';
+        const DEFAULT_ET = { BMO:'07:00', AMC:'16:05' };
+        const ALERTS = [ { ms: 24*3600e3, label:'mâine' }, { ms: 3600e3, label:'în 1 oră' } ];
+        const store = {
+            get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e) { return d; } },
+            set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
+        };
+        let calConfOnly = false, calYear, calMonth, calSel = null;
+
+        const nyFmt = new Intl.DateTimeFormat('en-US', { timeZone: NY_TZ, hourCycle:'h23', year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', weekday:'short' });
+        function nyParts(d) {
+            const o = {}; nyFmt.formatToParts(d).forEach(p => o[p.type] = p.value);
+            return { y:+o.year, m:+o.month, d:+o.day, h:+o.hour % 24, mi:+o.minute, s:+o.second, wd:o.weekday };
+        }
+        // oră de perete ET (zi + HH:MM) -> moment real (Date), cu DST corect
+        function etToDate(iso, hhmm) {
+            const [y,m,d] = iso.split('-').map(Number), [h,mi] = hhmm.split(':').map(Number);
+            const target = Date.UTC(y, m-1, d, h, mi);
+            let g = target + 4*3600e3;
+            for (let i = 0; i < 3; i++) { const p = nyParts(new Date(g)); g += target - Date.UTC(p.y, p.m-1, p.d, p.h, p.mi); }
+            return new Date(g);
+        }
+        const pad = n => String(n).padStart(2,'0');
+        const fmtLocalTime = d => d.toLocaleTimeString('ro-RO', { hour:'2-digit', minute:'2-digit' });
+        const fmtLocalDate = d => d.toLocaleDateString('ro-RO', { weekday:'short', day:'numeric', month:'short' });
+        const fmtIsoDate = iso => { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString('ro-RO', { weekday:'short', day:'numeric', month:'short', year:'numeric' }); };
+        function countdown(ms) {
+            if (ms <= 0) return 'raportat';
+            const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4);
+            return d > 0 ? `în ${d}z ${h}h` : (h > 0 ? `în ${h}h ${m}m` : `în ${m}m`);
+        }
+
+        function tickerInfo(t) {
+            const sym = [...document.querySelectorAll('.ticker-symbol')].find(e => e.innerText.trim() === t);
+            if (!sym) return { color:'#d8e4f0', name:'', row:null };
+            const row = sym.closest('.ticker-row');
+            return { color: sym.style.color || '#d8e4f0', name: row.querySelector('.ticker-company').innerText, row };
+        }
+
+        // construiește lista de evenimente
+        function buildEvents() {
+            const out = [];
+            Object.entries(EARNINGS).forEach(([t, e]) => {
+                if (!e.date || (e.status !== 'confirmat' && e.status !== 'estimat')) return;
+                const exact = !!e.time;
+                const known = e.session === 'BMO' || e.session === 'AMC';
+                const et = e.time || (known ? DEFAULT_ET[e.session] : '09:30');
+                out.push({ t, ...e, when: etToDate(e.date, et), etTime: et, exact, known, info: tickerInfo(t) });
+            });
+            return out.sort((a,b) => a.when - b.when);
+        }
+        let EVENTS = [];
+        const visibleEvents = () => EVENTS.filter(e => !calConfOnly || e.status === 'confirmat');
+
+        function sessLabel(e) { return e.session === 'BMO' ? '☀️ BMO' : e.session === 'AMC' ? '🌙 AMC' : '⏰ sesiune ?'; }
+        function timeLabel(e) {
+            if (!e.known && !e.exact) return 'oră neanunțată';
+            return (e.exact ? '' : '~') + fmtLocalTime(e.when) + ` <span style="color:#4a5e7a;font-weight:normal;">(${e.exact?'':'~'}${e.etTime} ET)</span>`;
+        }
+        function statusHtml(st) { return st === 'confirmat' ? '<span class="st-conf">✅ confirmat</span>' : '<span class="st-est">🕓 estimat</span>'; }
+
+        function evRow(e, now) {
+            const past = e.when.getTime() + 3*3600e3 < now;
+            return `<div class="ev-row ${past?'past':''}" onclick="openFromCal('${e.t}')">
+                <div class="ev-left"><span class="ev-sym" style="color:${e.info.color}">${e.t} <span style="font-size:0.7rem;">${sessLabel(e)}</span></span>
+                <span class="ev-sub">${e.info.name} · ${statusHtml(e.status)}</span></div>
+                <div class="ev-right"><div class="ev-time">${timeLabel(e)}</div><div class="ev-cd">${fmtIsoDate(e.date)} · ${countdown(e.when - now)}</div></div></div>`;
+        }
+
+        function renderCalendar() {
+            const now = Date.now(), evs = visibleEvents();
+            const byDay = {}; evs.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
+            const first = new Date(calYear, calMonth, 1), startDow = (first.getDay() + 6) % 7;
+            const days = new Date(calYear, calMonth+1, 0).getDate();
+            document.getElementById('calTitle').innerText = first.toLocaleDateString('ro-RO', { month:'long', year:'numeric' });
+            const tp = nyParts(new Date()), todayIso = `${tp.y}-${pad(tp.m)}-${pad(tp.d)}`;
+            let h = ['L','Ma','Mi','J','V','S','D'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+            for (let i = 0; i < startDow; i++) h += '<div class="cal-day out"></div>';
+            for (let d = 1; d <= days; d++) {
+                const iso = `${calYear}-${pad(calMonth+1)}-${pad(d)}`, list = byDay[iso] || [];
+                const chips = list.slice(0,3).map(e => `<span class="cal-chip" style="color:${e.info.color}">${e.status==='confirmat'?'✓':''}${e.t}</span>`).join('');
+                const more = list.length > 3 ? `<span class="cal-more">+${list.length-3}</span>` : '';
+                h += `<div class="cal-day ${iso===todayIso?'today':''} ${iso===calSel?'sel':''} ${iso<todayIso?'past':''}" onclick="calPick('${iso}')"><span class="dn">${d}</span>${chips}${more}</div>`;
+            }
+            document.getElementById('calGrid').innerHTML = h;
+
+            let title, list;
+            if (calSel) { title = `Raportări · ${fmtIsoDate(calSel)}`; list = byDay[calSel] || []; }
+            else { title = 'Următoarele 14 zile'; list = evs.filter(e => e.when.getTime() > now - 3*3600e3 && e.when.getTime() < now + 14*864e5); }
+            document.getElementById('calListTitle').innerHTML = title + (calSel ? ' · <a href="#" onclick="calPick(null);return false;" style="color:#00c8f0;">următoarele 14 zile</a>' : '');
+            document.getElementById('calList').innerHTML = list.length ? list.map(e => evRow(e, now)).join('') : '<div class="cal-note">Nicio raportare.</div>';
+            document.getElementById('calCount').innerText = `(${evs.length})`;
+        }
+        function calShift(n) { calMonth += n; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+        function calPick(iso) { calSel = (iso === calSel) ? null : iso; renderCalendar(); }
+        function toggleConfOnly() { calConfOnly = !calConfOnly; const b = document.getElementById('btnConfOnly'); b.innerText = calConfOnly ? 'Filtru: doar confirmate' : 'Filtru: toate'; b.classList.toggle('on', calConfOnly); renderCalendar(); }
+        function openFromCal(t) { const i = tickerInfo(t); if (i.row) i.row.click(); }
+
+        // card earnings în drawer
+        function renderEarningsCard(ticker) {
+            const e = EARNINGS[ticker] || { status:'neverificat', src:'' };
+            const dateEl = document.getElementById('dEarnDate'), stEl = document.getElementById('dEarnStatus'), sesEl = document.getElementById('dEarnSession'), ex = document.getElementById('dEarnExtra');
+            ex.innerHTML = '';
+            sesEl.className = 'session-badge session-na'; sesEl.innerText = '—';
+            if (e.status === 'n/a') { dateEl.innerText = 'Fără raportare (ETF/Index)'; stEl.innerText = '—'; return; }
+            if (e.status === 'delistat') { dateEl.innerText = 'Delistat — achiziționat de IBM (17 Mar 2026)'; stEl.innerText = 'Nu mai raportează separat'; return; }
+            if (e.status === 'neverificat' || !e.date) { dateEl.innerText = 'Dată neanunțată'; stEl.innerText = '⚠️ ' + (e.src || 'Verifică pe TradingView'); return; }
+            const ev = EVENTS.find(x => x.t === ticker);
+            dateEl.innerText = fmtIsoDate(e.date);
+            stEl.innerHTML = (e.status === 'confirmat' ? '✅ Confirmat de companie' : '🕓 Estimat, neconfirmat') ;
+            if (e.session === 'BMO') { sesEl.innerText = '☀️ BMO · înainte de deschidere'; sesEl.className = 'session-badge session-bmo'; }
+            else if (e.session === 'AMC') { sesEl.innerText = '🌙 AMC · după închidere'; sesEl.className = 'session-badge session-amc'; }
+            else { sesEl.innerText = '⏰ ?'; }
+            ex.innerHTML = `<div>🕒 Ora ta: <b style="color:#fff">${timeLabel(ev)}</b></div>
+                <div>⏳ ${countdown(ev.when - Date.now())}</div>
+                <div style="color:#4a5e7a;">Sursă: ${e.src}</div>
+                <button class="cal-btn" onclick="downloadICS('${ticker}')">📥 Adaugă ${ticker} în calendar (.ics, alertă -1 zi și -1h)</button>`;
+        }
+
+        // .ics export — alerte native în calendarul telefonului
+        function icsStamp(d) { return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''); }
+        function icsEsc(s) { return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n'); }
+        function downloadICS(which) {
+            let evs = EVENTS.filter(e => e.when.getTime() > Date.now() - 864e5);
+            if (which === 'conf') evs = evs.filter(e => e.status === 'confirmat');
+            else if (which !== 'all') evs = EVENTS.filter(e => e.t === which);
+            if (!evs.length) { showToast('Nicio raportare viitoare de exportat.'); return; }
+            const L = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AI Stack Map//Earnings//RO','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Earnings AI Stack'];
+            const stamp = icsStamp(new Date());
+            evs.forEach(e => {
+                const title = `${e.t} earnings ${e.session==='?'?'':e.session}${e.status==='confirmat'?' ✅':' (estimat)'}`;
+                const desc = `${e.info.name}\\nStatus: ${e.status}\\nOra ET: ${e.known||e.exact ? (e.exact?'':'~')+e.etTime : 'neanunțată'}\\nSursă: ${icsEsc(e.src)}`;
+                L.push('BEGIN:VEVENT', `UID:${e.t}-${e.date}@ai-stack-map`, `DTSTAMP:${stamp}`);
+                if (e.known || e.exact) {
+                    L.push(`DTSTART:${icsStamp(e.when)}`, `DTEND:${icsStamp(new Date(e.when.getTime()+30*6e4))}`);
+                } else {
+                    const [y,m,d] = e.date.split('-').map(Number), nx = new Date(Date.UTC(y,m-1,d+1));
+                    L.push(`DTSTART;VALUE=DATE:${e.date.replace(/-/g,'')}`, `DTEND;VALUE=DATE:${nx.toISOString().slice(0,10).replace(/-/g,'')}`);
+                }
+                L.push(`SUMMARY:${icsEsc(title)}`, `DESCRIPTION:${desc}`,
+                    'BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${icsEsc(e.t)} raportează mâine`,'TRIGGER:-P1D','END:VALARM',
+                    'BEGIN:VALARM','ACTION:DISPLAY',`DESCRIPTION:${icsEsc(e.t)} raportează în 1 oră`,'TRIGGER:-PT1H','END:VALARM',
+                    'END:VEVENT');
+            });
+            L.push('END:VCALENDAR');
+            const blob = new Blob([L.join('\r\n')], { type:'text/calendar;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = which === 'all' ? 'earnings-toate.ics' : which === 'conf' ? 'earnings-confirmate.ics' : `earnings-${which}.ics`;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+            showToast(`📥 ${evs.length} raportări exportate. Deschide fișierul ca să le adaugi în calendar.`);
+        }
+
+        // notificări (cât timp pagina e deschisă)
+        function showToast(msg) { const t = document.getElementById('toast'); t.innerHTML = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 7000); }
+        function updateNotifBtn() {
+            const b = document.getElementById('btnNotif');
+            if (!('Notification' in window)) { b.innerText = '🔕 Notificări indisponibile aici'; return; }
+            if (Notification.permission === 'granted') { b.innerText = '🔔 Notificări active'; b.classList.add('on'); }
+            else if (Notification.permission === 'denied') b.innerText = '🔕 Notificări blocate în browser';
+        }
+        function enableNotifications() {
+            if (!('Notification' in window)) { showToast('Browserul nu suportă notificări aici. Folosește exportul .ics.'); return; }
+            Notification.requestPermission().then(p => { updateNotifBtn(); if (p === 'granted') { notify('🔔 Notificări earnings active', 'Vei fi anunțat cu o zi și cu 1h înainte, cât timp pagina e deschisă.'); checkAlerts(); } });
+        }
+        function notify(title, body) {
+            showToast(`<b>${title}</b><br>${body}`);
+            try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, tag: title }); } catch(e) {}
+        }
+        function checkAlerts() {
+            const now = Date.now(), fired = store.get('earnFired', {});
+            EVENTS.forEach(e => ALERTS.forEach(a => {
+                const key = `${e.t}|${e.date}|${a.ms}`, at = e.when.getTime() - a.ms;
+                if (!fired[key] && now >= at && now < at + 30*6e4) {
+                    fired[key] = 1;
+                    notify(`📈 ${e.t} raportează ${a.label}`, `${fmtLocalDate(e.when)} ${e.known||e.exact ? (e.exact?'':'~')+fmtLocalTime(e.when) : ''} · ${sessLabel(e)} · ${e.status}`);
+                }
+            }));
+            store.set('earnFired', fired);
+        }
+
+        // banner: azi / mâine (zi ET)
+        function renderBanner() {
+            const p = nyParts(new Date()), today = `${p.y}-${pad(p.m)}-${pad(p.d)}`;
+            const tm = new Date(Date.UTC(p.y, p.m-1, p.d+1)), tomorrow = tm.toISOString().slice(0,10);
+            const tod = EVENTS.filter(e => e.date === today), tom = EVENTS.filter(e => e.date === tomorrow);
+            const el = document.getElementById('alertBanner');
+            if (!tod.length && !tom.length) { el.classList.remove('show'); return; }
+            const fmt = l => l.map(e => `<b style="color:${e.info.color};cursor:pointer;" onclick="openFromCal('${e.t}')">${e.t}</b> ${e.session==='?'?'':e.session} ${e.known||e.exact?(e.exact?'':'~')+fmtLocalTime(e.when):''}`).join(' · ');
+            el.innerHTML = `<div class="ab-title">⚡ Earnings apropiate</div>` + (tod.length ? `<div>Azi: ${fmt(tod)}</div>` : '') + (tom.length ? `<div>Mâine: ${fmt(tom)}</div>` : '');
+            el.classList.add('show');
+        }
+
+        // chip cu data earnings pe fiecare rând din planșe
+        function addRowChips() {
+            const now = Date.now();
+            document.querySelectorAll('.ticker-row').forEach(row => {
+                const t = row.querySelector('.ticker-symbol').innerText.trim();
+                const ev = EVENTS.find(e => e.t === t);
+                const tc = row.querySelector('.tag-container');
+                if (!ev || !tc) return;
+                const old = tc.querySelector('.earn-chip'); if (old) old.remove();
+                const soon = ev.when - now < 7*864e5 && ev.when - now > -3*3600e3;
+                const sp = document.createElement('span');
+                sp.className = 'earn-chip' + (soon ? ' soon' : ev.status === 'confirmat' ? ' conf' : '');
+                const [y,m,d] = ev.date.split('-').map(Number);
+                sp.innerText = `📅 ${new Date(y,m-1,d).toLocaleDateString('ro-RO',{day:'numeric',month:'short'})} ${ev.session==='BMO'?'☀️':ev.session==='AMC'?'🌙':''}${ev.status==='confirmat'?' ✓':''}`;
+                tc.appendChild(sp);
+            });
+        }
+
+        // ceas
+        function tickClock() {
+            const now = new Date(), p = nyParts(now);
+            document.getElementById('clkLocal').innerText = now.toLocaleTimeString('ro-RO');
+            document.getElementById('clkDate').innerText = now.toLocaleDateString('ro-RO', { weekday:'long', day:'numeric', month:'short' });
+            document.getElementById('clkNY').innerText = `${pad(p.h)}:${pad(p.mi)}`;
+            const mins = p.h*60 + p.mi, wkday = !['Sat','Sun'].includes(p.wd);
+            let st = 'Închis', col = '#ef4444';
+            if (wkday && mins >= 570 && mins < 960) { st = 'Piața deschisă'; col = '#10b981'; }
+            else if (wkday && mins >= 240 && mins < 570) { st = 'Pre-market'; col = '#f59e0b'; }
+            else if (wkday && mins >= 960 && mins < 1200) { st = 'After-hours'; col = '#818cf8'; }
+            const mk = document.getElementById('clkMkt'); mk.innerText = st; mk.style.color = col;
+            const nx = EVENTS.find(e => e.when.getTime() > now.getTime());
+            document.getElementById('clkNext').innerHTML = nx ? `<span style="color:${nx.info.color}">${nx.t}</span>` : '—';
+            document.getElementById('clkNextCd').innerText = nx ? countdown(nx.when - now) : '';
+        }
+
+        function initEarningsCalendar() {
+            EVENTS = buildEvents();
+            const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth();
+            renderCalendar(); renderBanner(); addRowChips(); updateNotifBtn(); tickClock(); checkAlerts();
+            setInterval(tickClock, 1000);
+            setInterval(() => { checkAlerts(); renderBanner(); }, 60000);
+        }
+        initEarningsCalendar();
+
+
+        // ================= TRADINGVIEW LIVE (widget-uri publice, fără cont) =================
+        const TV_EX = {
+            NASDAQ: 'NVDA AMD AVGO INTC MRVL QCOM AMAT LRCX KLAC ASML TXN ON MPWR SMCI ACLS FORM ALAB CBRS ARM SNPS CDNS CRDO TER AMKR ADI GFS MTSI ENTG NVTS MU WDC STX NTAP NTNX MDB SLAB SNDK SKHY MSFT AMZN GOOGL META SPCX CRWV NBIS EQIX CEG CSCO FSLR MSTR COIN HOOD CORZ IREN APLD CIFR WULF LITE ADBE WDAY PLTR GTLB DDOG CRWD ZS PANW TTD DUOL UPST AAPL TSLA APP INTU FTNT TEM SOUN NNE TLN QQQ SOXX TLT SMH IBIT',
+            NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS',
+            AMEX: 'SPY IWM GLD UUP XLK HYG DIA LEU'
+        };
+        const TV_SPECIAL = { VIX:'TVC:VIX', NDX:'OANDA:NAS100USD' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
+        function tvSymbol(t) {
+            if (TV_SPECIAL[t]) return TV_SPECIAL[t];
+            for (const ex in TV_EX) if (TV_EX[ex].split(' ').includes(t)) return ex + ':' + t;
+            return t; // lasă TradingView să rezolve bursa
+        }
+        const TAPE = [
+            ['OANDA:NAS100USD','NAS100'], ['NASDAQ:QQQ','QQQ'], ['AMEX:SPY','SPY'], ['TVC:VIX','VIX'], ['BITSTAMP:BTCUSD','BTC'],
+            ['TVC:DXY','DXY'], ['TVC:US10Y','US10Y'], ['NASDAQ:NVDA','NVDA'], ['NYSE:TSM','TSM'], ['NASDAQ:AVGO','AVGO'],
+            ['NASDAQ:MSFT','MSFT'], ['NASDAQ:META','META'], ['NASDAQ:SMH','SMH']
+        ];
+
+        function tvEmbed(container, widget, config, onFail) {
+            container.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+            container.className = 'tradingview-widget-container';
+            const sc = document.createElement('script');
+            sc.type = 'text/javascript';
+            sc.async = true;
+            sc.src = `https://s3.tradingview.com/external-embedding/embed-widget-${widget}.js`;
+            sc.innerHTML = JSON.stringify(config);
+            sc.onerror = () => onFail && onFail();
+            container.appendChild(sc);
+            // dacă în 10s nu apare niciun iframe, arată fallback
+            setTimeout(() => { if (!container.querySelector('iframe') && onFail) onFail(); }, 10000);
+        }
+
+        function loadTape() {
+            const box = document.getElementById('tvTape');
+            if (!box || !navigator.onLine) { if (box) box.innerHTML = '<div class="tv-fail">Offline — prețuri live indisponibile</div>'; return; }
+            tvEmbed(box, 'ticker-tape', {
+                symbols: TAPE.map(([proName, title]) => ({ proName, title })),
+                showSymbolLogo: false, isTransparent: true, displayMode: 'compact', colorTheme: 'dark', locale: 'en'
+            }, () => { box.innerHTML = '<div class="tv-fail">Banda TradingView nu s-a încărcat (conexiune / blocată de browser)</div>'; });
+        }
+
+        function loadDrawerLive(ticker) {
+            const box = document.getElementById('tvLive');
+            const tv = tvSymbol(ticker);
+            document.getElementById('tvLiveSym').innerText = tv;
+            const fail = () => { box.innerHTML = `<div class="tv-fail">Widget-ul live nu s-a încărcat. <a href="https://www.tradingview.com/chart/?symbol=${encodeURIComponent(tv)}" target="_blank" rel="noopener" style="color:#00c8f0;">Deschide ${ticker} în TradingView ↗</a></div>`; };
+            if (!navigator.onLine) { fail(); return; }
+            tvEmbed(box, 'mini-symbol-overview', {
+                symbol: tv, width: '100%', height: 190, locale: 'en', dateRange: '1D',
+                colorTheme: 'dark', isTransparent: true, autosize: false, largeChartUrl: ''
+            }, fail);
+        }
+
+        function refreshLive() {
+            loadTape();
+            rowLiveReset();
+            const open = document.getElementById('detailsDrawer').classList.contains('open');
+            if (open) loadDrawerLive(document.getElementById('drawSymbol').innerText.trim());
+            const s = document.getElementById('liveStamp');
+            if (s) s.innerText = 'actualizat ' + new Date().toLocaleTimeString('ro-RO', { hour:'2-digit', minute:'2-digit' });
+        }
+
+        // ===== Preț live pe fiecare rând (widget TradingView, încărcat doar pentru rândurile vizibile) =====
+        function rowLiveLoad(row) {
+            if (row.dataset.live) return;
+            row.dataset.live = '1';
+            const t = row.querySelector('.ticker-symbol').innerText.trim();
+            const perf = row.querySelector('.ticker-perf');
+            let box = row.querySelector('.row-live');
+            if (!box) { box = document.createElement('div'); perf.parentNode.insertBefore(box, perf); }
+            box.className = 'row-live';
+            tvEmbed(box, 'single-quote', { symbol: tvSymbol(t), width: '100%', isTransparent: true, colorTheme: 'dark', locale: 'en' },
+                () => { box.className = 'row-live'; box.innerHTML = ''; });   // rezervă: rămâne prețul din fișier
+            box.classList.add('row-live');
+            const iv = setInterval(() => { if (box.querySelector('iframe')) { box.classList.add('on'); clearInterval(iv); } }, 300);
+            setTimeout(() => clearInterval(iv), 10500);
+        }
+        const rowLiveIO = ('IntersectionObserver' in window) ? new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting && navigator.onLine) { rowLiveLoad(e.target); rowLiveIO.unobserve(e.target); } });
+        }, { rootMargin: '200px' }) : null;
+        function rowLiveObserve(row) { if (rowLiveIO) rowLiveIO.observe(row); }
+        function rowLiveReset() {
+            document.querySelectorAll('.ticker-row').forEach(row => {
+                delete row.dataset.live;
+                const box = row.querySelector('.row-live'); if (box) box.remove();
+                rowLiveObserve(row);
+            });
+        }
+        document.querySelectorAll('.ticker-row').forEach(rowLiveObserve);
+        loadTape();
+        document.getElementById('liveStamp').innerText = 'încărcat ' + new Date().toLocaleTimeString('ro-RO', { hour:'2-digit', minute:'2-digit' });
+
+    </script>
+</body>
+</html>
