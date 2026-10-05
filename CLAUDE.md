@@ -81,3 +81,20 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
    - validează JS-ul;
    - fă commit cu mesajul `Confirmări earnings <data> — v<N+1>` și push pe `main`;
    - raportează lui Gabriel un tabel scurt: ticker, data, sesiunea, ora și link spre sursa oficială.
+
+## Cross-check aleatoriu (luni, miercuri, vineri; două verificări independente, în paralel)
+
+Scop: să prindă erorile la care nu s-a gândit nimeni. Se verifică **produsul final**, adică ce e pe link, cu surse **independente** de cea a scriptului. Scriptul folosește Yahoo, deci Yahoo nu e sursă de control.
+
+1. Starea verificată: ultimul `ai-stack-map-mobile-N.html` din repo, plus din `update-log.txt` data și ora rulării care l-a produs.
+2. Eșantion: **8 tickeri aleși la întâmplare** (aleatoriu real, de exemplu `random.sample`, nu „cei importanți”). Cel puțin unul din Energy sau Macro și cel puțin unul care raportează în altă monedă decât USD, dacă există. Scrie în raport seed-ul sau lista, ca verificarea să poată fi refăcută.
+3. Pentru fiecare ticker verifici, față de surse independente:
+   - **Prețul și variația %** față de închiderea zilei de tranzacționare corespunzătoare rulării: StockAnalysis, Nasdaq.com sau site-ul bursei. Toleranță: ±0.5% la preț.
+   - **Market cap, volum și P/E**, ca ordin de mărime: StockAnalysis sau Finviz. Toleranță ±5%. P/E poate diferi după metoda de calcul (TTM); notezi doar diferențele mari.
+   - **Earnings**:
+     - un `confirmat` trebuie să aibă comunicatul oficial (deschizi sursa din `src`);
+     - un `estimat` trebuie să fie apropiat de cel puțin încă o estimare publică;
+     - dacă compania a anunțat între timp oficial data, semnalezi.
+   - **Trimestrial (`FIN`)**: ultimul trimestru, venituri și profit net, față de comunicatul de rezultate al companiei sau de raportul la SEC (10-Q/6-K). Plus o valoare din reacția prețului, recalculată din prețurile de închidere publice.
+4. **Nu modifici fișierele și nu faci commit.** Cross-check-ul doar raportează. O eroare găsită se corectează la cauză, adică în script sau în procedură, după discuția cu Gabriel, nu prin peticirea unei valori.
+5. Raport: un tabel cu ticker, câmp, valoarea din fișier, valoarea de control, sursa (link) și verdictul (OK / diferență / eroare). La final: câte câmpuri au fost verificate, câte OK, și diferențele cu cauza probabilă.
