@@ -16,18 +16,25 @@ Verificări interne (nu depind de nicio sursă):
 Scrie crosscheck-report.md (raportul ultimei rulări) și adaugă un rând în crosscheck-history.csv.
 Nu modifică niciodată fișierele HTML.
 """
-import csv, datetime as dt, glob, json, os, re, subprocess, sys, tempfile, time
+import csv, datetime as dt, glob, gzip, json, os, re, subprocess, sys, tempfile, time
 import urllib.request
 
 UA = "AI Stack Map crosscheck stack-map-bot@users.noreply.github.com"
 HERE = os.path.dirname(os.path.abspath(__file__))
 NON_STOCK = {"NDX", "VIX", "SPY", "QQQ", "IWM", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK",
              "IBIT", "HYG", "DIA", "WTI", "BRENT"}
-TV_NON_STOCK = {"VIX": "TVC:VIX", "NDX": "NASDAQ:NDX", "WTI": "NYMEX:CL1!", "BRENT": "ICE:BRN1!"}
+TV_NON_STOCK = {"VIX": ["TVC:VIX", "CBOE:VIX"], "NDX": ["NASDAQ:NDX"], "WTI": ["NYMEX:CL1!", "TVC:USOIL"],
+                "BRENT": ["ICEEUR:BRN1!", "ICE:BRN1!", "TVC:UKOIL"]}
+H24 = {"WTI", "BRENT", "VIX"}      # se tranzacționează aproape non-stop → prețul depinde de momentul citirii
 
 # toleranțe → (eroare, diferență)
 TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (40.0, 15.0),
-       "pe": (25.0, 10.0), "fin": (2.0, 0.5), "shares": (5.0, 2.0)}
+       "pe": (1e9, 15.0),            # P/E: definiții diferite între surse → niciodată „eroare”, doar diferență
+       "mcap_adr": (1e9, 3.0),       # ADR: prima față de bursa locală → doar diferență
+       "price_24h": (3.0, 1.0), "chg_24h": (2.0, 0.5),
+       "fin": (2.0, 0.5), "shares": (5.0, 2.0)}
+SEC_UAS = ["AI Stack Map crosscheck stack-map-bot@users.noreply.github.com",
+           "AIStackMap/1.0 (+https://github.com/xGABRIELxEUGENx/ai-stack-map; stack-map-bot@users.noreply.github.com)"]
 
 
 # ------------------------------------------------------------------ rețea
@@ -41,7 +48,9 @@ def http(url, data=None, headers=None, tries=3):
         try:
             req = urllib.request.Request(url, data=body, headers=h)
             with urllib.request.urlopen(req, timeout=30) as r:
-                return json.loads(r.read().decode("utf-8"))
+                raw = r.read()
+                if r.headers.get("Content-Encoding") == "gzip": raw = gzip.decompress(raw)
+                return json.loads(raw.decode("utf-8"))
         except Exception as e:
             err = e
             time.sleep(1.5 * (i + 1))
@@ -107,16 +116,20 @@ def parse_page(html):
 
 # ------------------------------------------------------------------ surse de control
 def tv_quotes(tickers, tvex):
-    syms, back = [], {}
+    """Întoarce ({ticker: cotație}, {ticker: simbolul TV care a mers}). Bursa din TV_EX are prioritate;
+    dacă nu răspunde, se încearcă celelalte burse (și se raportează nepotrivirea)."""
+    cands, back = {}, {}
     for t in dict.fromkeys(tickers):
-        if t in TV_NON_STOCK: cands = [TV_NON_STOCK[t]]
-        elif t in tvex: cands = [f"{tvex[t]}:{t}"]
-        else: cands = [f"{ex}:{t}" for ex in ("NASDAQ", "NYSE", "AMEX", "CBOE")]   # bursa nu e în TV_EX
-        for s in cands: syms.append(s); back[s] = t
+        if t in TV_NON_STOCK: c = TV_NON_STOCK[t]
+        else:
+            first = [f"{tvex[t]}:{t}"] if t in tvex else []
+            c = first + [f"{ex}:{t}" for ex in ("NASDAQ", "NYSE", "AMEX", "CBOE") if f"{ex}:{t}" not in first]
+        cands[t] = c
+        for s in c: back[s] = t
     cols = ["close", "change", "market_cap_basic", "volume", "price_earnings_ttm"]
-    out = {}
+    got = {}
     for market in ("america", "futures", "cfd", "global"):
-        need = [s for s in syms if back[s] not in out]
+        need = [s for s, t in back.items() if s not in got and not any(x in got for x in cands[t])]
         if not need: break
         try:
             r = http(f"https://scanner.tradingview.com/{market}/scan",
@@ -125,17 +138,20 @@ def tv_quotes(tickers, tvex):
         except Exception as e:
             print(f"  ! TradingView {market}: {e}"); continue
         for row in r.get("data", []):
-            t = back.get(row["s"])
-            if t and row.get("d") and row["d"][0] is not None:
-                out[t] = dict(zip(cols, row["d"]))
-    return out
+            if row.get("s") in back and row.get("d") and row["d"][0] is not None:
+                got[row["s"]] = dict(zip(cols, row["d"]))
+    out, used = {}, {}
+    for t, c in cands.items():
+        for s in c:                                   # primul candidat (în ordinea priorității) care a răspuns
+            if s in got: out[t], used[t] = got[s], s; break
+    return out, used
 
 SEC_REV = ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
            "RevenueFromContractWithCustomerIncludingAssessedTax", "RevenuesNetOfInterestExpense"]
 
 def sec_quarters(cik):
     """{tag: {end_date: valoare_trimestrială_USD}} din XBRL; Q4 = an − 9 luni când lipsește."""
-    j = http(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json")
+    j = http(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json", headers={"Accept-Encoding": "gzip"})
     g = j.get("facts", {}).get("us-gaap", {})
     def series(tag):
         items = (g.get(tag, {}).get("units", {}) or {}).get("USD", [])
@@ -184,6 +200,8 @@ def grade(r, kind, t, field, fv, cv, src, note=""):
     if d >= err: r.add("EROARE", t, field, fv, cv, src, f"{d:.2f}{'pp' if kind == 'chg_pp' else '%'} {note}".strip())
     elif d >= warn: r.add("DIFERENȚĂ", t, field, fv, cv, src, f"{d:.2f}{'pp' if kind == 'chg_pp' else '%'} {note}".strip())
     else: r.ok()
+
+def src_tv_name(): return "TradingView scanner"
 
 def latest_versions():
     files = []
@@ -269,7 +287,11 @@ def main():
                 if abs(pct) > 60: r.add("DIFERENȚĂ", t, f"reacție {d}", f"{pct}%", "< 60%", "intern", "mișcare extremă — verifică")
 
     # ---- 2. TradingView: preț, %, market cap, volum, P/E
-    tvq = tv_quotes(tick, tvex)
+    tvq, used = tv_quotes(tick, tvex)
+    for t, s in used.items():
+        if t in tvex and s != f"{tvex[t]}:{t}":
+            r.add("EROARE", t, "bursa în TV_EX", tvex[t], s.split(":")[0], src_tv_name(),
+                  "widget-ul live din pagină caută pe bursa greșită")
     src_tv = "TradingView scanner"
     if not tvq: notes.append("TradingView scanner indisponibil — prețurile nu au fost verificate extern")
     for x in rows:
@@ -277,26 +299,38 @@ def main():
         if not q:
             if tvq: notes.append(f"{t}: fără cotație TradingView")
             continue
-        grade(r, "price", t, "preț", x["price"], q["close"], src_tv)
-        grade(r, "chg_pp", t, "% zi", x["chg"], q["change"], src_tv)
+        h24 = t in H24
+        note24 = "(se tranzacționează ~24h; momentul citirii diferă)" if h24 else ""
+        grade(r, "price_24h" if h24 else "price", t, "preț", x["price"], q["close"], src_tv, note24)
+        grade(r, "chg_24h" if h24 else "chg_pp", t, "% zi", x["chg"], q["change"], src_tv, note24)
         if t not in NON_STOCK:
-            grade(r, "mcap", t, "market cap", x["mcap"], q["market_cap_basic"], src_tv)
+            adr = ((fin or {}).get(t) or {}).get("cur", "USD") != "USD"
+            grade(r, "mcap_adr" if adr else "mcap", t, "market cap", x["mcap"], q["market_cap_basic"], src_tv,
+                  "(ADR: prima față de bursa locală)" if adr else "")
             grade(r, "vol", t, "volum", x["vol"], q["volume"], src_tv, "(metode de agregare diferite)")
             if x["pe"] and q["price_earnings_ttm"] and q["price_earnings_ttm"] > 0:
                 grade(r, "pe", t, "P/E", x["pe"], q["price_earnings_ttm"], src_tv, "(TTM calculat diferit)")
 
     # ---- 3. SEC EDGAR: venituri și profit net pe trimestru
-    try:
-        cmap = {v["ticker"].upper(): int(v["cik_str"]) for v in http("https://www.sec.gov/files/company_tickers.json").values()}
-    except Exception as e:
-        cmap = {}; notes.append(f"SEC EDGAR indisponibil — financiarele neverificate ({e})")
+    global UA
+    cmap, sec_err = {}, []
+    for ua in SEC_UAS:
+        UA = ua
+        try:
+            cmap = {v["ticker"].upper(): int(v["cik_str"]) for v in
+                    http("https://www.sec.gov/files/company_tickers.json", headers={"Accept-Encoding": "gzip"}).values()}
+            notes.append(f"SEC EDGAR acceptat cu User-Agent: {ua}")
+            break
+        except Exception as e:
+            sec_err.append(str(e)[-60:])
+    if not cmap: notes.append(f"SEC EDGAR indisponibil — financiarele neverificate ({'; '.join(sec_err)})")
     sec_ok, sec_skip = 0, []
     for t in stocks:
         f = (fin or {}).get(t)
         if not f or not f.get("q") or t not in cmap: sec_skip.append(t); continue
         if f.get("cur", "USD") != "USD": sec_skip.append(t); continue
         try:
-            rev_s, ni_s = sec_quarters(cmap[t]); time.sleep(0.15)
+            rev_s, ni_s = sec_quarters(cmap[t]); time.sleep(0.15)   # limita SEC: max 10 cereri/secundă
         except Exception as e:
             sec_skip.append(t); continue
         hit = False
@@ -331,7 +365,7 @@ def main():
             L.append("—")
         L.append("")
     if notes: L += ["## Note", ""] + [f"- {x}" for x in sorted(set(notes))] + [""]
-    if sec_skip: L += [f"Fără verificare SEC: {', '.join(sorted(set(sec_skip)))}", ""]
+    if sec_skip and cmap: L += [f"Fără verificare SEC: {', '.join(sorted(set(sec_skip)))}", ""]
     open(os.path.join(HERE, "crosscheck-report.md"), "w", encoding="utf-8").write("\n".join(L))
     hist = os.path.join(HERE, "crosscheck-history.csv")
     new = not os.path.exists(hist)
