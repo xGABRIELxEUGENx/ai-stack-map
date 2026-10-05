@@ -139,7 +139,8 @@ def main():
         if ref is None or not ref or math.isnan(p) or math.isnan(ref):
             missing.append(key)
             continue
-        q[key] = {"p": rnd(p), "c": round((p / ref - 1) * 100, 2), "ref": rnd(ref),
+        q[key] = {"p": rnd(p), "c": round((p / ref - 1) * 100, 2) + 0.0,  # + 0.0: fără „-0.0”
+                  "ref": rnd(ref),
                   "s": session_of(t_utc), "t": t_utc.strftime("%Y-%m-%dT%H:%M:%SZ")}
 
     total = len(keys)
