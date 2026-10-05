@@ -6,7 +6,9 @@ Ce face la fiecare rulare:
   1. Găsește ultima versiune ai-stack-map-mobile-N.html din folderul scriptului (sau --html).
   2. Pentru fiecare ticker din planșe citește datele publice Yahoo Finance (prin biblioteca yfinance):
      preț, variație %, market cap, volum, P/E, următoarea dată de earnings + dacă e estimată.
-  3. Scrie o versiune NOUĂ (N+1) — cea veche rămâne neatinsă (metoda scriitorului) —
+     Venituri și profit net trimestrial: SEC EDGAR (raportările oficiale) pentru companiile americane;
+     Yahoo doar pentru companiile străine și pentru trimestrul încă nedepus la SEC (marcat „Y”).
+  3. Scrie o versiune NOUĂ (N+1) — versiunile vechi rămân neatinse, pentru urmărirea bug-urilor —
      plus o copie cu nume fix: ai-stack-map-LATEST.html (pe asta o deschizi / sincronizezi pe telefon).
   4. Scrie în update-log.txt tot ce s-a schimbat la earnings.
 
@@ -23,7 +25,8 @@ Instalare (o singură dată):   pip install yfinance
 Rulare manuală:               python update_stack_map.py
 Programare zilnică: vezi README din răspunsul Claude (Task Scheduler pe Windows / cron pe Mac-Linux).
 """
-import argparse, datetime as dt, glob, json, os, re, sys, time
+import argparse, datetime as dt, glob, gzip, json, os, re, sys, time
+import urllib.request
 
 try:
     import yfinance as yf
@@ -127,10 +130,94 @@ def earnings_from_yahoo(d, today):
     return when_ny.date().isoformat(), session, est
 
 
+# ---------------------------------------------------------------- SEC EDGAR (sursa oficială pentru venituri / profit net)
+# SEC cere un „Nume email” de contact în User-Agent → secretul GitHub SEC_USER_AGENT (nu în cod: repo-ul e public).
+SEC_UA = os.environ.get("SEC_USER_AGENT", "").strip()
+SEC_REV_TAGS = ["RevenuesNetOfInterestExpense",          # bănci: venitul net total, cum îl raportează banca
+                "Revenues",                              # venitul total raportat (include ex. derivatele la energie)
+                "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
+                "RevenueFromContractWithCustomerIncludingAssessedTax"]
+SEC_NI_TAGS = ["NetIncomeLoss", "ProfitLoss"]           # profitul net atribuibil companiei; altfel profitul total
+_SEC_CIK = None
+
+def _sec_get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": SEC_UA, "Accept-Encoding": "gzip"})
+    with urllib.request.urlopen(req, timeout=40) as r:
+        raw = r.read()
+        if r.headers.get("Content-Encoding") == "gzip":
+            raw = gzip.decompress(raw)
+    return json.loads(raw.decode("utf-8"))
+
+def _sec_cik(t):
+    global _SEC_CIK
+    if _SEC_CIK is None:
+        _SEC_CIK = {}
+        if not SEC_UA:
+            print("  ! SEC_USER_AGENT lipsește — financiarele rămân din Yahoo")
+        else:
+            try:
+                _SEC_CIK = {v["ticker"].upper(): int(v["cik_str"])
+                            for v in _sec_get("https://www.sec.gov/files/company_tickers.json").values()}
+            except Exception as e:
+                print(f"  ! SEC lista CIK: {e} — financiarele rămân din Yahoo")
+    return _SEC_CIK.get(t)
+
+def _sec_series(g, tag):
+    """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea cea mai recentă.
+    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă nu se potrivesc, T4 se omite."""
+    latest = {}
+    for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
+        if "start" not in it:
+            continue
+        k = (it["start"], it["end"])
+        if k not in latest or it.get("filed", "") > latest[k].get("filed", ""):
+            latest[k] = it
+    q, ann, ytd9 = {}, {}, {}
+    for (st, en), it in latest.items():
+        sd, ed = dt.date.fromisoformat(st), dt.date.fromisoformat(en)
+        d = (ed - sd).days
+        if 80 <= d <= 100: q[ed] = (sd, it["val"])
+        elif 350 <= d <= 380: ann[(sd, ed)] = it["val"]
+        elif 260 <= d <= 285: ytd9[(sd, ed)] = it["val"]
+    out = {e: v for e, (sd, v) in q.items()}
+    for (sd, ed), v in ann.items():
+        if ed in out:
+            continue
+        est = []
+        nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
+        if nine: est.append(v - nine[0])
+        three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
+        if len(three) == 3: est.append(v - sum(three))
+        if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
+            continue
+        if est: out[ed] = est[0]
+    return out
+
+def sec_quarters(t):
+    """Ultimele 5 trimestre [data, venituri M$, profit net M$, "SEC"] din raportările oficiale, sau None."""
+    cik = _sec_cik(t)
+    if not cik:
+        return None
+    try:
+        g = _sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json").get("facts", {}).get("us-gaap", {})
+        time.sleep(0.15)                                   # limita SEC: max 10 cereri/secundă
+    except Exception as e:
+        print(f"  ~ {t} SEC: {e}")
+        return None
+    rev, ni = {}, {}
+    for tag in SEC_REV_TAGS:                               # pe fiecare trimestru: prima definiție din listă care are valoare
+        for e, v in _sec_series(g, tag).items(): rev.setdefault(e, v)
+    for tag in SEC_NI_TAGS:
+        for e, v in _sec_series(g, tag).items(): ni.setdefault(e, v)
+    ends = sorted(e for e in rev if e > dt.date.today() - dt.timedelta(days=550))[-5:]
+    rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
+    return rows or None
+
+
 # ---------------------------------------------------------------- date trimestriale (secțiunea 📊 din drawer)
 FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// FIN-END)", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 3            # crește când se schimbă formatul → toate intrările se reîmprospătează
+FIN_SCHEMA = 4            # crește când se schimbă formatul → toate intrările se reîmprospătează
 
 def _num(x):
     try:
@@ -164,21 +251,27 @@ def fetch_fin(t, fcur=None):
         except Exception:
             fcur = None
     out["cur"] = fcur or "USD"
-    # 1) contul de profit și pierdere trimestrial
+    # 1) venituri și profit net trimestrial: SEC EDGAR (rapoartele oficiale 10-Q/10-K) pentru companiile americane;
+    #    trimestrul raportat deja în comunicat dar încă nedepus la SEC vine din Yahoo, marcat "Y".
+    #    Companiile străine (ADR, IFRS, monedă ≠ USD) nu raportează trimestrial la SEC → Yahoo.
+    yrows = []
     try:
         q = tk.quarterly_income_stmt
         if q is not None and not q.empty:
-            rows = []
             for c in sorted(q.columns)[-5:]:
                 rev = _row(q, ["Total Revenue", "Operating Revenue"], c)
                 ni = _row(q, ["Net Income", "Net Income Common Stockholders"], c)
-                if rev is None:
-                    continue
-                rows.append([c.strftime("%Y-%m-%d"), round(rev / 1e6, 1), None if ni is None else round(ni / 1e6, 1)])
-            if rows:
-                out["q"] = rows
+                if rev is not None:
+                    yrows.append([c.strftime("%Y-%m-%d"), round(rev / 1e6, 2), None if ni is None else round(ni / 1e6, 2), "Y"])
     except Exception as e:
-        print(f"  ~ {t} fin/q: {e}")
+        print(f"  ~ {t} fin/q Yahoo: {e}")
+    srows = sec_quarters(t) if out["cur"] == "USD" else None
+    if srows:
+        last = dt.date.fromisoformat(srows[-1][0])
+        newer = [r for r in yrows if dt.date.fromisoformat(r[0]) > last + dt.timedelta(days=45)]
+        out["q"] = (srows + newer)[-5:]
+    elif yrows:
+        out["q"] = yrows
     # 2) EPS raportat vs estimare (ultimele 4 trimestre)
     try:
         eh = tk.earnings_history

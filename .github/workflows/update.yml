@@ -18,6 +18,8 @@ jobs:
           python-version: '3.12'
       - run: pip install yfinance lxml
       - run: python update_stack_map.py
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}   # venituri/profit net din SEC EDGAR
       - name: Salvează versiunea nouă
         run: |
           git config user.name  "stack-map-bot"
