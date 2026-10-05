@@ -82,19 +82,49 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
    - fă commit cu mesajul `Confirmări earnings <data> — v<N+1>` și push pe `main`;
    - raportează lui Gabriel un tabel scurt: ticker, data, sesiunea, ora și link spre sursa oficială.
 
-## Cross-check aleatoriu (luni, miercuri, vineri; două verificări independente, în paralel)
+## Cross-check — două metode DIFERITE, în paralel (luni, miercuri, vineri)
 
-Scop: să prindă erorile la care nu s-a gândit nimeni. Se verifică **produsul final**, adică ce e pe link, cu surse **independente** de cea a scriptului. Scriptul folosește Yahoo, deci Yahoo nu e sursă de control.
+Principiul lui Gabriel: o verificare făcută cu aceeași metodă repetă aceleași unghiuri moarte. De aceea cele două verificări folosesc metode, surse și trasee de date diferite, iar erorile lor nu se suprapun.
 
-1. Starea verificată: ultimul `ai-stack-map-mobile-N.html` din repo, plus din `update-log.txt` data și ora rulării care l-a produs.
-2. Eșantion: **8 tickeri aleși la întâmplare** (aleatoriu real, de exemplu `random.sample`, nu „cei importanți”). Cel puțin unul din Energy sau Macro și cel puțin unul care raportează în altă monedă decât USD, dacă există. Scrie în raport seed-ul sau lista, ca verificarea să poată fi refăcută.
-3. Pentru fiecare ticker verifici, față de surse independente:
-   - **Prețul și variația %** față de închiderea zilei de tranzacționare corespunzătoare rulării: StockAnalysis, Nasdaq.com sau site-ul bursei. Toleranță: ±0.5% la preț.
-   - **Market cap, volum și P/E**, ca ordin de mărime: StockAnalysis sau Finviz. Toleranță ±5%. P/E poate diferi după metoda de calcul (TTM); notezi doar diferențele mari.
+Pentru amândouă:
+- **Nu modifici fișierele și nu faci commit** (doar `crosscheck.yml` scrie raportul B). O eroare găsită se corectează la cauză, adică în script sau în procedură, după discuția cu Gabriel, nu prin peticirea unei valori.
+- Yahoo nu e sursă de control, pentru că e chiar sursa scriptului de actualizare.
+
+### Cross-check aleatoriu — Metoda A (judecată pe eșantion, din documente primare; în conversația cu Gabriel)
+
+1. Starea verificată: ultimul `ai-stack-map-mobile-N.html`, plus data rulării care l-a produs, din `update-log.txt`.
+2. Eșantion: **8 tickeri aleși cu `random.sample`**. Cel puțin unul din Energy sau Macro și unul care raportează în altă monedă decât USD. Scrie lista în raport.
+3. Citește documentele primare și compară:
+   - **Prețul și %** față de închiderea zilei: StockAnalysis, Nasdaq.com sau site-ul bursei.
    - **Earnings**:
      - un `confirmat` trebuie să aibă comunicatul oficial (deschizi sursa din `src`);
      - un `estimat` trebuie să fie apropiat de cel puțin încă o estimare publică;
-     - dacă compania a anunțat între timp oficial data, semnalezi.
-   - **Trimestrial (`FIN`)**: ultimul trimestru, venituri și profit net, față de comunicatul de rezultate al companiei sau de raportul la SEC (10-Q/6-K). Plus o valoare din reacția prețului, recalculată din prețurile de închidere publice.
-4. **Nu modifici fișierele și nu faci commit.** Cross-check-ul doar raportează. O eroare găsită se corectează la cauză, adică în script sau în procedură, după discuția cu Gabriel, nu prin peticirea unei valori.
-5. Raport: un tabel cu ticker, câmp, valoarea din fișier, valoarea de control, sursa (link) și verdictul (OK / diferență / eroare). La final: câte câmpuri au fost verificate, câte OK, și diferențele cu cauza probabilă.
+     - dacă compania a anunțat între timp data oficial, semnalezi.
+   - **Trimestrial**: ultimul trimestru față de comunicatul de rezultate sau de 10-Q/6-K.
+   - **Ce nu poate prinde codul**:
+     - ticker delistat, fuzionat sau redenumit;
+     - companie pusă în stratul greșit;
+     - descriere depășită;
+     - bursa greșită (widget-ul live nu se încarcă);
+     - link oficial mort.
+4. Raport: tabel cu ticker, câmp, fișier, control, sursă (link) și verdict, plus sumarul.
+
+### Metoda B (cod automat pe TOȚI tickerii, alte surse; GitHub + Claude Code)
+
+- `crosscheck.py` e un script independent: nu importă nimic din `update_stack_map.py`. Rulează prin `.github/workflows/crosscheck.yml` (luni, miercuri, vineri, 06:10 UTC) și scrie `crosscheck-report.md` și `crosscheck-history.csv`.
+- **Surse de control**:
+  - TradingView scanner pentru preț, %, market cap, volum și P/E;
+  - SEC EDGAR XBRL pentru venituri și profit net trimestrial; cere secretul `SEC_USER_AGENT` = „Nume email”.
+- **Verificări interne**:
+  - JS valid; `LATEST` identic cu ultima versiune;
+  - contoarele straturilor; dubluri în același strat;
+  - EARNINGS ↔ rânduri; culoarea % față de semn; badge-ul față de drawer;
+  - acțiuni (mcap/preț) stabile între versiuni;
+  - nicio dată de earnings trecută; niciun `confirmat` fără sursă oficială;
+  - vechimea `FIN`; bursa din `TV_EX` față de bursa reală.
+- **Clasificare**: „EROARE” = probabil greșit; „DIFERENȚĂ” = poate avea cauză legitimă:
+  - P/E calculat diferit între surse;
+  - prima ADR față de bursa locală;
+  - instrumente care se tranzacționează ~24h (WTI, BRENT, VIX), unde contează momentul citirii;
+  - dividend la data ex-dividend.
+- **Rolul lui Claude Code** (sarcina programată, 09:54 ora României): citește raportul B al zilei, investighează fiecare EROARE până la cauza probabilă (bug de script, sursă, definiție) și raportează lui Gabriel. Nu repetă metoda A.

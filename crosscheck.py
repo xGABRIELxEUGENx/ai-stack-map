@@ -33,7 +33,9 @@ TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (
        "mcap_adr": (1e9, 3.0),       # ADR: prima față de bursa locală → doar diferență
        "price_24h": (3.0, 1.0), "chg_24h": (2.0, 0.5),
        "fin": (2.0, 0.5), "shares": (5.0, 2.0)}
-SEC_UAS = ["AI Stack Map crosscheck stack-map-bot@users.noreply.github.com",
+# SEC cere un email real de contact în User-Agent. Se ține în secretul GitHub SEC_USER_AGENT (nu în cod — repo-ul e public).
+SEC_UAS = ([os.environ["SEC_USER_AGENT"]] if os.environ.get("SEC_USER_AGENT") else []) + [
+           "AI Stack Map crosscheck stack-map-bot@users.noreply.github.com",
            "AIStackMap/1.0 (+https://github.com/xGABRIELxEUGENx/ai-stack-map; stack-map-bot@users.noreply.github.com)"]
 
 
@@ -195,10 +197,12 @@ def pdiff(a, b):
 
 def grade(r, kind, t, field, fv, cv, src, note=""):
     if fv is None or cv is None: return
-    d = abs(fv - cv) if kind == "chg_pp" else pdiff(fv, cv)
+    pp = kind.startswith("chg")                      # variația % se compară în puncte procentuale
+    d = abs(fv - cv) if pp else pdiff(fv, cv)
     err, warn = TOL[kind]
-    if d >= err: r.add("EROARE", t, field, fv, cv, src, f"{d:.2f}{'pp' if kind == 'chg_pp' else '%'} {note}".strip())
-    elif d >= warn: r.add("DIFERENȚĂ", t, field, fv, cv, src, f"{d:.2f}{'pp' if kind == 'chg_pp' else '%'} {note}".strip())
+    unit = "pp" if pp else "%"
+    if d >= err: r.add("EROARE", t, field, fv, cv, src, f"{d:.2f}{unit} {note}".strip())
+    elif d >= warn: r.add("DIFERENȚĂ", t, field, fv, cv, src, f"{d:.2f}{unit} {note}".strip())
     else: r.ok()
 
 def src_tv_name(): return "TradingView scanner"
@@ -319,7 +323,7 @@ def main():
         try:
             cmap = {v["ticker"].upper(): int(v["cik_str"]) for v in
                     http("https://www.sec.gov/files/company_tickers.json", headers={"Accept-Encoding": "gzip"}).values()}
-            notes.append(f"SEC EDGAR acceptat cu User-Agent: {ua}")
+            notes.append("SEC EDGAR acceptat" + (" (contact din secretul SEC_USER_AGENT)" if ua == os.environ.get("SEC_USER_AGENT") else f" cu User-Agent: {ua}"))
             break
         except Exception as e:
             sec_err.append(str(e)[-60:])

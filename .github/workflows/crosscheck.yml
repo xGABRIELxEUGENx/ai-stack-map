@@ -20,6 +20,8 @@ jobs:
         with:
           node-version: '20'
       - run: python crosscheck.py          # doar biblioteca standard Python + node; nu folosește yfinance/Yahoo
+        env:
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}   # opțional: „Nume email@domeniu” pentru SEC EDGAR
       - name: Salvează raportul
         run: |
           git config user.name  "stack-map-bot"
