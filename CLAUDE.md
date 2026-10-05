@@ -10,7 +10,7 @@ Link public (GitHub Pages): https://xgabrielxeugenx.github.io/ai-stack-map/ (des
 | `ai-stack-map-mobile-N.html` | Versiunile, câte una pe actualizare. N cel mai mare = starea curentă. |
 | `ai-stack-map-LATEST.html` | Copie identică a ultimei versiuni. E adresa fixă din spatele linkului. |
 | `index.html` | Redirecționează linkul către `ai-stack-map-LATEST.html`. |
-| `update_stack_map.py` | Scriptul de actualizare: prețuri, earnings, EPS, consens, reacții din Yahoo Finance (`yfinance`); venituri/profit net trimestrial doar din documente oficiale (SEC EDGAR + `FIN_PR`). |
+| `update_stack_map.py` | Scriptul de actualizare: prețuri, earnings, EPS, consens, reacții din Yahoo Finance (`yfinance`); venituri/profit net trimestrial din SEC EDGAR + `FIN_PR`, iar trimestrul abia raportat provizoriu din TradingView scanner. |
 | `tools/apply_fin_oficial.py` | Aplică idempotent blocul `FIN_PR` și JS-ul pentru sursele financiare pe o versiune dată, scriind N+1. |
 | `.github/workflows/update.yml` | Rulează scriptul luni–vineri, 21:30 UTC, după închiderea bursei US. Se poate porni și manual. Cere secretul `SEC_USER_AGENT` = „Nume email”. |
 | `update-log.txt` | Jurnalul rulărilor: schimbări de earnings, tickeri fără date. |
@@ -20,7 +20,10 @@ Ce face scriptul la fiecare rulare:
 2. Pentru fiecare ticker actualizează prețul, %, market cap, volumul și P/E.
 3. Actualizează datele de earnings, numai ca `estimat`.
 4. Actualizează datele trimestriale (blocul `FIN`):
-   - venituri și profit net (`q`) **doar din documente oficiale**: rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`) și comunicatele de rezultate din `FIN_PR` (marcate `C`) pentru trimestrele de după ultimul raport SEC (> 45 de zile) și pentru companiile fără SEC trimestrial (străine). Ultimele 5. Dacă SEC nu răspunde, păstrează `q` din versiunea anterioară;
+   - venituri și profit net (`q`), ultimele 5 trimestre:
+     - istoricul din rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`), automat; dacă SEC nu răspunde, păstrează `q` din versiunea anterioară;
+     - companiile fără SEC trimestrial (străine: TSM, ASML, SAP, SKHY, CCJ, GFS, NBIS) din comunicatele din `FIN_PR` (marcate `C`); un rând `C` intră și la americani, dacă e la > 45 de zile după ultimul raport SEC;
+     - **trimestrul abia raportat**, din seara publicării: TradingView scanner (`revenue_fq`, `net_income_fq`, `fiscal_period_end_fq`), marcat `TV` = provizoriu, doar dacă e la > 45 de zile după ultimul rând oficial și doar în USD (TradingView convertește companiile străine în USD, deci la ele nu se folosește). Rândul `TV` e înlocuit automat când apare trimestrul în SEC sau în `FIN_PR`; atunci scriptul scrie în `update-log.txt` „OK/DIFERENȚĂ TradingView vs SEC|C …”;
    - EPS raportat vs estimat, consensul trimestrului următor (`nx`) și reacția prețului (`rx`): Yahoo;
    - scrie în `update-log.txt` „DIFERENȚĂ comunicat vs SEC …” când un trimestru din `FIN_PR` diferă cu > 0.5% de valoarea SEC (sfârșit ±12 zile).
 
@@ -50,7 +53,7 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
   `'T': { date:'YYYY-MM-DD', session:'BMO|AMC|?', status:'confirmat|estimat|neverificat|n/a', time:'HH:MM sau gol', src:'...' },`
   Scriptul **nu suprascrie** un `confirmat` cu dată viitoare. Dacă Yahoo arată altă dată, scriptul doar scrie un AVERTISMENT în `update-log.txt`.
 - **`FIN`**: blocul dintre `// FIN-START` și `// FIN-END` e scris **doar de script**. Nu-l edita de mână.
-  Rândul din `q`: `[sfârșit_trimestru, venituri_M, profit_net_M, "SEC"|"C"]`, în moneda raportului.
+  Rândul din `q`: `[sfârșit_trimestru, venituri_M, profit_net_M, "SEC"|"C"|"TV"]`, în moneda raportului. În pagină: `*` = comunicat, `†` = TradingView provizoriu.
 - **`FIN_PR`**: blocul dintre `// FINPR-START` și `// FINPR-END`, imediat după `FIN-END`, e scris **doar de Claude** (scriptul doar îl citește), numai din documentul oficial al companiei (8-K/6-K anexa 99.1 pe sec.gov, comunicatul sau raportul de pe pagina de investitori), cu URL-ul exact. JSON valid, o linie pe ticker, trimestrele în ordine cronologică:
   `"T": [["YYYY-MM-DD" (sfârșitul trimestrului fiscal), venituri_milioane, profit_net_milioane, "url_sursă", "YYYY-MM-DD" (data comunicatului), "MONEDA"], ...]`
   - venituri = venitul total raportat (la bănci, venitul net total); profit net = profitul net GAAP/IFRS atribuibil companiei (nu ajustat). Dacă documentul nu dă cifra, scrii `null` — nu calculezi și nu ghicești;
@@ -85,7 +88,7 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
    - `time` = ora exactă ET a publicării, dacă e anunțată (nu ora call-ului);
    - `src` = sursa și data comunicatului.
    Dacă data oficială diferă de cea din fișier, folosește data oficială.
-3b. **Trimestrul nou în `FIN_PR`**: pentru companiile care au raportat în ultimele 3 zile lucrătoare, citește comunicatul de rezultate (8-K/6-K anexa 99.1 pe sec.gov sau pagina de investitori) și adaugă trimestrul nou în `FIN_PR`, cu regulile de mai sus (cifre citite efectiv, URL exact). Se aplică tuturor companiilor care au raportat, americane și străine; scriptul îl folosește până apare în 10-Q.
+3b. **Trimestrul nou în `FIN_PR`, doar pentru companiile fără SEC trimestrial** (TSM, ASML, SAP, SKHY, CCJ, GFS, NBIS — cele al căror `q` vine din rânduri `C`): dacă una a raportat în ultimele 3 zile lucrătoare, citește comunicatul de rezultate (6-K anexa 99.1 pe sec.gov sau pagina de investitori) și adaugă trimestrul nou în `FIN_PR`, cu regulile de mai sus (cifre citite efectiv, URL exact, moneda raportului). Companiile americane nu se completează de mână: trimestrul nou vine automat din TradingView (provizoriu), apoi din SEC.
 4. Fără nicio confirmare nouă și niciun trimestru nou în `FIN_PR`: nu crea versiune nouă și nu face commit. Raportează scurt: „nicio confirmare nouă azi”.
 5. Cu confirmări noi sau trimestre noi în `FIN_PR`:
    - creează N+1 cu **doar** acele linii schimbate (regula 3) și copiază-l în `LATEST`;
