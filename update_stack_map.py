@@ -6,9 +6,16 @@ Ce face la fiecare rulare:
   1. Găsește ultima versiune ai-stack-map-mobile-N.html din folderul scriptului (sau --html).
   2. Pentru fiecare ticker din planșe citește datele publice Yahoo Finance (prin biblioteca yfinance):
      preț, variație %, market cap, volum, P/E, următoarea dată de earnings + dacă e estimată.
-  3. Scrie o versiune NOUĂ (N+1) — cea veche rămâne neatinsă (metoda scriitorului) —
+     Venituri și profit net trimestrial, fără Yahoo:
+       - rapoartele depuse la SEC (10-Q/10-K, XBRL), marcate "SEC" — istoricul, automat;
+       - comunicatele de rezultate (blocul FIN_PR din pagină, scris de Claude), marcate "C" — pentru companiile
+         străine care nu depun trimestrial XBRL la SEC;
+       - TradingView scanner, marcat "TV" (provizoriu) — trimestrul abia raportat, din seara publicării, până
+         apare în 10-Q / FIN_PR; doar cifre în USD (TradingView convertește companiile străine → acolo nu se folosește).
+     Yahoo rămâne doar pentru EPS raportat vs estimat, consensul trimestrului următor și reacția prețului.
+  3. Scrie o versiune NOUĂ (N+1) — versiunile vechi rămân neatinse, pentru urmărirea bug-urilor —
      plus o copie cu nume fix: ai-stack-map-LATEST.html (pe asta o deschizi / sincronizezi pe telefon).
-  4. Scrie în update-log.txt tot ce s-a schimbat la earnings.
+  4. Scrie în update-log.txt tot ce s-a schimbat la earnings și diferențele comunicat vs SEC.
 
 Reguli pentru earnings (ca să nu strice ce e verificat):
   - O dată 'confirmat' din fișier NU e suprascrisă cât timp e în viitor; dacă Yahoo arată altă dată,
@@ -23,7 +30,8 @@ Instalare (o singură dată):   pip install yfinance
 Rulare manuală:               python update_stack_map.py
 Programare zilnică: vezi README din răspunsul Claude (Task Scheduler pe Windows / cron pe Mac-Linux).
 """
-import argparse, datetime as dt, glob, json, os, re, sys, time
+import argparse, datetime as dt, glob, gzip, json, os, re, sys, time
+import urllib.request
 
 try:
     import yfinance as yf
@@ -127,10 +135,112 @@ def earnings_from_yahoo(d, today):
     return when_ny.date().isoformat(), session, est
 
 
+# ---------------------------------------------------------------- SEC EDGAR (sursa oficială pentru venituri / profit net)
+# SEC cere un „Nume email” de contact în User-Agent → secretul GitHub SEC_USER_AGENT (nu în cod: repo-ul e public).
+SEC_UA = os.environ.get("SEC_USER_AGENT", "").strip()
+SEC_REV_TAGS = ["RevenuesNetOfInterestExpense",          # bănci: venitul net total, cum îl raportează banca
+                "Revenues",                              # venitul total raportat (include ex. derivatele la energie)
+                "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
+                "RevenueFromContractWithCustomerIncludingAssessedTax"]
+SEC_NI_TAGS = ["NetIncomeLoss", "ProfitLoss"]           # profitul net atribuibil companiei; altfel profitul total
+_SEC_CIK = None
+_SEC_CIK_ERR = None                                      # motivul pentru care lista CIK nu s-a putut citi
+
+class SecUnavailable(Exception):
+    """SEC nu a răspuns (rețea, secret lipsă) — diferit de „compania nu are CIK”."""
+
+def _sec_get(url):
+    req = urllib.request.Request(url, headers={"User-Agent": SEC_UA, "Accept-Encoding": "gzip"})
+    with urllib.request.urlopen(req, timeout=40) as r:
+        raw = r.read()
+        if r.headers.get("Content-Encoding") == "gzip":
+            raw = gzip.decompress(raw)
+    return json.loads(raw.decode("utf-8"))
+
+def _sec_cik(t):
+    global _SEC_CIK, _SEC_CIK_ERR
+    if _SEC_CIK is None:
+        _SEC_CIK = {}
+        if not SEC_UA:
+            _SEC_CIK_ERR = "SEC_USER_AGENT lipsește"
+        else:
+            try:
+                _SEC_CIK = {v["ticker"].upper(): int(v["cik_str"])
+                            for v in _sec_get("https://www.sec.gov/files/company_tickers.json").values()}
+            except Exception as e:
+                _SEC_CIK_ERR = f"lista CIK: {e}"
+        if _SEC_CIK_ERR:
+            print(f"  ! SEC indisponibil ({_SEC_CIK_ERR}) — venituri/profit rămân cele din versiunea anterioară")
+    if _SEC_CIK_ERR:
+        raise SecUnavailable(_SEC_CIK_ERR)
+    return _SEC_CIK.get(t)
+
+def _sec_series(g, tag):
+    """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea cea mai recentă.
+    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă nu se potrivesc, T4 se omite."""
+    latest = {}
+    for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
+        if "start" not in it:
+            continue
+        k = (it["start"], it["end"])
+        if k not in latest or it.get("filed", "") > latest[k].get("filed", ""):
+            latest[k] = it
+    q, ann, ytd9 = {}, {}, {}
+    for (st, en), it in latest.items():
+        sd, ed = dt.date.fromisoformat(st), dt.date.fromisoformat(en)
+        d = (ed - sd).days
+        if 80 <= d <= 100: q[ed] = (sd, it["val"])
+        elif 350 <= d <= 380: ann[(sd, ed)] = it["val"]
+        elif 260 <= d <= 285: ytd9[(sd, ed)] = it["val"]
+    out = {e: v for e, (sd, v) in q.items()}
+    for (sd, ed), v in ann.items():
+        if ed in out:
+            continue
+        est = []
+        nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
+        if nine: est.append(v - nine[0])
+        three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
+        if len(three) == 3: est.append(v - sum(three))
+        if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
+            continue
+        if est: out[ed] = est[0]
+    return out
+
+def sec_quarters(t):
+    """Ultimele 5 trimestre [data, venituri M$, profit net M$, "SEC"] din raportările oficiale,
+    None dacă firma nu are CIK / date trimestriale; SecUnavailable dacă SEC nu răspunde."""
+    cik = _sec_cik(t)
+    if not cik:
+        return None
+    try:
+        g = _sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json").get("facts", {}).get("us-gaap", {})
+        time.sleep(0.15)                                   # limita SEC: max 10 cereri/secundă
+    except Exception as e:
+        if getattr(e, "code", None) == 404:                # CIK fără date XBRL
+            return None
+        raise SecUnavailable(f"{t}: {e}")
+    rev, ni = {}, {}
+    for tag in SEC_REV_TAGS:                               # pe fiecare trimestru: prima definiție din listă care are valoare
+        for e, v in _sec_series(g, tag).items(): rev.setdefault(e, v)
+    for tag in SEC_NI_TAGS:
+        for e, v in _sec_series(g, tag).items(): ni.setdefault(e, v)
+    ends = sorted(e for e in rev if e > dt.date.today() - dt.timedelta(days=550))[-5:]
+    rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
+    return rows or None
+
+
 # ---------------------------------------------------------------- date trimestriale (secțiunea 📊 din drawer)
 FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// FIN-END)", re.S)
+# FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
+FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 3            # crește când se schimbă formatul → toate intrările se reîmprospătează
+FIN_SCHEMA = 5            # crește când se schimbă formatul → toate intrările se reîmprospătează
+PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
+PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
+PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt
+TV_SCAN_URL = "https://scanner.tradingview.com/america/scan"
+# revenue_fq: la NEE a dat venitul raportat (total_revenue_fq nu); la celelalte cele două coincid → revenue_fq întâi
+TV_COLS = ["revenue_fq", "total_revenue_fq", "net_income_fq", "fiscal_period_end_fq", "fundamental_currency_code"]
 
 def _num(x):
     try:
@@ -139,12 +249,6 @@ def _num(x):
     except Exception:
         return None
 
-def _row(df, names, col):
-    for n in names:
-        if n in df.index:
-            return _num(df.loc[n, col])
-    return None
-
 def _col(df, *names):
     low = {str(c).lower(): c for c in df.columns}
     for n in names:
@@ -152,9 +256,87 @@ def _col(df, *names):
             return low[n.lower()]
     return None
 
-def fetch_fin(t, fcur=None):
-    """Venituri/profit net pe 5 trimestre, EPS raportat vs estimat, consens trimestrul următor,
-    reacția prețului după ultimele raportări. Întoarce dict (poate fi parțial) sau None."""
+def _d(iso):
+    return dt.date.fromisoformat(iso)
+
+def read_fin_pr(html):
+    """{ticker: [[sfârșit_trim, venituri_M, profit_M, url, data_comunicat, moneda], ...]} din blocul FIN_PR al paginii."""
+    m = FINPR_RE.search(html)
+    if not m:
+        return {}
+    try:
+        pr = json.loads(m.group(1))
+    except ValueError as e:
+        print(f"  ! FIN_PR nu e JSON valid ({e}) — ignorat")
+        return {}
+    return {t: sorted(rows, key=lambda r: r[0]) for t, rows in pr.items() if rows}
+
+def read_tv_ex(html):
+    """{ticker: bursa} din TV_EX al paginii (NASDAQ/NYSE/AMEX)."""
+    m = re.search(r"const TV_EX = \{(.*?)\};", html, re.S)
+    return {t: ex for ex, lst in re.findall(r"(\w+): '([^']*)'", m.group(1)) for t in lst.split()} if m else {}
+
+def tv_latest(tickers, tv_ex):
+    """{ticker: [sfârșit_trim, venituri_M, profit_M]} = ultimul trimestru raportat, din TradingView scanner
+    (o singură cerere pentru toți tickerii). Doar cifre în USD. None dacă scanner-ul nu răspunde."""
+    back = {}
+    for t in tickers:
+        for ex in ([tv_ex[t]] if t in tv_ex else ["NASDAQ", "NYSE", "AMEX"]):
+            back[f"{ex}:{t}"] = t
+    body = json.dumps({"symbols": {"tickers": list(back), "query": {"types": []}}, "columns": TV_COLS}).encode()
+    req = urllib.request.Request(TV_SCAN_URL, data=body, headers={
+        "Content-Type": "application/json", "Origin": "https://www.tradingview.com",
+        "Referer": "https://www.tradingview.com/", "User-Agent": "Mozilla/5.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            rows = json.loads(r.read().decode("utf-8")).get("data", [])
+    except Exception as e:
+        print(f"  ! TradingView scanner: {e} — trimestrele provizorii rămân cele din versiunea anterioară")
+        return None
+    out = {}
+    for row in rows:
+        t, d = back.get(row.get("s")), dict(zip(TV_COLS, row.get("d") or []))
+        rev = _num(d.get("revenue_fq"))
+        rev = rev if rev is not None else _num(d.get("total_revenue_fq"))
+        end = d.get("fiscal_period_end_fq")
+        if not t or t in out or rev is None or not end or d.get("fundamental_currency_code") != "USD":
+            continue
+        ni = _num(d.get("net_income_fq"))
+        out[t] = [dt.datetime.fromtimestamp(int(end), dt.timezone.utc).date().isoformat(),
+                  round(rev / 1e6, 2), None if ni is None else round(ni / 1e6, 2)]
+    return out
+
+def build_quarters(t, srows, pr, tvq, log):
+    """Rândurile q [data, venituri, profit, "SEC"|"C"|"TV"] + moneda lor (sau None dacă moneda vine din Yahoo).
+    SEC are prioritate; comunicatul („C”) doar pentru trimestrele de după ultimul raport SEC (> 45 zile)
+    sau pentru companiile fără SEC; TradingView („TV”, provizoriu) doar pentru un trimestru și mai nou (> 45 zile),
+    și doar în USD. Ultimele 5."""
+    pr = pr or []
+    for p in pr:                                           # comunicat vs SEC pe același trimestru → log la diferențe
+        s = next((r for r in srows or [] if abs((_d(r[0]) - _d(p[0])).days) <= PR_MATCH_DAYS), None)
+        if not s:
+            continue
+        diffs = [f"{lab} comunicat {pv} vs SEC {sv}" for lab, pv, sv in (("venituri", p[1], s[1]), ("profit", p[2], s[2]))
+                 if pv is not None and sv is not None and abs(pv - sv) > PR_DIFF_PCT / 100 * max(abs(sv), 1e-9)]
+        if diffs:
+            log.append(f"DIFERENȚĂ comunicat vs SEC {t} {p[0]}: " + "; ".join(diffs) + f" (sursă comunicat: {p[3]})")
+    if srows:
+        last = _d(srows[-1][0])
+        q, cur = srows + [[p[0], p[1], p[2], "C"] for p in pr
+                          if p[5] == "USD" and _d(p[0]) > last + dt.timedelta(days=PR_GAP_DAYS)], None
+    elif pr:
+        cur = pr[-1][5]                                    # moneda ultimului comunicat; rânduri în altă monedă nu se amestecă
+        q = [[p[0], p[1], p[2], "C"] for p in pr if p[5] == cur]
+    else:
+        q, cur = [], None
+    if tvq and cur in (None, "USD") and (not q or _d(tvq[0]) > _d(q[-1][0]) + dt.timedelta(days=PR_GAP_DAYS)):
+        q = q + [[tvq[0], tvq[1], tvq[2], "TV"]]
+    return (q[-5:] or None), cur
+
+def fetch_fin(t, fcur=None, pr=None, log=None, tvq=None):
+    """Venituri/profit net pe 5 trimestre (SEC + comunicate + TradingView provizoriu), EPS raportat vs estimat, consens trimestrul
+    următor, reacția prețului după ultimele raportări. Întoarce dict (poate fi parțial) sau None.
+    Cheia temporară "_secerr" = SEC n-a răspuns → update_fin păstrează veniturile/profitul vechi."""
     tk = yf.Ticker(YAHOO_SYMBOL.get(t, t))
     out = {}
     # moneda în care raportează compania (TSM = TWD, ASML/SAP = EUR …); cifrele NU se convertesc
@@ -164,21 +346,21 @@ def fetch_fin(t, fcur=None):
         except Exception:
             fcur = None
     out["cur"] = fcur or "USD"
-    # 1) contul de profit și pierdere trimestrial
-    try:
-        q = tk.quarterly_income_stmt
-        if q is not None and not q.empty:
-            rows = []
-            for c in sorted(q.columns)[-5:]:
-                rev = _row(q, ["Total Revenue", "Operating Revenue"], c)
-                ni = _row(q, ["Net Income", "Net Income Common Stockholders"], c)
-                if rev is None:
-                    continue
-                rows.append([c.strftime("%Y-%m-%d"), round(rev / 1e6, 1), None if ni is None else round(ni / 1e6, 1)])
-            if rows:
-                out["q"] = rows
-    except Exception as e:
-        print(f"  ~ {t} fin/q: {e}")
+    # 1) venituri și profit net trimestrial: SEC (10-Q/10-K XBRL) pentru companiile americane, comunicatele din
+    #    FIN_PR („C”) pentru companiile străine, TradingView („TV”, provizoriu) pentru trimestrul abia raportat.
+    srows = None
+    if out["cur"] == "USD":
+        try:
+            srows = sec_quarters(t)
+        except SecUnavailable as e:
+            print(f"  ~ {t} SEC: {e}")
+            out["_secerr"] = True
+    if "_secerr" not in out:
+        q, qcur = build_quarters(t, srows, pr, tvq, log if log is not None else [])
+        if q:
+            out["q"] = q
+            if qcur:
+                out["cur"] = qcur                          # moneda din comunicat (documentul oficial) are prioritate
     # 2) EPS raportat vs estimare (ultimele 4 trimestre)
     try:
         eh = tk.earnings_history
@@ -246,8 +428,29 @@ def fetch_fin(t, fcur=None):
     return out if len(out) > 1 else None
 
 
-def fin_needs_refresh(entry, earn_date, today):
+def fin_needs_refresh(entry, earn_date, today, pr=None, tvq=None):
     if not entry or not entry.get("upd") or entry.get("v") != FIN_SCHEMA:
+        return True
+    # Claude a adăugat / corectat un trimestru în FIN_PR care nu se vede încă în q → reîmprospătează
+    q = entry.get("q") or []
+    if pr and (not q or _d(pr[-1][0]) > _d(q[-1][0]) + dt.timedelta(days=PR_MATCH_DAYS)):
+        return True
+    if pr and any(r[3] == "TV" and any(abs((_d(p[0]) - _d(r[0])).days) <= PR_MATCH_DAYS for p in pr) for r in q):
+        return True                                        # comunicatul a sosit pentru trimestrul provizoriu
+    # TradingView are un trimestru nou (sau alte cifre pentru cel provizoriu) → reîmprospătează imediat (doar USD)
+    if tvq and entry.get("cur", "USD") == "USD":
+        if not q or _d(tvq[0]) > _d(q[-1][0]) + dt.timedelta(days=PR_GAP_DAYS):
+            return True
+        if q[-1][3] == "TV" and q[-1][:3] != tvq:
+            return True
+    # raport nou (TradingView are trimestrul), dar EPS-ul Yahoo încă nu → reîncearcă la fiecare rulare (max ~100 zile
+    # după sfârșitul trimestrului); altfel, la un raport AMC prins înainte ca Yahoo să aibă EPS-ul, ar aștepta 7 zile
+    if tvq and (today - _d(tvq[0])).days <= 100:
+        eps = entry.get("eps") or []
+        if not eps or _d(tvq[0]) > _d(eps[-1][0]) + dt.timedelta(days=PR_GAP_DAYS):
+            return True
+    prd = {p[0]: p for p in pr or []}
+    if any(r[3] == "C" and (r[0] not in prd or [prd[r[0]][1], prd[r[0]][2]] != r[1:3]) for r in q):
         return True
     upd = dt.date.fromisoformat(entry["upd"])
     if (today - upd).days >= FIN_MAX_AGE_DAYS:
@@ -256,7 +459,7 @@ def fin_needs_refresh(entry, earn_date, today):
     return bool(earn_date) and upd <= dt.date.fromisoformat(earn_date) <= today
 
 
-def update_fin(html, tickers, today, data=None):
+def update_fin(html, tickers, today, data=None, log=None):
     m = FIN_RE.search(html)
     if not m:
         print("  ! blocul FIN lipsește din HTML — sar peste datele trimestriale")
@@ -264,15 +467,37 @@ def update_fin(html, tickers, today, data=None):
     block = html[m.start():m.end()]
     js = block[block.index("{"):block.rindex("}") + 1]
     fin = json.loads(js) if js.strip() != "{}" else {}
+    fin_pr = read_fin_pr(html)
     earn_dates = {mm.group(2): mm.group(3) for mm in EARN_LINE_RE.finditer(html)}
-    done, miss = 0, []
+    tv = tv_latest([t for t in tickers if t not in NO_EARNINGS], read_tv_ex(html))
+    done, miss, secdown = 0, [], []
     for t in tickers:
         if t in NO_EARNINGS:
             fin.pop(t, None)
             continue
-        if not fin_needs_refresh(fin.get(t), earn_dates.get(t), today):
+        old_q = (fin.get(t) or {}).get("q") or []
+        if tv is not None:
+            tvq = tv.get(t)
+        else:                                              # scanner indisponibil → păstrează rândul provizoriu vechi
+            tvq = next((r[:3] for r in old_q if len(r) > 3 and r[3] == "TV"), None)
+        if not fin_needs_refresh(fin.get(t), earn_dates.get(t), today, fin_pr.get(t), tvq):
             continue
-        d = fetch_fin(t, ((data or {}).get(t) or {}).get("fcur"))
+        d = fetch_fin(t, ((data or {}).get(t) or {}).get("fcur"), fin_pr.get(t), log, tvq)
+        if d and d.pop("_secerr", False):
+            old = fin.get(t) or {}
+            if old.get("v") == FIN_SCHEMA and old.get("q"):
+                d["q"], d["cur"] = old["q"], old.get("cur", d["cur"])   # SEC n-a răspuns → păstrează rândurile oficiale vechi
+            secdown.append(t)
+        if d and log is not None:                          # provizoriul TV înlocuit de cifra oficială → cât de bun a fost?
+            for r in old_q:
+                if len(r) < 4 or r[3] != "TV":
+                    continue
+                o = next((x for x in d.get("q") or [] if x[3] != "TV" and abs((_d(x[0]) - _d(r[0])).days) <= PR_MATCH_DAYS), None)
+                if not o:
+                    continue
+                diffs = [f"{lab} TV {tv_v} vs {o[3]} {ov}" for lab, tv_v, ov in (("venituri", r[1], o[1]), ("profit", r[2], o[2]))
+                         if tv_v is not None and ov is not None and abs(tv_v - ov) > PR_DIFF_PCT / 100 * max(abs(ov), 1e-9)]
+                log.append(f"{'DIFERENȚĂ' if diffs else 'OK'} TradingView vs {o[3]} {t} {o[0]}" + (": " + "; ".join(diffs) if diffs else ""))
         if d:
             d["upd"], d["v"] = today.isoformat(), FIN_SCHEMA
             fin[t] = d                        # înlocuiește complet intrarea veche
@@ -280,6 +505,8 @@ def update_fin(html, tickers, today, data=None):
         else:
             miss.append(t)                    # păstrează ce era, reîncearcă la rularea următoare
         time.sleep(0.4)
+    if secdown and log is not None:
+        log.append(f"SEC indisponibil — venituri/profit păstrate din versiunea anterioară (unde existau) pentru: {', '.join(secdown)}")
     body = "{\n" + ",\n".join(f'            "{k}":{json.dumps(fin[k], separators=(",", ":"))}' for k in sorted(fin)) + "\n        }"
     html = html[:m.start()] + m.group(1) + body + m.group(2) + html[m.end():]
     return html, done, miss
@@ -365,7 +592,7 @@ def main():
     html = EARN_LINE_RE.sub(upd_earn, html)
 
     # 3) date trimestriale (doar unde e nevoie: lipsă, mai vechi de 7 zile sau după un raport)
-    html, fin_done, fin_miss = update_fin(html, tickers, today, data)
+    html, fin_done, fin_miss = update_fin(html, tickers, today, data, log)
     print(f"Trimestriale: {fin_done} tickeri reîmprospătați | fără date: {', '.join(fin_miss) or 'niciunul'}")
 
     print(f"Rânduri actualizate: {nrows} | tickeri fără date: {', '.join(failed) or 'niciunul'}")
