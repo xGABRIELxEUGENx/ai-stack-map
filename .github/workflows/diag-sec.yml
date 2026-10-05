@@ -1,6 +1,9 @@
 name: DIAG SEC (temporar)
 on:
   workflow_dispatch:
+  push:
+    branches: [sec-anomalii]
+    paths: ['diag/sec_dump.py', '.github/workflows/diag-sec.yml']
 permissions:
   contents: write
 jobs:
