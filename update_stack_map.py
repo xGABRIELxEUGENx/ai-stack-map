@@ -130,7 +130,7 @@ def earnings_from_yahoo(d, today):
 # ---------------------------------------------------------------- date trimestriale (secțiunea 📊 din drawer)
 FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// FIN-END)", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 2            # crește când se schimbă formatul → toate intrările se reîmprospătează
+FIN_SCHEMA = 3            # crește când se schimbă formatul → toate intrările se reîmprospătează
 
 def _num(x):
     try:
@@ -189,6 +189,9 @@ def fetch_fin(t, fcur=None):
                 a, e = _num(eh.loc[idx, ca]) if ca else None, _num(eh.loc[idx, ce]) if ce else None
                 if a is None:
                     continue
+                # estimare în altă unitate/monedă decât raportatul (ex. ADR vs acțiunea locală) → o respingem
+                if e is not None and a and e and (abs(a / e) > 8 or abs(e / a) > 8):
+                    e = None
                 d = idx.strftime("%Y-%m-%d") if hasattr(idx, "strftime") else str(idx)[:10]
                 rows.append([d, round(a, 3), None if e is None else round(e, 3)])
             if rows:
