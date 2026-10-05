@@ -10,15 +10,19 @@ Link public (GitHub Pages): https://xgabrielxeugenx.github.io/ai-stack-map/ (des
 | `ai-stack-map-mobile-N.html` | Versiunile, câte una pe actualizare. N cel mai mare = starea curentă. |
 | `ai-stack-map-LATEST.html` | Copie identică a ultimei versiuni. E adresa fixă din spatele linkului. |
 | `index.html` | Redirecționează linkul către `ai-stack-map-LATEST.html`. |
-| `update_stack_map.py` | Scriptul de actualizare (Yahoo Finance prin `yfinance`). |
-| `.github/workflows/update.yml` | Rulează scriptul luni–vineri, 21:30 UTC, după închiderea bursei US. Se poate porni și manual. |
+| `update_stack_map.py` | Scriptul de actualizare: prețuri, earnings, EPS, consens, reacții din Yahoo Finance (`yfinance`); venituri/profit net trimestrial doar din documente oficiale (SEC EDGAR + `FIN_PR`). |
+| `tools/apply_fin_oficial.py` | Aplică idempotent blocul `FIN_PR` și JS-ul pentru sursele financiare pe o versiune dată, scriind N+1. |
+| `.github/workflows/update.yml` | Rulează scriptul luni–vineri, 21:30 UTC, după închiderea bursei US. Se poate porni și manual. Cere secretul `SEC_USER_AGENT` = „Nume email”. |
 | `update-log.txt` | Jurnalul rulărilor: schimbări de earnings, tickeri fără date. |
 
 Ce face scriptul la fiecare rulare:
 1. Pornește de la ultima versiune N și scrie N+1 plus `LATEST`.
 2. Pentru fiecare ticker actualizează prețul, %, market cap, volumul și P/E.
 3. Actualizează datele de earnings, numai ca `estimat`.
-4. Actualizează datele trimestriale (blocul `FIN`).
+4. Actualizează datele trimestriale (blocul `FIN`):
+   - venituri și profit net (`q`) **doar din documente oficiale**: rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`) și comunicatele de rezultate din `FIN_PR` (marcate `C`) pentru trimestrele de după ultimul raport SEC (> 45 de zile) și pentru companiile fără SEC trimestrial (străine). Ultimele 5. Dacă SEC nu răspunde, păstrează `q` din versiunea anterioară;
+   - EPS raportat vs estimat, consensul trimestrului următor (`nx`) și reacția prețului (`rx`): Yahoo;
+   - scrie în `update-log.txt` „DIFERENȚĂ comunicat vs SEC …” când un trimestru din `FIN_PR` diferă cu > 0.5% de valoarea SEC (sfârșit ±12 zile).
 
 Prețurile live din pagină vin din widget-urile TradingView, la deschiderea paginii.
 
@@ -46,6 +50,12 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
   `'T': { date:'YYYY-MM-DD', session:'BMO|AMC|?', status:'confirmat|estimat|neverificat|n/a', time:'HH:MM sau gol', src:'...' },`
   Scriptul **nu suprascrie** un `confirmat` cu dată viitoare. Dacă Yahoo arată altă dată, scriptul doar scrie un AVERTISMENT în `update-log.txt`.
 - **`FIN`**: blocul dintre `// FIN-START` și `// FIN-END` e scris **doar de script**. Nu-l edita de mână.
+  Rândul din `q`: `[sfârșit_trimestru, venituri_M, profit_net_M, "SEC"|"C"]`, în moneda raportului.
+- **`FIN_PR`**: blocul dintre `// FINPR-START` și `// FINPR-END`, imediat după `FIN-END`, e scris **doar de Claude** (scriptul doar îl citește), numai din documentul oficial al companiei (8-K/6-K anexa 99.1 pe sec.gov, comunicatul sau raportul de pe pagina de investitori), cu URL-ul exact. JSON valid, o linie pe ticker, trimestrele în ordine cronologică:
+  `"T": [["YYYY-MM-DD" (sfârșitul trimestrului fiscal), venituri_milioane, profit_net_milioane, "url_sursă", "YYYY-MM-DD" (data comunicatului), "MONEDA"], ...]`
+  - venituri = venitul total raportat (la bănci, venitul net total); profit net = profitul net GAAP/IFRS atribuibil companiei (nu ajustat). Dacă documentul nu dă cifra, scrii `null` — nu calculezi și nu ghicești;
+  - cifrele în moneda raportului, fără conversie, în milioane;
+  - fără document găsit, nu completezi.
 
 ## Când adaugi un ticker nou, completezi toate locurile
 
@@ -75,12 +85,13 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
    - `time` = ora exactă ET a publicării, dacă e anunțată (nu ora call-ului);
    - `src` = sursa și data comunicatului.
    Dacă data oficială diferă de cea din fișier, folosește data oficială.
-4. Fără nicio confirmare nouă: nu crea versiune nouă și nu face commit. Raportează scurt: „nicio confirmare nouă azi”.
-5. Cu confirmări noi:
+3b. **Trimestrul nou în `FIN_PR`**: pentru companiile care au raportat în ultimele 3 zile lucrătoare, citește comunicatul de rezultate (8-K/6-K anexa 99.1 pe sec.gov sau pagina de investitori) și adaugă trimestrul nou în `FIN_PR`, cu regulile de mai sus (cifre citite efectiv, URL exact). Se aplică tuturor companiilor care au raportat, americane și străine; scriptul îl folosește până apare în 10-Q.
+4. Fără nicio confirmare nouă și niciun trimestru nou în `FIN_PR`: nu crea versiune nouă și nu face commit. Raportează scurt: „nicio confirmare nouă azi”.
+5. Cu confirmări noi sau trimestre noi în `FIN_PR`:
    - creează N+1 cu **doar** acele linii schimbate (regula 3) și copiază-l în `LATEST`;
    - validează JS-ul;
    - fă commit cu mesajul `Confirmări earnings <data> — v<N+1>` și push pe `main`;
-   - raportează lui Gabriel un tabel scurt: ticker, data, sesiunea, ora și link spre sursa oficială.
+   - raportează lui Gabriel un tabel scurt: ticker, data, sesiunea, ora și link spre sursa oficială; pentru `FIN_PR`: ticker, trimestru, venituri, profit, link.
 
 ## Cross-check — două metode DIFERITE, în paralel (luni, miercuri, vineri)
 
@@ -88,7 +99,7 @@ Principiul lui Gabriel: o verificare făcută cu aceeași metodă repetă acelea
 
 Pentru amândouă:
 - **Nu modifici fișierele și nu faci commit** (doar `crosscheck.yml` scrie raportul B). O eroare găsită se corectează la cauză, adică în script sau în procedură, după discuția cu Gabriel, nu prin peticirea unei valori.
-- Yahoo nu e sursă de control, pentru că e chiar sursa scriptului de actualizare.
+- Yahoo nu e sursă de control pentru preț, %, market cap, volum, P/E și earnings, pentru că e chiar sursa scriptului pentru acestea. La venituri și profit net, pagina folosește doar documente oficiale (SEC + comunicate), deci acolo Yahoo e o sursă de control independentă.
 
 ### Cross-check aleatoriu — Metoda A (judecată pe eșantion, din documente primare; în conversația cu Gabriel)
 
@@ -100,7 +111,7 @@ Pentru amândouă:
      - un `confirmat` trebuie să aibă comunicatul oficial (deschizi sursa din `src`);
      - un `estimat` trebuie să fie apropiat de cel puțin încă o estimare publică;
      - dacă compania a anunțat între timp data oficial, semnalezi.
-   - **Trimestrial**: ultimul trimestru față de comunicatul de rezultate sau de 10-Q/6-K.
+   - **Trimestrial**: ultimul trimestru față de comunicatul de rezultate sau de 10-Q/6-K; pentru un rând `C`, deschizi URL-ul din `FIN_PR`.
    - **Ce nu poate prinde codul**:
      - ticker delistat, fuzionat sau redenumit;
      - companie pusă în stratul greșit;
@@ -114,7 +125,7 @@ Pentru amândouă:
 - `crosscheck.py` e un script independent: nu importă nimic din `update_stack_map.py`. Rulează prin `.github/workflows/crosscheck.yml` (luni, miercuri, vineri, 06:10 UTC) și scrie `crosscheck-report.md` și `crosscheck-history.csv`.
 - **Surse de control**:
   - TradingView scanner pentru preț, %, market cap, volum și P/E;
-  - SEC EDGAR XBRL pentru venituri și profit net trimestrial; cere secretul `SEC_USER_AGENT` = „Nume email”.
+  - Yahoo Finance (`yfinance`, `quarterly_income_stmt`: „Total Revenue”, „Net Income”) pentru venituri și profit net trimestrial, comparat cu rândurile `q` (potrivire după dată ±12 zile; Yahoo normalizează la sfârșit de lună). EROARE la ≥ 15%, DIFERENȚĂ la ≥ 3%, cu nota „Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)”.
 - **Verificări interne**:
   - JS valid; `LATEST` identic cu ultima versiune;
   - contoarele straturilor; dubluri în același strat;

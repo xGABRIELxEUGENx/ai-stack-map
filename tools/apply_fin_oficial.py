@@ -33,7 +33,7 @@ EDITS = [
      """                const cx = i * gw + gw / 2, [d, rev, ni] = r, mg = (ni != null && rev) ? ni / rev * 100 : null;
                 g += `<g><title>${finQ(d)} · Venituri ${finMoney(rev)} · Profit net ${finMoney(ni)}${mg!=null?' · Marjă '+mg.toFixed(1)+'%':''}</title>""",
      """                const cx = i * gw + gw / 2, [d, rev, ni, src] = r, mg = (ni != null && rev) ? ni / rev * 100 : null, pr = src === 'C';
-                g += `<g><title>${finQ(d)}${pr ? '*' : ''} · Venituri ${finMoney(rev)} · Profit net ${finMoney(ni)}${mg!=null?' · Marjă '+mg.toFixed(1)+'%':''} · sursă: ${pr ? 'comunicatul companiei' : 'SEC 10-Q/10-K'}</title>"""),
+                g += `<g><title>${finQ(d)}${pr ? '*' : ''} · Venituri ${finMoney(rev)} · Profit net ${finMoney(ni)}${mg!=null?' · Marjă '+mg.toFixed(1)+'%':''}${src ? ' · sursă: ' + (pr ? 'comunicatul companiei' : 'SEC 10-Q/10-K') : ''}</title>"""),
     ("grafic venituri: eticheta trimestrului",
      """                    <text x="${cx}" y="${bot + 16}" text-anchor="middle" font-size="10" fill="${FIN_C.ink2}">${finQ(d)}</text>
                     <text x="${cx}" y="${bot + 30}" text-anchor="middle" font-size="9.5" fill="${FIN_C.mute}">${mg != null ? 'marjă '""",
@@ -68,6 +68,11 @@ EDITS = [
      """            h += `<div class="fin-src">Venituri/profit: rapoarte oficiale (SEC, comunicatele companiei) · EPS, consens, prețuri: Yahoo Finance · actualizat ${f.upd ? fmtIsoDate(f.upd) : '—'}</div>`;"""),
 ]
 
+# forme intermediare (versiunile de pe ramura fin-oficial dinaintea corecturii), tratate tot ca „vechi”
+PREV = {"grafic venituri: tooltip + * pe trimestrele din comunicat": [
+    """                const cx = i * gw + gw / 2, [d, rev, ni, src] = r, mg = (ni != null && rev) ? ni / rev * 100 : null, pr = src === 'C';
+                g += `<g><title>${finQ(d)}${pr ? '*' : ''} · Venituri ${finMoney(rev)} · Profit net ${finMoney(ni)}${mg!=null?' · Marjă '+mg.toFixed(1)+'%':''} · sursă: ${pr ? 'comunicatul companiei' : 'SEC 10-Q/10-K'}</title>"""]}
+
 
 def apply(html):
     """Întoarce (html_nou, listă_de_pași). Ridică ValueError dacă o modificare nu se poate aplica."""
@@ -81,13 +86,14 @@ def apply(html):
         html = html[:m.end()] + FINPR_BLOCK + html[m.end():]
         steps.append("bloc FIN_PR: adăugat (gol)")
     for name, old, new in EDITS:
+        olds = [old] + PREV.get(name, [])
         if new in html:
             steps.append(f"{name}: deja aplicat")
-        elif html.count(old) == 1:
-            html = html.replace(old, new)
+        elif any(html.count(o) == 1 for o in olds):
+            html = html.replace(next(o for o in olds if html.count(o) == 1), new)
             steps.append(f"{name}: aplicat")
         else:
-            raise ValueError(f"{name}: nu găsesc forma veche (de {html.count(old)} ori) și nici pe cea nouă")
+            raise ValueError(f"{name}: nu găsesc forma veche și nici pe cea nouă")
     return html, steps
 
 
