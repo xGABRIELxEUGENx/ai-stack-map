@@ -123,3 +123,6 @@
   TLN: 2026-11-04 AMC confirmat(Yahoo)  →  2026-11-04 AMC estimat
   XE: 2026-11-16 BMO confirmat(Yahoo)  →  2026-11-16 BMO estimat
   MA: 2026-10-29 BMO confirmat(Yahoo)  →  2026-10-29 BMO estimat
+
+=== 2026-10-05 07:43 | ai-stack-map-mobile-20.html → ai-stack-map-mobile-21.html | rânduri 148 | fără date: -
+  trimestriale: 129 reîmprospătate | fără date: -
