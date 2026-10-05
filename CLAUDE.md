@@ -14,6 +14,9 @@ Link public (GitHub Pages): https://xgabrielxeugenx.github.io/ai-stack-map/ (des
 | `tools/apply_fin_oficial.py` | Aplică idempotent blocul `FIN_PR` și JS-ul pentru sursele financiare pe o versiune dată, scriind N+1. |
 | `.github/workflows/update.yml` | Rulează scriptul luni–vineri, 21:30 UTC, după închiderea bursei US. Se poate porni și manual. Cere secretul `SEC_USER_AGENT` = „Nume email”. |
 | `update-log.txt` | Jurnalul rulărilor: schimbări de earnings, tickeri fără date. |
+| `live_quotes.py` | Fluxul ETH (pre-market / after-hours / închis): scrie `quotes.json` din Yahoo (`yfinance`). Independent de `update_stack_map.py`. |
+| `.github/workflows/live.yml` | Rulează `live_quotes.py` la 15 minute, luni–vineri, și publică `quotes.json` pe ramura orfană `live`. |
+| `tools/apply_live_eth.py` | Aplică idempotent pe o versiune dată CSS-ul, eticheta și JS-ul hibrid TradingView / ETH, scriind N+1. |
 
 Ce face scriptul la fiecare rulare:
 1. Pornește de la ultima versiune N și scrie N+1 plus `LATEST`.
@@ -27,7 +30,30 @@ Ce face scriptul la fiecare rulare:
    - EPS raportat vs estimat, consensul trimestrului următor (`nx`) și reacția prețului (`rx`): Yahoo;
    - scrie în `update-log.txt` „DIFERENȚĂ comunicat vs SEC …” când un trimestru din `FIN_PR` diferă cu > 0.5% de valoarea SEC (sfârșit ±12 zile).
 
-Prețurile live din pagină vin din widget-urile TradingView, la deschiderea paginii.
+## Prețurile live din pagină — hibrid TradingView / flux ETH
+
+Sesiunea se calculează în browser, în America/New_York, și se reverifică la fiecare minut. Trecerea la 09:30 și la 16:00 ET reconstruiește banda și rândurile fără reîncărcare.
+
+- **Sesiunea regulată (09:30–16:00 ET, luni–vineri):** widget-urile TradingView, la deschiderea paginii: banda `ticker-tape` și `single-quote` pe fiecare rând vizibil. Eticheta: „Live · TradingView”.
+- **PRE (04:00–09:30), POST (16:00–20:00) și închis (noaptea, weekend):** widget-urile gratuite TV arată la acțiuni doar sesiunea regulată, deci pagina trece pe fluxul propriu `quotes.json`:
+  - pe rânduri: prețul, % colorat după semn și un badge de sesiune („PRE 08:45 ET”, „POST 17:30 ET”, „ÎNCHIS · POST 19:55 ET”; cu ziua, dacă cotația e din altă zi ET); fără date pentru ticker rămâne prețul din fișier;
+  - banda: proprie, aceleași elemente ca `TAPE`; NAS100 → `NQ` (contractul futures NQ=F, care se mișcă în ETH);
+  - eticheta: „Live · ETH (PRE/POST, ~15 min întârziere)” sau „Închis · ultimele cotații ETH”, cu ora generării;
+  - fetch-ul se face la încărcare, la Refresh și automat la 5 minute. Dacă eșuează, rămân ultimele cotații primite; fără ele, widget-urile TV ca înainte. Eticheta spune „flux ETH indisponibil”.
+- Drawer-ul (graficul mini TV) e același în toate sesiunile.
+- Zilele de sărbătoare ale bursei nu sunt tratate separat: între 09:30 și 16:00 ET pagina arată widget-urile TV.
+
+**Fluxul ETH (`quotes.json`):**
+- Sursă: Yahoo prin `yfinance`, în două cereri pe loturi: `period="2d", interval="5m", prepost=True` pentru ultimul preț și ora lui; `period="7d", interval="1d"` pentru închiderile regulate.
+- Tickeri: toți `openDetails('T'` din ultima versiune. Simboluri speciale: NDX→^NDX, VIX→^VIX, WTI→CL=F, BRENT→BZ=F. Doar pentru bandă: NQ→NQ=F, BTC→BTC-USD, DXY→DX-Y.NYB, US10Y→^TNX.
+- Program: `live.yml`, cron `*/15 8-23 * * 1-5` și `*/15 0-1 * * 2-6` (UTC), care acoperă 04:00–20:00 ET și vara, și iarna. Scriptul iese fără să scrie în weekend și în afara intervalului 04:00–20:15 ET (`--force` doar pentru teste). Se poate porni și manual (Run workflow).
+- Format: `{"generated": "…Z", "q": {"NVDA": {"p": preț, "c": % față de ref, "ref": închiderea de referință, "s": "PRE|REG|POST|CLOSED", "t": "ora barei, ISO UTC"}, …}, "missing": [tickeri fără date]}`.
+  - `s` = sesiunea după ora barei în ET;
+  - `ref`: în PRE și REG, închiderea regulată anterioară; în POST, închiderea regulată de azi; la BTC, închiderea zilei UTC anterioare.
+- Dacă lipsesc peste jumătate dintre tickeri, scriptul nu scrie fișierul (exit 1), iar pe ramura `live` rămâne ultimul `quotes.json` bun.
+- Publicare: ramura orfană `live`, un singur commit, refăcut la fiecare rulare și împins cu force push. Pagina îl citește de la `https://raw.githubusercontent.com/xGABRIELxEUGENx/ai-stack-map/live/quotes.json?ts=<timp>` (CORS permis).
+- **`quotes.json` nu e versiune și nu se ține în `main`.** Nu intră sub regula 1 sau regula 4: e un flux live, refăcut la 15 minute. Pagina rămâne completă fără el (cade pe widget-urile TV și pe prețurile din fișier).
+- O schimbare de pagină pentru live se aplică tot ca versiune nouă N+1 (`tools/apply_live_eth.py`).
 
 ## Regulile, fiecare cu domeniul ei de aplicare
 
@@ -68,7 +94,9 @@ Prețurile live din pagină vin din widget-urile TradingView, la deschiderea pag
 4. Bursa în `TV_EX` (NASDAQ/NYSE/AMEX).
 5. Dacă nu e acțiune:
    - în pagină: `TV_SPECIAL`, `NO_EDGAR` și eventual `SRC_OVERRIDE`;
-   - în script: `YAHOO_SYMBOL` și `NO_EARNINGS`.
+   - în script: `YAHOO_SYMBOL` și `NO_EARNINGS`;
+   - în `live_quotes.py`: `YAHOO_SYMBOL` (simbolul Yahoo pentru fluxul ETH);
+   - în pagină, dacă e indice fără „$”: `ETH_NO_DOLLAR`.
 
 ## Verificări înainte de commit
 

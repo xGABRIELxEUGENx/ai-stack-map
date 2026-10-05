@@ -1,0 +1,43 @@
+name: Live ETH quotes
+
+# Fluxul ETH al paginii: quotes.json (pre-market / after-hours / închis), la 15 minute, luni–vineri.
+# Cron-ul acoperă 04:00–20:00 ET și vara (EDT, UTC-4), și iarna (EST, UTC-5); live_quotes.py filtrează singur ora exactă.
+# quotes.json NU intră în main: se publică pe ramura orfană `live`, cu un singur commit refăcut și împins cu force push.
+on:
+  schedule:
+    - cron: '*/15 8-23 * * 1-5'   # 08:00–23:45 UTC, luni–vineri
+    - cron: '*/15 0-1 * * 2-6'    # 00:00–01:45 UTC, marți–sâmbătă (= seara ET de luni–vineri)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-quotes
+  cancel-in-progress: false
+
+jobs:
+  quotes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install yfinance
+      - run: python live_quotes.py --out "$RUNNER_TEMP/quotes.json"
+      - name: Publică pe ramura live (fără istoric)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          f="$RUNNER_TEMP/quotes.json"
+          if [ ! -f "$f" ]; then echo "Nimic de publicat (în afara programului ETH)."; exit 0; fi
+          d=$(mktemp -d); cp "$f" "$d/quotes.json"; cd "$d"
+          git init -q -b live
+          git config user.name  "stack-map-bot"
+          git config user.email "stack-map-bot@users.noreply.github.com"
+          git add quotes.json
+          git commit -q -m "quotes.json $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" live
+          echo "Publicat pe ramura live."
