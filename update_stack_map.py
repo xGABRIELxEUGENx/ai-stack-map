@@ -140,9 +140,16 @@ def earnings_from_yahoo(d, today):
 SEC_UA = os.environ.get("SEC_USER_AGENT", "").strip()
 SEC_REV_TAGS = ["RevenuesNetOfInterestExpense",          # bănci: venitul net total, cum îl raportează banca
                 "Revenues",                              # venitul total raportat (include ex. derivatele la energie)
+                "RegulatedAndUnregulatedOperatingRevenue",   # utilități (NEE): venitul operațional total
                 "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
                 "RevenueFromContractWithCustomerIncludingAssessedTax"]
-SEC_NI_TAGS = ["NetIncomeLoss", "ProfitLoss"]           # profitul net atribuibil companiei; altfel profitul total
+SEC_NI_TAGS = ["NetIncomeLoss",                          # profitul net atribuibil companiei
+               "NetIncomeLossAvailableToCommonStockholdersBasic",  # atribuibil acționarilor comuni (IRM, APLD nu etichetează NetIncomeLoss)
+               "ProfitLoss"]                             # altfel profitul total (inclusiv minoritarii)
+# doar rapoartele financiare (10-Q/10-K, la emitenții străini 6-K/20-F/40-F, plus 8-K cu situații retratate):
+# DEF 14A / PRE 14A (tabelul „pay versus performance”) repetă profitul anual, uneori în altă unitate
+# (ANET 3,511 „USD” = milioane) și, fiind depus mai târziu, ar înlocui cifra din 10-K → T4 greșit
+SEC_FORMS = {f + a for f in ("10-Q", "10-K", "10-QT", "10-KT", "6-K", "20-F", "40-F", "8-K") for a in ("", "/A")}
 _SEC_CIK = None
 _SEC_CIK_ERR = None                                      # motivul pentru care lista CIK nu s-a putut citi
 
@@ -175,12 +182,13 @@ def _sec_cik(t):
         raise SecUnavailable(_SEC_CIK_ERR)
     return _SEC_CIK.get(t)
 
-def _sec_series(g, tag):
-    """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea cea mai recentă.
-    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă nu se potrivesc, T4 se omite."""
+def _sec_series(g, tag, positive=False):
+    """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea periodică (10-Q/10-K) cea mai recentă.
+    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă nu se potrivesc, T4 se omite.
+    T4 derivat se omite și dacă e implauzibil: anul și cele 9 luni la scară diferită (≥ 1000×) sau, la venituri, ≤ 0."""
     latest = {}
     for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
-        if "start" not in it:
+        if "start" not in it or it.get("form") not in SEC_FORMS:
             continue
         k = (it["start"], it["end"])
         if k not in latest or it.get("filed", "") > latest[k].get("filed", ""):
@@ -196,14 +204,29 @@ def _sec_series(g, tag):
     for (sd, ed), v in ann.items():
         if ed in out:
             continue
-        est = []
+        est, parts = [], []
         nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
-        if nine: est.append(v - nine[0])
+        if nine: est.append(v - nine[0]); parts.append(nine[0])
         three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
-        if len(three) == 3: est.append(v - sum(three))
+        if len(three) == 3: est.append(v - sum(three)); parts.append(sum(three))
         if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
             continue
+        if any(v and p and max(abs(v), abs(p)) >= 1000 * min(abs(v), abs(p)) for p in parts):
+            continue                                       # anul și 9 luni în unități diferite
+        if est and positive and est[0] <= 0:
+            continue
         if est: out[ed] = est[0]
+    return out
+
+def _sec_pick(g, tags, since, positive=False):
+    """Seria unei companii: tag-ul cu cele mai multe trimestre după `since` (la egalitate, ordinea din listă),
+    apoi golurile completate din celelalte tag-uri, în ordinea listei. Așa nu se amestecă un sub-total
+    (ex. NTAP „Revenues” apărut doar în ultimele rapoarte) cu totalul folosit în restul seriei."""
+    series = [_sec_series(g, tag, positive) for tag in tags]
+    best = max(range(len(tags)), key=lambda i: (sum(1 for e in series[i] if e > since), -i))
+    out = dict(series[best])
+    for s in series:
+        for e, v in s.items(): out.setdefault(e, v)
     return out
 
 def sec_quarters(t):
@@ -219,12 +242,9 @@ def sec_quarters(t):
         if getattr(e, "code", None) == 404:                # CIK fără date XBRL
             return None
         raise SecUnavailable(f"{t}: {e}")
-    rev, ni = {}, {}
-    for tag in SEC_REV_TAGS:                               # pe fiecare trimestru: prima definiție din listă care are valoare
-        for e, v in _sec_series(g, tag).items(): rev.setdefault(e, v)
-    for tag in SEC_NI_TAGS:
-        for e, v in _sec_series(g, tag).items(): ni.setdefault(e, v)
-    ends = sorted(e for e in rev if e > dt.date.today() - dt.timedelta(days=550))[-5:]
+    since = dt.date.today() - dt.timedelta(days=550)
+    rev, ni = _sec_pick(g, SEC_REV_TAGS, since, positive=True), _sec_pick(g, SEC_NI_TAGS, since)
+    ends = sorted(e for e in rev if e > since)[-5:]
     rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
     return rows or None
 
@@ -234,7 +254,7 @@ FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// F
 # FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
 FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 5            # crește când se schimbă formatul → toate intrările se reîmprospătează
+FIN_SCHEMA = 6            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
 PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
 PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
 PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt
