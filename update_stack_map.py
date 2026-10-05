@@ -100,6 +100,7 @@ def fetch(t):
                 "pe": info.get("trailingPE"),
                 "earn_ts": info.get("earningsTimestampStart") or info.get("earningsTimestamp"),
                 "earn_est": info.get("isEarningsDateEstimate"),
+                "fcur": info.get("financialCurrency"),
             }
         except Exception as e:
             err = e
@@ -129,6 +130,7 @@ def earnings_from_yahoo(d, today):
 # ---------------------------------------------------------------- date trimestriale (secțiunea 📊 din drawer)
 FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// FIN-END)", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
+FIN_SCHEMA = 2            # crește când se schimbă formatul → toate intrările se reîmprospătează
 
 def _num(x):
     try:
@@ -150,11 +152,18 @@ def _col(df, *names):
             return low[n.lower()]
     return None
 
-def fetch_fin(t):
+def fetch_fin(t, fcur=None):
     """Venituri/profit net pe 5 trimestre, EPS raportat vs estimat, consens trimestrul următor,
     reacția prețului după ultimele raportări. Întoarce dict (poate fi parțial) sau None."""
     tk = yf.Ticker(YAHOO_SYMBOL.get(t, t))
     out = {}
+    # moneda în care raportează compania (TSM = TWD, ASML/SAP = EUR …); cifrele NU se convertesc
+    if not fcur:
+        try:
+            fcur = (tk.info or {}).get("financialCurrency")
+        except Exception:
+            fcur = None
+    out["cur"] = fcur or "USD"
     # 1) contul de profit și pierdere trimestrial
     try:
         q = tk.quarterly_income_stmt
@@ -231,11 +240,11 @@ def fetch_fin(t):
                 out["rx"] = rx[-6:]
     except Exception as e:
         print(f"  ~ {t} fin/rx: {e}")
-    return out or None
+    return out if len(out) > 1 else None
 
 
 def fin_needs_refresh(entry, earn_date, today):
-    if not entry or not entry.get("upd"):
+    if not entry or not entry.get("upd") or entry.get("v") != FIN_SCHEMA:
         return True
     upd = dt.date.fromisoformat(entry["upd"])
     if (today - upd).days >= FIN_MAX_AGE_DAYS:
@@ -244,7 +253,7 @@ def fin_needs_refresh(entry, earn_date, today):
     return bool(earn_date) and upd <= dt.date.fromisoformat(earn_date) <= today
 
 
-def update_fin(html, tickers, today):
+def update_fin(html, tickers, today, data=None):
     m = FIN_RE.search(html)
     if not m:
         print("  ! blocul FIN lipsește din HTML — sar peste datele trimestriale")
@@ -260,9 +269,9 @@ def update_fin(html, tickers, today):
             continue
         if not fin_needs_refresh(fin.get(t), earn_dates.get(t), today):
             continue
-        d = fetch_fin(t)
+        d = fetch_fin(t, ((data or {}).get(t) or {}).get("fcur"))
         if d:
-            d["upd"] = today.isoformat()
+            d["upd"], d["v"] = today.isoformat(), FIN_SCHEMA
             fin[t] = d                        # înlocuiește complet intrarea veche
             done += 1
         else:
@@ -353,7 +362,7 @@ def main():
     html = EARN_LINE_RE.sub(upd_earn, html)
 
     # 3) date trimestriale (doar unde e nevoie: lipsă, mai vechi de 7 zile sau după un raport)
-    html, fin_done, fin_miss = update_fin(html, tickers, today)
+    html, fin_done, fin_miss = update_fin(html, tickers, today, data)
     print(f"Trimestriale: {fin_done} tickeri reîmprospătați | fără date: {', '.join(fin_miss) or 'niciunul'}")
 
     print(f"Rânduri actualizate: {nrows} | tickeri fără date: {', '.join(failed) or 'niciunul'}")
