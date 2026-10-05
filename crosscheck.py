@@ -151,30 +151,41 @@ def tv_quotes(tickers, tvex):
 SEC_REV = ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
            "RevenueFromContractWithCustomerIncludingAssessedTax", "RevenuesNetOfInterestExpense"]
 
+SEC_NI = ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"]
+
 def sec_quarters(cik):
-    """{tag: {end_date: valoare_trimestrială_USD}} din XBRL; Q4 = an − 9 luni când lipsește."""
+    """{"rev": {tag: {end: val}}, "ni": {tag: {end: val}}} din XBRL, toate definițiile oficiale.
+    Fiecare perioadă ia valoarea din raportarea cea mai recentă (retratări incluse).
+    Q4 (lipsește ca trimestru în 10-K) = an − 9 luni și, separat, an − (T1+T2+T3); dacă cele două
+    calcule nu se potrivesc, Q4 nu se compară (incert)."""
     j = http(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json", headers={"Accept-Encoding": "gzip"})
     g = j.get("facts", {}).get("us-gaap", {})
     def series(tag):
-        items = (g.get(tag, {}).get("units", {}) or {}).get("USD", [])
-        q, ann, ytd9 = {}, {}, {}
-        for it in items:
+        latest = {}
+        for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
             if "start" not in it: continue
-            s, e = dt.date.fromisoformat(it["start"]), dt.date.fromisoformat(it["end"])
-            d = (e - s).days
-            if 80 <= d <= 100: q[e] = it["val"]
-            elif 350 <= d <= 380: ann[(s, e)] = it["val"]
-            elif 260 <= d <= 285: ytd9[(s, e)] = it["val"]
-        for (s, e), v in ann.items():
-            if e not in q:
-                nine = [val for (s9, e9), val in ytd9.items() if s9 == s and 0 < (e - e9).days < 110]
-                if nine: q[e] = v - nine[0]
-        return q
-    rev = {}
-    for tag in SEC_REV:                       # primul tag care are date recente câștigă per trimestru
-        for e, v in series(tag).items():
-            rev.setdefault(e, v)
-    return rev, series("NetIncomeLoss")
+            k = (it["start"], it["end"])
+            if k not in latest or it.get("filed", "") > latest[k].get("filed", ""): latest[k] = it
+        q, ann, ytd9 = {}, {}, {}
+        for (st, en), it in latest.items():
+            sd, ed = dt.date.fromisoformat(st), dt.date.fromisoformat(en)
+            d = (ed - sd).days
+            if 80 <= d <= 100: q[ed] = (sd, it["val"])
+            elif 350 <= d <= 380: ann[(sd, ed)] = it["val"]
+            elif 260 <= d <= 285: ytd9[(sd, ed)] = it["val"]
+        out = {e: v for e, (sd, v) in q.items()}
+        for (sd, ed), v in ann.items():
+            if ed in out: continue
+            est = []
+            nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
+            if nine: est.append(v - nine[0])
+            three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
+            if len(three) == 3: est.append(v - sum(three))
+            if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
+                continue                                        # calcule Q4 contradictorii → nu comparăm
+            if est: out[ed] = est[0]
+        return out
+    return ({"rev": {t: series(t) for t in SEC_REV}, "ni": {t: series(t) for t in SEC_NI}})
 
 def nearest(d, series, days=12):
     best = None
@@ -360,18 +371,23 @@ def main():
         if not f or not f.get("q") or t not in cmap: sec_skip.append(t); continue
         if f.get("cur", "USD") != "USD": sec_skip.append(t); continue
         try:
-            rev_s, ni_s = sec_quarters(cmap[t]); time.sleep(0.15)   # limita SEC: max 10 cereri/secundă
+            sq = sec_quarters(cmap[t]); time.sleep(0.15)   # limita SEC: max 10 cereri/secundă
         except Exception as e:
             sec_skip.append(t); continue
         hit = False
         for d, rev, ni in f["q"][-3:]:
             dd = dt.date.fromisoformat(d)
-            a = nearest(dd, rev_s)
-            if a and rev is not None:
-                grade(r, "fin", t, f"venituri {d}", rev, a[2] / 1e6, f"SEC 10-Q/10-K ({a[1]})"); hit = True
-            b = nearest(dd, ni_s)
-            if b and ni is not None:
-                grade(r, "fin", t, f"profit net {d}", ni, b[2] / 1e6, f"SEC 10-Q/10-K ({b[1]})"); hit = True
+            for key, val, label in (("rev", rev, "venituri"), ("ni", ni, "profit net")):
+                if val is None: continue
+                cands = []
+                for tag, ser in sq[key].items():                 # fișierul e corect dacă se potrivește cu ORICARE definiție oficială
+                    nb = nearest(dd, ser)
+                    if nb: cands.append((abs(val - nb[2] / 1e6), tag, nb))
+                if not cands: continue
+                gap, tag, nb = min(cands)
+                hit = True
+                if gap <= 0.15: r.ok(); continue                 # rotunjirea din fișier (0.1M)
+                grade(r, "fin", t, f"{label} {d}", val, nb[2] / 1e6, f"SEC {tag} ({nb[1]})")
         if hit: sec_ok += 1
         else: sec_skip.append(t)
 
