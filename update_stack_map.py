@@ -443,6 +443,12 @@ def fin_needs_refresh(entry, earn_date, today, pr=None, tvq=None):
             return True
         if q[-1][3] == "TV" and q[-1][:3] != tvq:
             return True
+    # raport nou (TradingView are trimestrul), dar EPS-ul Yahoo încă nu → reîncearcă la fiecare rulare (max ~100 zile
+    # după sfârșitul trimestrului); altfel, la un raport AMC prins înainte ca Yahoo să aibă EPS-ul, ar aștepta 7 zile
+    if tvq and (today - _d(tvq[0])).days <= 100:
+        eps = entry.get("eps") or []
+        if not eps or _d(tvq[0]) > _d(eps[-1][0]) + dt.timedelta(days=PR_GAP_DAYS):
+            return True
     prd = {p[0]: p for p in pr or []}
     if any(r[3] == "C" and (r[0] not in prd or [prd[r[0]][1], prd[r[0]][2]] != r[1:3]) for r in q):
         return True
