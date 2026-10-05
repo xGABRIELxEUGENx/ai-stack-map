@@ -1,0 +1,1428 @@
+{
+ "ANET": [
+  {
+   "form": "10-Q",
+   "filingDate": "2026-08-05",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001596532-26-000175",
+   "primaryDocument": "anet-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-04",
+   "reportDate": "2026-08-04",
+   "accessionNumber": "0001596532-26-000174",
+   "primaryDocument": "anet-20260804.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-02",
+   "reportDate": "2026-05-29",
+   "accessionNumber": "0001596532-26-000118",
+   "primaryDocument": "anet-20260529.htm",
+   "items": "5.07"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-05-06",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0001596532-26-000078",
+   "primaryDocument": "anet-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-05",
+   "reportDate": "2026-05-05",
+   "accessionNumber": "0001596532-26-000074",
+   "primaryDocument": "anet-20260505.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-02-17",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0001596532-26-000013",
+   "primaryDocument": "anet-20251231.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-12",
+   "reportDate": "2026-02-12",
+   "accessionNumber": "0001596532-26-000010",
+   "primaryDocument": "anet-20260212.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-11-05",
+   "reportDate": "2025-09-30",
+   "accessionNumber": "0001596532-25-000286",
+   "primaryDocument": "anet-20250930.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-04",
+   "reportDate": "2025-11-04",
+   "accessionNumber": "0001596532-25-000284",
+   "primaryDocument": "anet-20251104.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-08",
+   "reportDate": "2025-09-05",
+   "accessionNumber": "0001596532-25-000258",
+   "primaryDocument": "anet-20250905.htm",
+   "items": "5.02,5.03,8.01,9.01"
+  }
+ ],
+ "NEE": [
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-14",
+   "reportDate": "2026-09-14",
+   "accessionNumber": "0001104659-26-107537",
+   "primaryDocument": "tm2625368d1_8k.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-03",
+   "reportDate": "2026-09-03",
+   "accessionNumber": "0000753308-26-000071",
+   "primaryDocument": "nee-20260903.htm",
+   "items": "5.07"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-25",
+   "reportDate": "2026-08-25",
+   "accessionNumber": "0001104659-26-100476",
+   "primaryDocument": "tm2623831d1_8k.htm",
+   "items": "8.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-11",
+   "reportDate": "2026-08-10",
+   "accessionNumber": "0000753308-26-000065",
+   "primaryDocument": "nee-20260810.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-07-24",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0000753308-26-000060",
+   "primaryDocument": "nee-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-24",
+   "reportDate": "2026-07-24",
+   "accessionNumber": "0000753308-26-000058",
+   "primaryDocument": "nee-20260724.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-08",
+   "reportDate": "2026-07-08",
+   "accessionNumber": "0001104659-26-081863",
+   "primaryDocument": "tm2614888d16_8k.htm",
+   "items": "5.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-22",
+   "reportDate": "2026-06-22",
+   "accessionNumber": "0000753308-26-000052",
+   "primaryDocument": "nee-20260622.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-15",
+   "reportDate": "2026-06-15",
+   "accessionNumber": "0000753308-26-000046",
+   "primaryDocument": "nee-20260615.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-01",
+   "reportDate": "2026-06-01",
+   "accessionNumber": "0000753308-26-000043",
+   "primaryDocument": "nee-20260601.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-27",
+   "reportDate": "2026-05-21",
+   "accessionNumber": "0000753308-26-000041",
+   "primaryDocument": "nee-20260521.htm",
+   "items": "5.07"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-26",
+   "reportDate": "2026-05-26",
+   "accessionNumber": "0000753308-26-000039",
+   "primaryDocument": "nee-20260526.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-18",
+   "reportDate": "2026-05-15",
+   "accessionNumber": "0001104659-26-063001",
+   "primaryDocument": "tm2614888d1_8k.htm",
+   "items": "1.01,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-18",
+   "reportDate": "2026-05-15",
+   "accessionNumber": "0001104659-26-062992",
+   "primaryDocument": "tm2614888d2_8k.htm",
+   "items": "5.02,8.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-04-23",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0000753308-26-000031",
+   "primaryDocument": "nee-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-23",
+   "reportDate": "2026-04-23",
+   "accessionNumber": "0000753308-26-000028",
+   "primaryDocument": "nee-20260423.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-20",
+   "reportDate": "2026-03-20",
+   "accessionNumber": "0000753308-26-000024",
+   "primaryDocument": "nee-20260320.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-10",
+   "reportDate": "2026-03-05",
+   "accessionNumber": "0000753308-26-000022",
+   "primaryDocument": "nee-20260305.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-03",
+   "reportDate": "2026-03-03",
+   "accessionNumber": "0000753308-26-000020",
+   "primaryDocument": "nee-20260303.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-26",
+   "reportDate": "2026-02-26",
+   "accessionNumber": "0000753308-26-000017",
+   "primaryDocument": "nee-20260226.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-02-13",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0000753308-26-000015",
+   "primaryDocument": "nee-20251231.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-10",
+   "reportDate": "2026-02-10",
+   "accessionNumber": "0000753308-26-000011",
+   "primaryDocument": "nee-20260210.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-05",
+   "reportDate": "2026-02-05",
+   "accessionNumber": "0000753308-26-000009",
+   "primaryDocument": "nee-20260205.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-27",
+   "reportDate": "2026-01-27",
+   "accessionNumber": "0000753308-26-000007",
+   "primaryDocument": "nee-20260127.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-02",
+   "reportDate": "2026-01-02",
+   "accessionNumber": "0000753308-26-000004",
+   "primaryDocument": "nee-20260102.htm",
+   "items": "2.02,7.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-31",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0000753308-25-000068",
+   "primaryDocument": "nee-20251231.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-08",
+   "reportDate": "2025-12-08",
+   "accessionNumber": "0000753308-25-000064",
+   "primaryDocument": "nee-20251208.htm",
+   "items": "7.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-05",
+   "reportDate": "2025-12-05",
+   "accessionNumber": "0000753308-25-000062",
+   "primaryDocument": "nee-20251205.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-20",
+   "reportDate": "2025-11-20",
+   "accessionNumber": "0000753308-25-000060",
+   "primaryDocument": "nee-20251120.htm",
+   "items": "8.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-12",
+   "reportDate": "2025-11-12",
+   "accessionNumber": "0000753308-25-000058",
+   "primaryDocument": "nee-20251112.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-10-28",
+   "reportDate": "2025-09-30",
+   "accessionNumber": "0000753308-25-000056",
+   "primaryDocument": "nee-20250930.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-28",
+   "reportDate": "2025-10-28",
+   "accessionNumber": "0000753308-25-000055",
+   "primaryDocument": "nee-20251028.htm",
+   "items": "2.02,9.01"
+  }
+ ],
+ "NTAP": [
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-11",
+   "reportDate": "2026-09-09",
+   "accessionNumber": "0001193125-26-389273",
+   "primaryDocument": "ntap-20260909.htm",
+   "items": "3.03,5.03,5.07"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-09-02",
+   "reportDate": "2026-07-31",
+   "accessionNumber": "0001193125-26-380207",
+   "primaryDocument": "ntap-20260731.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-02",
+   "reportDate": "2026-09-02",
+   "accessionNumber": "0001002047-26-000003",
+   "primaryDocument": "ntap-20260902.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-06-05",
+   "reportDate": "2026-04-24",
+   "accessionNumber": "0001193125-26-259683",
+   "primaryDocument": "ntap-20260424.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-28",
+   "reportDate": "2026-05-21",
+   "accessionNumber": "0001193125-26-245196",
+   "primaryDocument": "ntap-20260521.htm",
+   "items": "2.02,8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-02-26",
+   "reportDate": "2026-01-23",
+   "accessionNumber": "0001193125-26-076622",
+   "primaryDocument": "ntap-20260123.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-26",
+   "reportDate": "2026-02-26",
+   "accessionNumber": "0001193125-26-076545",
+   "primaryDocument": "ntap-20260226.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-12",
+   "reportDate": "2026-01-08",
+   "accessionNumber": "0001193125-26-010401",
+   "primaryDocument": "ntap-20260108.htm",
+   "items": "5.02,7.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-11-25",
+   "reportDate": "2025-10-24",
+   "accessionNumber": "0001193125-25-297237",
+   "primaryDocument": "ntap-20251024.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-25",
+   "reportDate": "2025-11-25",
+   "accessionNumber": "0001193125-25-297164",
+   "primaryDocument": "ntap-20251125.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-15",
+   "reportDate": "2025-09-10",
+   "accessionNumber": "0001193125-25-202408",
+   "primaryDocument": "ntap-20250910.htm",
+   "items": "5.02,5.07,9.01"
+  }
+ ],
+ "TLN": [
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-29",
+   "reportDate": "2026-09-25",
+   "accessionNumber": "0001622536-26-000074",
+   "primaryDocument": "tln-20260925.htm",
+   "items": "5.02,7.01,8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-08-05",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001622536-26-000066",
+   "primaryDocument": "tln-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-05",
+   "reportDate": "2026-08-05",
+   "accessionNumber": "0001622536-26-000065",
+   "primaryDocument": "tln-20260805.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-14",
+   "reportDate": "2026-07-14",
+   "accessionNumber": "0001622536-26-000058",
+   "primaryDocument": "tln-20260714.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-15",
+   "reportDate": "2026-06-15",
+   "accessionNumber": "0001622536-26-000048",
+   "primaryDocument": "tln-20260615.htm",
+   "items": "1.01,2.01,2.03,3.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-21",
+   "reportDate": "2026-05-20",
+   "accessionNumber": "0001622536-26-000042",
+   "primaryDocument": "tln-20260520.htm",
+   "items": "1.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-07",
+   "reportDate": "2026-05-05",
+   "accessionNumber": "0001622536-26-000039",
+   "primaryDocument": "tln-20260505.htm",
+   "items": "5.07"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-05-05",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0001622536-26-000036",
+   "primaryDocument": "tln-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-05",
+   "reportDate": "2026-05-05",
+   "accessionNumber": "0001622536-26-000035",
+   "primaryDocument": "tln-20260505.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-17",
+   "reportDate": "2026-04-17",
+   "accessionNumber": "0001622536-26-000030",
+   "primaryDocument": "tln-20260417.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-02-26",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0001622536-26-000017",
+   "primaryDocument": "tln-20251231.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-26",
+   "reportDate": "2026-02-26",
+   "accessionNumber": "0001622536-26-000014",
+   "primaryDocument": "tln-20260226.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-15",
+   "reportDate": "2026-01-15",
+   "accessionNumber": "0001622536-26-000004",
+   "primaryDocument": "tln-20260115.htm",
+   "items": "1.01,3.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-17",
+   "reportDate": "2025-12-17",
+   "accessionNumber": "0001622536-25-000045",
+   "primaryDocument": "tln-20251217.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-15",
+   "reportDate": "2025-12-09",
+   "accessionNumber": "0001622536-25-000041",
+   "primaryDocument": "tln-20251209.htm",
+   "items": "5.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-25",
+   "reportDate": "2025-11-25",
+   "accessionNumber": "0001622536-25-000037",
+   "primaryDocument": "tln-20251125.htm",
+   "items": "1.01,2.01,2.03,7.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-11-05",
+   "reportDate": "2025-09-30",
+   "accessionNumber": "0001622536-25-000032",
+   "primaryDocument": "tln-20250930.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-05",
+   "reportDate": "2025-11-05",
+   "accessionNumber": "0001622536-25-000031",
+   "primaryDocument": "tln-20251105.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-27",
+   "reportDate": "2025-10-27",
+   "accessionNumber": "0001622536-25-000023",
+   "primaryDocument": "tln-20251027.htm",
+   "items": "1.01,2.03,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-10",
+   "reportDate": "2025-10-10",
+   "accessionNumber": "0001622536-25-000021",
+   "primaryDocument": "tln-20251010.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-10",
+   "reportDate": "2025-10-09",
+   "accessionNumber": "0001622536-25-000018",
+   "primaryDocument": "tln-20251009.htm",
+   "items": "7.01,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-06",
+   "reportDate": "2025-10-06",
+   "accessionNumber": "0001622536-25-000013",
+   "primaryDocument": "tln-20251006.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-09",
+   "reportDate": "2025-09-08",
+   "accessionNumber": "0001622536-25-000010",
+   "primaryDocument": "tln-20250908.htm",
+   "items": "7.01,8.01,9.01"
+  }
+ ],
+ "XE": [
+  {
+   "form": "10-Q",
+   "filingDate": "2026-08-13",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001193125-26-347752",
+   "primaryDocument": "xe-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-13",
+   "reportDate": "2026-08-13",
+   "accessionNumber": "0001193125-26-347740",
+   "primaryDocument": "xe-20260813.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-06-04",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0001193125-26-256376",
+   "primaryDocument": "xe-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-04",
+   "reportDate": "2026-06-04",
+   "accessionNumber": "0001193125-26-256369",
+   "primaryDocument": "xe-20260604.htm",
+   "items": "2.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-19",
+   "reportDate": "2026-05-19",
+   "accessionNumber": "0002088896-26-000005",
+   "primaryDocument": "xe-20260519.htm",
+   "items": "7.01,9.01"
+  }
+ ],
+ "APLD": [
+  {
+   "form": "10-K",
+   "filingDate": "2026-07-29",
+   "reportDate": "2026-05-31",
+   "accessionNumber": "0001144879-26-000048",
+   "primaryDocument": "apld-20260531.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-27",
+   "reportDate": "2026-07-27",
+   "accessionNumber": "0001144879-26-000044",
+   "primaryDocument": "apld-20260727.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-26",
+   "reportDate": "2026-06-26",
+   "accessionNumber": "0001493152-26-030333",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,3.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-16",
+   "reportDate": "2026-06-16",
+   "accessionNumber": "0001493152-26-028899",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-09",
+   "reportDate": "2026-06-08",
+   "accessionNumber": "0001493152-26-027984",
+   "primaryDocument": "form8-k.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-09",
+   "reportDate": "2026-06-09",
+   "accessionNumber": "0001493152-26-027979",
+   "primaryDocument": "form8-k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-09",
+   "reportDate": "2026-06-08",
+   "accessionNumber": "0001493152-26-027857",
+   "primaryDocument": "form8-k.htm",
+   "items": "7.01,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-05",
+   "reportDate": "2026-05-01",
+   "accessionNumber": "0001493152-26-021333",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.01,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-23",
+   "reportDate": "2026-04-23",
+   "accessionNumber": "0001144879-26-000036",
+   "primaryDocument": "apld-20260423.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-16",
+   "reportDate": "2026-04-10",
+   "accessionNumber": "0001493152-26-017092",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-04-08",
+   "reportDate": "2026-02-28",
+   "accessionNumber": "0001144879-26-000030",
+   "primaryDocument": "apld-20260228.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-08",
+   "reportDate": "2026-04-08",
+   "accessionNumber": "0001144879-26-000029",
+   "primaryDocument": "apld-20260408.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-10",
+   "reportDate": "2026-03-10",
+   "accessionNumber": "0001493152-26-009538",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,5.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-04",
+   "reportDate": "2026-02-26",
+   "accessionNumber": "0001493152-26-008849",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-04",
+   "reportDate": "2026-03-04",
+   "accessionNumber": "0001493152-26-008772",
+   "primaryDocument": "form8-k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-02",
+   "reportDate": "2026-03-02",
+   "accessionNumber": "0001493152-26-008549",
+   "primaryDocument": "form8-k.htm",
+   "items": "7.01,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-17",
+   "reportDate": "2026-02-15",
+   "accessionNumber": "0001493152-26-006897",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-09",
+   "reportDate": "2026-02-06",
+   "accessionNumber": "0001493152-26-005788",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-16",
+   "reportDate": "2026-01-14",
+   "accessionNumber": "0001493152-26-002580",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.02,8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-01-08",
+   "reportDate": "2025-11-30",
+   "accessionNumber": "0001144879-26-000006",
+   "primaryDocument": "apld-20251130.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-08",
+   "reportDate": "2026-01-06",
+   "accessionNumber": "0001493152-26-000974",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-07",
+   "reportDate": "2026-01-07",
+   "accessionNumber": "0001144879-26-000002",
+   "primaryDocument": "apld-20260107.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-29",
+   "reportDate": "2025-12-29",
+   "accessionNumber": "0001493152-25-029408",
+   "primaryDocument": "form8-k.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-22",
+   "reportDate": "2025-12-18",
+   "accessionNumber": "0001493152-25-028791",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-02",
+   "reportDate": "2025-11-25",
+   "accessionNumber": "0001493152-25-025753",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-20",
+   "reportDate": "2025-11-20",
+   "accessionNumber": "0001493152-25-024479",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-14",
+   "reportDate": "2025-11-13",
+   "accessionNumber": "0001493152-25-022506",
+   "primaryDocument": "form8-k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-12",
+   "reportDate": "2025-11-12",
+   "accessionNumber": "0001493152-25-021955",
+   "primaryDocument": "form8-k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-10",
+   "reportDate": "2025-11-10",
+   "accessionNumber": "0001493152-25-021404",
+   "primaryDocument": "form8-k.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-10",
+   "reportDate": "2025-11-10",
+   "accessionNumber": "0001493152-25-021400",
+   "primaryDocument": "form8-k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-06",
+   "reportDate": "2025-11-05",
+   "accessionNumber": "0001144879-25-000095",
+   "primaryDocument": "apld-20251105.htm",
+   "items": "5.02,5.03,5.07,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-22",
+   "reportDate": "2025-10-22",
+   "accessionNumber": "0001144879-25-000076",
+   "primaryDocument": "apld-20251022.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-21",
+   "reportDate": "2025-10-21",
+   "accessionNumber": "0001493152-25-018800",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,3.02,5.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-17",
+   "reportDate": "2025-10-14",
+   "accessionNumber": "0001493152-25-018464",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-09",
+   "reportDate": "2025-10-03",
+   "accessionNumber": "0001493152-25-017609",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,3.02,8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-10-09",
+   "reportDate": "2025-08-31",
+   "accessionNumber": "0001144879-25-000069",
+   "primaryDocument": "apld-20250831.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-09",
+   "reportDate": "2025-10-09",
+   "accessionNumber": "0001144879-25-000068",
+   "primaryDocument": "apld-20251009.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-26",
+   "reportDate": "2025-09-25",
+   "accessionNumber": "0001493152-25-015760",
+   "primaryDocument": "form8-k.htm",
+   "items": "5.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-12",
+   "reportDate": "2025-09-09",
+   "accessionNumber": "0001493152-25-013210",
+   "primaryDocument": "form8-k.htm",
+   "items": "1.01,2.03,3.02,5.03,9.01"
+  }
+ ],
+ "BE": [
+  {
+   "form": "10-Q/A",
+   "filingDate": "2026-07-29",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001628280-26-050325",
+   "primaryDocument": "be-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-07-28",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001628280-26-050247",
+   "primaryDocument": "be-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-28",
+   "reportDate": "2026-07-28",
+   "accessionNumber": "0001628280-26-050150",
+   "primaryDocument": "be-20260728.htm",
+   "items": "2.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-09",
+   "reportDate": "2026-07-09",
+   "accessionNumber": "0001628280-26-047734",
+   "primaryDocument": "be-20260709.htm",
+   "items": "7.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-17",
+   "reportDate": "2026-06-15",
+   "accessionNumber": "0001193125-26-274388",
+   "primaryDocument": "d100413d8k.htm",
+   "items": "5.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-27",
+   "reportDate": "2026-05-21",
+   "accessionNumber": "0001628280-26-038451",
+   "primaryDocument": "be-20260521.htm",
+   "items": "5.03,5.07,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-04-29",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0001628280-26-028021",
+   "primaryDocument": "be-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-28",
+   "reportDate": "2026-04-28",
+   "accessionNumber": "0001628280-26-027913",
+   "primaryDocument": "be-20260428.htm",
+   "items": "2.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-27",
+   "reportDate": "2026-04-27",
+   "accessionNumber": "0001193125-26-179381",
+   "primaryDocument": "d133915d8k.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-13",
+   "reportDate": "2026-04-13",
+   "accessionNumber": "0001628280-26-024896",
+   "primaryDocument": "be-20260413.htm",
+   "items": "1.01,3.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-26",
+   "reportDate": "2026-03-26",
+   "accessionNumber": "0001193125-26-126402",
+   "primaryDocument": "d104322d8k.htm",
+   "items": "5.02,7.01,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-02-09",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0001628280-26-006516",
+   "primaryDocument": "be-20251231.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-05",
+   "reportDate": "2026-02-05",
+   "accessionNumber": "0001628280-26-005798",
+   "primaryDocument": "be-20260205.htm",
+   "items": "2.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-23",
+   "reportDate": "2025-12-19",
+   "accessionNumber": "0001628280-25-058618",
+   "primaryDocument": "be-20251219.htm",
+   "items": "1.01,2.03,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-04",
+   "reportDate": "2025-10-30",
+   "accessionNumber": "0001628280-25-049016",
+   "primaryDocument": "be-20251030.htm",
+   "items": "1.01,2.03,3.02,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-30",
+   "reportDate": "2025-10-30",
+   "accessionNumber": "0001193125-25-257353",
+   "primaryDocument": "d80130d8k.htm",
+   "items": "8.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-30",
+   "reportDate": "2025-10-28",
+   "accessionNumber": "0001628280-25-047228",
+   "primaryDocument": "be-20251028.htm",
+   "items": "1.01,3.02"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-10-28",
+   "reportDate": "2025-09-30",
+   "accessionNumber": "0001628280-25-046844",
+   "primaryDocument": "be-20250930.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-10-28",
+   "reportDate": "2025-10-28",
+   "accessionNumber": "0001628280-25-046745",
+   "primaryDocument": "be-20251028.htm",
+   "items": "2.02,7.01,9.01"
+  }
+ ],
+ "GTLB": [
+  {
+   "form": "10-Q",
+   "filingDate": "2026-09-02",
+   "reportDate": "2026-07-31",
+   "accessionNumber": "0001628280-26-059943",
+   "primaryDocument": "gtlb-20260731.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-01",
+   "reportDate": "2026-08-28",
+   "accessionNumber": "0001628280-26-059820",
+   "primaryDocument": "gtlb-20260828.htm",
+   "items": "2.02,5.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-08",
+   "reportDate": "2026-07-08",
+   "accessionNumber": "0001653482-26-000145",
+   "primaryDocument": "gtlb-20260708.htm",
+   "items": "7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-24",
+   "reportDate": "2026-06-17",
+   "accessionNumber": "0001653482-26-000139",
+   "primaryDocument": "gtlb-20260617.htm",
+   "items": "5.02,5.07"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-06-02",
+   "reportDate": "2026-06-01",
+   "accessionNumber": "0001628280-26-039805",
+   "primaryDocument": "gtlb-20260601.htm",
+   "items": "2.02,2.05,7.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-06-02",
+   "reportDate": "2026-04-30",
+   "accessionNumber": "0001628280-26-039793",
+   "primaryDocument": "gtlb-20260430.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-19",
+   "reportDate": "2026-05-18",
+   "accessionNumber": "0001653482-26-000107",
+   "primaryDocument": "gtlb-20260518.htm",
+   "items": "7.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-11",
+   "reportDate": "2026-05-11",
+   "accessionNumber": "0001653482-26-000095",
+   "primaryDocument": "gtlb-20260511.htm",
+   "items": "2.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-16",
+   "reportDate": "2026-04-13",
+   "accessionNumber": "0001653482-26-000051",
+   "primaryDocument": "gtlb-20260413.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-03-17",
+   "reportDate": "2026-01-31",
+   "accessionNumber": "0001628280-26-018731",
+   "primaryDocument": "gtlb-20260131.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-03",
+   "reportDate": "2026-03-02",
+   "accessionNumber": "0001628280-26-013795",
+   "primaryDocument": "gtlb-20260302.htm",
+   "items": "2.02,7.01,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-12",
+   "reportDate": "2026-01-09",
+   "accessionNumber": "0001653482-26-000009",
+   "primaryDocument": "gtlb-20260109.htm",
+   "items": "5.02,7.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-01-05",
+   "reportDate": "2025-12-30",
+   "accessionNumber": "0001653482-26-000002",
+   "primaryDocument": "gtlb-20251230.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-12-03",
+   "reportDate": "2025-10-31",
+   "accessionNumber": "0001628280-25-054840",
+   "primaryDocument": "gtlb-20251031.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-12-02",
+   "reportDate": "2025-12-02",
+   "accessionNumber": "0001628280-25-054758",
+   "primaryDocument": "gtlb-20251202.htm",
+   "items": "2.02,5.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-26",
+   "reportDate": "2025-11-25",
+   "accessionNumber": "0001653482-25-000060",
+   "primaryDocument": "gtlb-20251125.htm",
+   "items": "1.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-23",
+   "reportDate": "2025-09-19",
+   "accessionNumber": "0001653482-25-000042",
+   "primaryDocument": "gtlb-20250919.htm",
+   "items": "5.02"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-09-04",
+   "reportDate": "2025-07-31",
+   "accessionNumber": "0001653482-25-000010",
+   "primaryDocument": "gtlb-20250731.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-03",
+   "reportDate": "2025-08-28",
+   "accessionNumber": "0001653482-25-000008",
+   "primaryDocument": "gtlb-20250828.htm",
+   "items": "2.02,5.02,7.01,9.01"
+  }
+ ],
+ "SOUN": [
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-04",
+   "reportDate": "2026-09-04",
+   "accessionNumber": "0001213900-26-097712",
+   "primaryDocument": "ea0304691-8k_sound.htm",
+   "items": "1.01,2.01,3.02,5.02,7.01,8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-04",
+   "reportDate": "2026-09-04",
+   "accessionNumber": "0001213900-26-097477",
+   "primaryDocument": "ea0304188-8k_soundhound.htm",
+   "items": "8.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-09-02",
+   "reportDate": "2026-09-02",
+   "accessionNumber": "0001213900-26-096796",
+   "primaryDocument": "ea0304366-8k425_sound.htm",
+   "items": "3.02"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-08-10",
+   "reportDate": "2026-06-30",
+   "accessionNumber": "0001840856-26-000022",
+   "primaryDocument": "soun-20260630.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-08-05",
+   "reportDate": "2026-08-05",
+   "accessionNumber": "0001840856-26-000019",
+   "primaryDocument": "soun-20260805.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-24",
+   "reportDate": "2026-07-20",
+   "accessionNumber": "0001213900-26-081088",
+   "primaryDocument": "ea0299116-8k425_sound.htm",
+   "items": "8.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-13",
+   "reportDate": "2026-07-13",
+   "accessionNumber": "0001213900-26-077663",
+   "primaryDocument": "ea0297736-8k_sound.htm",
+   "items": "9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-07-02",
+   "reportDate": "2026-07-02",
+   "accessionNumber": "0001213900-26-075086",
+   "primaryDocument": "ea0296856-8k425_sound.htm",
+   "items": "1.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-27",
+   "reportDate": "2026-05-27",
+   "accessionNumber": "0001213900-26-061610",
+   "primaryDocument": "ea0292095-8k_sound.htm",
+   "items": "5.03,5.07,8.01,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2026-05-11",
+   "reportDate": "2026-03-31",
+   "accessionNumber": "0001840856-26-000015",
+   "primaryDocument": "soun-20260331.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-05-07",
+   "reportDate": "2026-05-07",
+   "accessionNumber": "0001840856-26-000012",
+   "primaryDocument": "soun-20260507.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-04-21",
+   "reportDate": "2026-04-21",
+   "accessionNumber": "0001213900-26-045987",
+   "primaryDocument": "ea0287117-8k425_sound.htm",
+   "items": "1.01,3.02,7.01,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-03-18",
+   "reportDate": "2026-03-18",
+   "accessionNumber": "0001213900-26-030707",
+   "primaryDocument": "ea0282324-8k_sound.htm",
+   "items": "5.02,9.01"
+  },
+  {
+   "form": "10-K",
+   "filingDate": "2026-03-02",
+   "reportDate": "2025-12-31",
+   "accessionNumber": "0001840856-26-000006",
+   "primaryDocument": "soun-20251231.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2026-02-26",
+   "reportDate": "2026-02-26",
+   "accessionNumber": "0001840856-26-000002",
+   "primaryDocument": "soun-20260226.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "10-Q",
+   "filingDate": "2025-11-10",
+   "reportDate": "2025-09-30",
+   "accessionNumber": "0001840856-25-000022",
+   "primaryDocument": "soun-20250930.htm",
+   "items": ""
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-11-06",
+   "reportDate": "2025-11-06",
+   "accessionNumber": "0001840856-25-000018",
+   "primaryDocument": "soun-20251106.htm",
+   "items": "2.02,9.01"
+  },
+  {
+   "form": "8-K",
+   "filingDate": "2025-09-09",
+   "reportDate": "2025-09-03",
+   "accessionNumber": "0001213900-25-086243",
+   "primaryDocument": "ea0256604-8k_sound.htm",
+   "items": "1.01,2.01,7.01,8.01,9.01"
+  }
+ ]
+}

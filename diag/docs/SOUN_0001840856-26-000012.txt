@@ -1,0 +1,206 @@
+https://www.sec.gov/Archives/edgar/data/1840856/000184085626000012/
+##### soun-20260507ex991earnings.htm
+EX-99.1
+2
+soun-20260507ex991earnings.htm
+EX-99.1
+Document
+SoundHound AI Reports Record Q1 Revenue of $44.2 million, Up 52%
+Launches OASYS as the gold standard agentic platform to revolutionize the way businesses interact with customers across every channel and touchpoint
+SANTA CLARA, Calif.--SoundHound AI, Inc. (Nasdaq: SOUN), a global leader in voice and agentic AI, today reported its financial results for the first quarter 2026 .
+“SoundHound started the year strong with our top line growing 52%. Excluding the impact of all acquisitions, revenue was up 88% in our core automotive and IoT AI vertical, highlighting incredible demand across all pillars of our business,” said Keyvan Mohajer, CEO and Co-founder of SoundHound AI. “Our launch of OASYS and our planned acquisition of LivePerson will bring the world’s first self-learning agentic AI platform to one of the most robust enterprise footprints in the entire conversational AI sector.”
+Financial Highlights
+• First quarter r eported revenue was $44.2 million, an increase of 52% year-over-year
+• First quarter GAAP gross margin was 31.1%; non-GAAP gross margin was 49.7%
+• First quarter GAAP net loss was $(25.0) million; non-GAAP net loss was $(26.6) million
+• First quarter adjusted EBITDA was a loss of $(26.7) million
+• First quarter GAAP earnings per share was a loss of $(0.06); non-GAAP earnings per share was a loss of $(0.06)
+• First quarter expenses included certain non recurring charges such as true up costs from vendors that also impacted both GAAP and non-GAAP gross margin
+• GAAP results include a gain from the calculated fair value of contingent acquisition liabilities where future earnout shares are marked-to-market on a quarterly basis based on the company’s stock price. Non-GAAP measures exclude this non-operating/non-cash impact.
+“We had a strong start to the year, delivering undeniable value for our end customers across multiple channels and a growing number of industries," said James Hom, CFO and Co-founder of SoundHound AI. "Our rapid innovation positions us for scale while setting us up for massive cost benefits in future years. We are exiting the quarter with a strong balance sheet and are poised to achieve robust growth for the rest of the year."
+Business Highlights
+• SoundHound AI Signs Agreement To Acquire LivePerson
+◦ Acquisition will combine SoundHound’s strengths in voice and agentic AI with LivePerson’s digital messaging services
+◦ Combined company expects a $500M revenue opportunity, accelerated path to profitability, strong balance sheet, and no debt
+◦ Results in one of the most comprehensive enterprise customer footprints in the conversational AI sector, including 25 of the Fortune 100
+◦ 2027 revenue range expected to be, at minimum, $350M-$400M, with at least $100M of growable contribution from LivePerson's long-tenured customers
+◦ Expected to close in the second half of 2026, subject to customary regulatory approvals and closing conditions
+• Launches OASYS
+◦ Launched the world’s first self-learning orchestrated agentic AI platform, where AI builds AI
+◦ OASYS allows businesses to do in minutes what once took months by managing the entire agentic AI lifecycle: automatically creating, orchestrating, evaluating, and improving agents over time
+◦ The technology marks a fundamental shift in the role of AI from something that must be continuously built and maintained, to a system that actively evolves based on real-world usage
+• Auto, Devices & Voice Commerce:
+◦ Multiple TV and auto OEMs integrating SoundHound's Voice Commerce
+◦ Signed a new 7-figure commitment with prominent Japanese manufacturer to deploy SoundHound’s voice assistant across vehicles globally
+◦ Multinational OEM signed expansion in South America
+◦ Signed agreement to integrate SoundHound’s voice AI across Walmart’s TV brand, ONN
+• Restaurants, Retail & Consumer Goods:
+◦ Major QSR seeing growing ROI with positive results from SoundHound’s drive thru technology - with AI-enabled locations generating more revenue than those not deploying the technology
+◦ Increased cross-sell wins among restaurant solutions, and a strong uptick in the adoption of SoundHound’s Voice Insights product
+◦ Deployed AI solutions with major global fitness apparel brands, representing the majority of the market share in that category
+◦ Signed deals with:
+▪ A national residential and commercial service company specializing in eco-friendly indoor air quality, with over 200 franchise locations
+▪ A 450 location water survival and swim school.
+▪ Multiple boutique fitness chains, with a total opportunity of 900+ locations
+• Banking, Financial Services & Insurance:
+◦ Expanded services with:
+▪ One the world’s largest banks that serves millions of customers, clients and communities in over 100 global markets
+▪ A New York based global financial services platforms company
+▪ An American multinational financial services corporation headquartered in Denver, Colorado
+▪ A multinational conglomerate corporation that offers a number of products and services across its multiple business groups
+▪ One of the 10th largest credit unions in the US operating with over 100 branches
+▪ A major American insurance corporation headquartered in Texas and operating in all 50 states
+◦ Renewed with one of the largest insurance companies in the U.S., a Fortune 100 company
+• Utilities, Energy & Telecommunications:
+◦ Closed a multi-year renewal with an American retail electricity provider headquartered in Texas, serving both residential and business customers
+◦ Expanded services with a large Kansas-based electric company serving both residential and commercial customers
+◦ Renewed and expanded services with a large telecommunications provider that offers broadband internet, digital television, and computer technical support to customers in 25 states
+• Healthcare, Pharmaceuticals & Life Sciences
+◦ Renewed and added additional services as part of our relationship with Allina Health
+◦ Won the business of a specialized U.S. healthcare organization offering care in multiple states
+◦ Renewed with a large U.S.-based healthcare network specializing in medical, surgical, and cosmetic dermatology, operating across 14 states in over 150 locations
+• Technology, Software & IT Services:
+◦ Renewed and expanded with a Japanese multinational conglomerate operating across sectors including energy, digital systems, mobility, and industrial infrastructure
+◦ Expanded services into Europe with one of the largest technology companies in the world
+• Channel Expansion:
+◦ Announced a partnership with Manpower Group bringing AI and automation solutions to large enterprises
+◦ Agreed to a partnership with an American multinational corporation that designs, builds, and manages infrastructure services.
+◦ Renewed with:
+▪ A leading global IT services and consulting company, providing digital transformation, AI, and cloud computing solutions
+▪ One of the largest information technology services and consulting companies in the world, headquartered in France
+▪ A Japanese-headquartered company that offers IT services, system integration, cloud computing, and information security.
+First Quarter 2026 Financial Measures 1
+| | | | | | | | | | | | | | | | | | | | | | | | | | | | | |
+Three Months Ended
+(thousands, unless otherwise noted)
+| | March 31, 2026 | | March 31, 2025 | |
+Change
+|
+Revenues | | $ | 44,195 | | $ | 29,129 | | | 52 | % |
+GAAP gross profit | | $ | 13,742 | | $ | 10,618 | | | 29 | % |
+GAAP gross margin | | | 31.1% | | | 36.5% | | | (5.4) | pp |
+Non-GAAP gross profit | | $ | 21,960 | | $ | 14,807 | | | 48 | % |
+Non-GAAP gross margin | | | 49.7% | | | 50.8% | | | (1.1) | pp |
+GAAP operating income (loss) 2
+| | $ | (22,671) | | | $ | 128,097 | | | | (118) | % |
+Non-GAAP adjusted EBITDA | | $ | (26,688) | | | $ | (22,172) | | | | (20) | % |
+GAAP net income (loss) 2
+| | $ | (25,028) | | | $ | 129,932 | | | | (119) | % |
+Non-GAAP net loss | | $ | (26,554) | | | $ | (22,331) | | | | (19) | % |
+GAAP net income (loss) per share 2
+| | $ | (0.06) | | | $ | 0.33 | | | $ | (0.39) | |
+Non-GAAP net loss per share | | $ | (0.06) | | | $ | (0.06) | | | $ | — | |
+1) Ple ase see tables below for a reconciliation from GAAP to non-GAAP.
+2) GAAP-only operating loss includes a significant impact from the calculated fair value of contingent acquisition liabilities where future earn-out shares are marked-to-market on a quarterly basis, and with the decrease in stock price compared to the previous quarter the gain associated with this item was $39 million in the first quarter of 2026. Non-GAAP measures exclude this non-operating/non-cash impact.
+Liquidity and Cash Flows
+The company’s total cash and cash equivalents was $216 million at March 31, 2026 , with no debt.
+Condensed Cash Flow Statement
+| | | | | | | | | | | | | | | | | | | | |
+Quarter Ended
+(thousands)
+| | March 31, 2026 | | March 31, 2025 |
+Cash flows: | | | | | | |
+Net cash used in operating activities | | $ | (26,258) | | | $ | (19,185) | |
+Net cash used in investing activities | | | (3,060) | | | | (162) | |
+Net cash provided by (used in) financing activities | | | (3,243) | | | | 67,010 | |
+Effects of exchange rate changes on cash | | | (287) | | | | (94) | |
+Net change in cash and cash equivalents | | $ | (32,848) | | | $ | 47,569 | |
+Business Outlook
+SoundHound AI reaffirms its full year 2026 revenue outlook and still expects it to be in a range of $225 - $260 million.
+Additional Information
+For more information please see the company’s SEC filings which can be obtained on the company’s website at investors.soundhound.com. The financial statements will be posted on the website, and will be included when the company files its 8-K. The financial data presented in this press release should be considered preliminary until the company files its 10-Q.
+Conference Call and Webcast
+SoundHound AI will host a live audio conference call and webcast today at 2:00 p.m. Pacific Time/5:00 p.m. Eastern Time. A live webcast and replay will also be accessible at investors.soundhound.com.
+About SoundHound AI
+SoundHound AI is a voice and agentic AI company that enables businesses to deliver natural, end-to-end conversational experiences across digital and physical channels, including phones, kiosks, chat, smart devices, drive-thrus, TVs, in-vehicle, and more. Its agentic platform, OASYS, is a self-learning, orchestrated AI system where organizations can build and deploy conversational AI agents to handle transactions, tasks, and workflows on behalf of customers and employees. Built on proprietary technology backed by 400+ patents and years of AI research, SoundHound serves leading brands across industries including automotive, financial services, healthcare, retail, telecommunications, and more. It powers millions of products and processes billions of interactions annually for enterprise customers worldwide. For more information, visit: www.soundhound.com
+Forward Looking Statements
+This press release contains forward-looking statements, which are not historical facts, within the meaning of Section 27A of the Securities Act of 1933, as amended, and Section 21E of the Securities Exchange Act of 1934, as amended. In some cases, you can identify forward-looking statements by the use of words such as “may,” “could,” “expect,” “intend,” “plan,” “seek,” “anticipate,” “believe,” “estimate,” “predict,” “potential,” “continue,” “likely,” “will,” “would” and variations of these terms and similar expressions, or the negative of these terms or similar expressions. These forward-looking statements include, but are not limited to, statements concerning our expected financial performance, our ability to implement our business strategy and anticipated business and operations, the anticipated closing of our pending acquisition of LivePerson, and guidance for financial results for 2026 and 2027 giving effect to the acquisition of LivePerson. Such forward-looking statements are necessarily based upon estimates and assumptions that, while considered reasonable by us and our management, are inherently uncertain. As a result, readers are cautioned not to place undue reliance on these forward-looking statements. Our actual results may differ materially from those expressed or implied by these forward-looking statements as a result of risks and uncertainties impacting SoundHound’s business including, our ability to successfully launch and commercialize new products and services and derive significant revenue, our market opportunity and our ability to acquire new customers and retain existing customers, our ability to close the acquisition of LivePerson in our expected timeframe or at all, unexpected costs, charges or expenses resulting from our recent acquisitions and our pending acquisition of LivePerson, the ability of our recent acquisitions and, upon closing, our acquisition of LivePerson, to be accretive on the company's financial results, and those other factors described in our risk factors set forth in our filings with the Securities and Exchange Commission from time to time, including our Annual Report on Form 10-K, Quarterly Reports on Form 10-Q and Current Reports on Form 8-K. We do not intend to update or alter our
+forward-looking statements, whether as a result of new information, future events or otherwise, except as required by applicable law.
+Non-GAAP Measures of Financial Performance
+To supplement the company’s financial statements, which are presented on the basis of U.S. generally accepted accounting principles (GAAP), the following non-GAAP measures of financial performance are included in this release: non-GAAP gross profit, non-GAAP gross margin, adjusted EBITDA, non-GAAP net loss and non-GAAP earnings per share.
+The company believes that providing this non-GAAP information in addition to the GAAP financial information allows investors to view the financial results in the way the company views its operating results. The company also believes that providing this information allows investors to not only better understand the company's financial performance, but also, better evaluate the information used by management to evaluate and measure such performance.
+As such, the company believes that disclosing non-GAAP financial measures to the readers of its financial statements provides the reader with useful supplemental information that allows for greater transparency in the review of the company’s financial and operational performance.
+The company defines its non-GAAP measures by excluding certain items:
+The company arrives at non-GAAP gross profit and non-GAAP gross margin by excluding (i) amortization of intangibles (including acquired intangible assets), (ii) stock-based compensation and related payroll taxes, and (iii) acquisition-related costs
+The company arrives at adjusted EBITDA by excluding (i) total other income/(expense), net, (ii) income taxes, (iii) depreciation and amortization expense (including acquired intangible assets), (iv) amortization of capitalized commissions, (v) stock-based compensation and related payroll taxes, (vi) change in fair value of contingent acquisition liabilities, and (vii) acquisition-related costs.
+The company arrives at non-GAAP net loss and non-GAAP net loss per share by excluding (i) depreciation and amortization expense (including acquired intangible assets), (ii) amortization of capitalized commissions, (iii) stock-based compensation and related payroll taxes, (iv) change in fair value of contingent acquisition liabilities, (v) change in fair value of derivative, (vi) acquisition-related costs.
+Reconciliations of GAAP to these adjusted non-GAAP financial measures are included in the tables below. When analyzing the company's operating results, investors should not consider non-GAAP measures as substitutes for the comparable financial measures prepared in accordance with GAAP.
+To the extent that the company presents any forward-looking non-GAAP financial measures, the company does not present a quantitative reconciliation of such measures to the most directly comparable GAAP financial measure (or otherwise present such forward-looking GAAP measures) because it is impractical to do so.
+First Quarter Reconciliation of GAAP Gross Profit to Non-GAAP Gross Profit and GAAP Gross Margin to Non-GAAP Gross Margin
+| | | | | | | | | | | | | | | | | | | | |
+Three Months Ended
+(thousands, unless otherwise noted)
+| | March 31, 2026 | | March 31, 2025 |
+GAAP gross profit 1
+| | $ | 13,742 | | $ | 10,618 |
+Adjustments: | | | | | | |
+Depreciation and amortization | | | 4,983 | | | | 4,046 | |
+Stock-based compensation and related payroll taxes²
+| | | 3,090 | | | | 143 | |
+Acquisition-related expenses | | | 145 | | | | — | |
+Non-GAAP gross profit | | $ | 21,960 | | | $ | 14,807 | |
+GAAP gross margin | | | 31.1% | | | 36.5% |
+Non-GAAP gross margin | | | 49.7% | | | 50.8% |
+1) G AAP gross profit is calculated by subtracting the cost of revenues from revenues.
+2) Q1 2026 includes employer payroll taxes that result from stock-based compensation in the amount of $0.2 million .
+First Quarter Reconciliation of GAAP Net Income (Loss) to Non-GAAP Adjusted EBITDA
+| | | | | | | | | | | | | | | | | | | | |
+Three Months Ended
+(thousands)
+| | March 31, 2026 | | March 31, 2025 |
+GAAP net income (loss) | | $ | (25,028) | | | $ | 129,932 | |
+Adjustments: | | | | | | |
+Total other income (expense), net 1
+| | | 1,559 | | | | (2,654) | |
+Income taxes | | | 798 | | | | 819 | |
+Depreciation and amortization | | | 9,966 | | | | 7,755 | |
+Amortization of capitalized commissions | | | 538 | | | | — | |
+Stock-based compensation and related payroll taxes 2
+| | | 19,952 | | | | 17,440 | |
+Change in fair value of contingent acquisition liabilities | | | (39,392) | | | | (176,100) | |
+Acquisition-related expenses 3
+| | | 4,919 | | | | 636 | |
+Non-GAAP adjusted EBITDA | | $ | (26,688) | | | $ | (22,172) | |
+1) Includes other income (expense), net of $(1.5) million and $2.9 million for the three months ended March 31, 2026 and 2025, respectively.
+2) Q1 2026 includes employer payroll taxes that result from stock-based compensation in the amount of $1.4 million.
+3) Acquisition-related expenses in Q1'26 also include acquisition-related severance expenses and transition expenses resulting from the transition agreements under specific acquisition. Acquisition-related transition expenses were newly added to non-GAAP adjustments in the current period and were not included in the comparative period.
+First Quarter Reconciliation of GAAP Net Income (Loss) to Non-GAAP Net Loss and Non-GAAP Net Loss Per Share
+| | | | | | | | | | | | | | | | | | | | |
+Three Months Ended
+(thousands, unless otherwise noted)
+| | March 31, 2026 | | March 31, 2025 |
+GAAP net income (loss) attributable to SoundHound common shareholders | | $ | (25,028) | | | $ | 129,227 | |
+Adjustments: | | | | | | |
+Depreciation and amortization | | | 9,966 | | | | 7,755 | |
+Amortization of capitalized commissions | | | 538 | | | | — | |
+Stock-based compensation and related payroll taxes 1
+| | | 19,952 | | | | 17,440 | |
+Change in fair value of contingent acquisition liabilities | | | (39,392) | | | | (176,100) | |
+Change in fair value of derivative | | | 2,491 | | | | (1,289) | |
+Acquisition-related expenses 2
+| | | 4,919 | | | | 636 | |
+Non-GAAP net loss | | $ | (26,554) | | | $ | (22,331) | |
+Basic: | | | | | | |
+GAAP net income (loss) per share 3
+| | $ | (0.06) | | | $ | 0.33 | |
+Adjustments | | | — | | | | (0.39) | |
+Non-GAAP net loss per share 3
+| | $ | (0.06) | | | $ | (0.06) | |
+Diluted: | | | | | | |
+GAAP net income (loss) per share 4
+| | $ | (0.11) | | | $ | 0.31 | |
+Adjustments | | | 0.05 | | | | (0.37) | |
+Non-GAAP net loss per share 4
+| | $ | (0.06) | | | $ | (0.06) | |
+1) Q1 2026 includes employer payroll taxes that result from stock-based compensation in the amount of $1.4 million.
+2) Acquisition-related expenses in Q1'26 also include acquisition-related severance expenses and transition expenses resulting from the transition agreements under specific acquisition. Acquisition-related transition expenses were newly added to non-GAAP adjustments in the current period and were not included in the comparative period.
+3) Weighted average common shares outstanding (basic) for the three months ended March 31, 2026 and 2025 were 421,472,827 and 393,893,313, respectively.
+4) Weighted average common shares outstanding (diluted) for the three months ended March 31, 2026 and 2025 were 421,472,827 and 393,893,313, respectively. Excludes earnings impact from realized portion of contingently issuable shares related to prior acquisitions.
+Investors:
+Scott Smith
+408-724-1498
+IR@SoundHound.com
+Media:
+Fiona McEvoy
+415-610-6590
+PR@SoundHound.com
