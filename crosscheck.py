@@ -4,8 +4,10 @@ crosscheck.py — METODA B de verificare a AI Stack Map: cod automat, pe TOȚI t
 cu alte surse și alt traseu de date decât update_stack_map.py (nu importă nimic din el).
 
 Surse de control (fără cont, fără cheie API):
-  - Prețuri, %, market cap, volum, P/E: TradingView scanner (scanner.tradingview.com) — nu Yahoo.
-  - Venituri și profit net trimestriale: SEC EDGAR XBRL (data.sec.gov) — raportările oficiale 10-Q/10-K.
+  - Prețuri, %, market cap, volum, P/E: TradingView scanner (scanner.tradingview.com) — nu Yahoo (Yahoo e sursa
+    scriptului de actualizare pentru acestea).
+  - Venituri și profit net trimestriale: Yahoo Finance (yfinance, quarterly_income_stmt: „Total Revenue”, „Net Income”) —
+    pagina le ia DOAR din documente oficiale (SEC 10-Q/10-K + comunicatele companiei), deci Yahoo e aici un traseu diferit.
 Verificări interne (nu depind de nicio sursă):
   - JS-ul paginii e valid; LATEST e identic cu ultima versiune; contoarele straturilor = rândurile;
   - fiecare rând are linie în EARNINGS și invers; culoarea % se potrivește cu semnul;
@@ -15,9 +17,15 @@ Verificări interne (nu depind de nicio sursă):
 
 Scrie crosscheck-report.md (raportul ultimei rulări) și adaugă un rând în crosscheck-history.csv.
 Nu modifică niciodată fișierele HTML.
+Instalare: pip install yfinance lxml
 """
 import csv, datetime as dt, glob, gzip, json, os, re, subprocess, sys, tempfile, time
 import urllib.request
+
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
 
 UA = "AI Stack Map crosscheck stack-map-bot@users.noreply.github.com"
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -32,11 +40,8 @@ TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (
        "pe": (1e9, 15.0),            # P/E: definiții diferite între surse → niciodată „eroare”, doar diferență
        "mcap_adr": (1e9, 3.0),       # ADR: prima față de bursa locală → doar diferență
        "price_24h": (3.0, 1.0), "chg_24h": (2.0, 0.5),
-       "fin": (2.0, 0.5), "shares": (5.0, 2.0)}
-# SEC cere un email real de contact în User-Agent. Se ține în secretul GitHub SEC_USER_AGENT (nu în cod — repo-ul e public).
-SEC_UAS = ([os.environ["SEC_USER_AGENT"]] if os.environ.get("SEC_USER_AGENT") else []) + [
-           "AI Stack Map crosscheck stack-map-bot@users.noreply.github.com",
-           "AIStackMap/1.0 (+https://github.com/xGABRIELxEUGENx/ai-stack-map; stack-map-bot@users.noreply.github.com)"]
+       "fin": (15.0, 3.0), "shares": (5.0, 2.0)}
+FIN_NOTE = "Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)"
 
 
 # ------------------------------------------------------------------ rețea
@@ -148,44 +153,20 @@ def tv_quotes(tickers, tvex):
             if s in got: out[t], used[t] = got[s], s; break
     return out, used
 
-SEC_REV = ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
-           "RevenueFromContractWithCustomerIncludingAssessedTax", "RevenuesNetOfInterestExpense"]
-
-SEC_NI = ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"]
-
-def sec_quarters(cik):
-    """{"rev": {tag: {end: val}}, "ni": {tag: {end: val}}} din XBRL, toate definițiile oficiale.
-    Fiecare perioadă ia valoarea din raportarea cea mai recentă (retratări incluse).
-    Q4 (lipsește ca trimestru în 10-K) = an − 9 luni și, separat, an − (T1+T2+T3); dacă cele două
-    calcule nu se potrivesc, Q4 nu se compară (incert)."""
-    j = http(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json", headers={"Accept-Encoding": "gzip"})
-    g = j.get("facts", {}).get("us-gaap", {})
-    def series(tag):
-        latest = {}
-        for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
-            if "start" not in it: continue
-            k = (it["start"], it["end"])
-            if k not in latest or it.get("filed", "") > latest[k].get("filed", ""): latest[k] = it
-        q, ann, ytd9 = {}, {}, {}
-        for (st, en), it in latest.items():
-            sd, ed = dt.date.fromisoformat(st), dt.date.fromisoformat(en)
-            d = (ed - sd).days
-            if 80 <= d <= 100: q[ed] = (sd, it["val"])
-            elif 350 <= d <= 380: ann[(sd, ed)] = it["val"]
-            elif 260 <= d <= 285: ytd9[(sd, ed)] = it["val"]
-        out = {e: v for e, (sd, v) in q.items()}
-        for (sd, ed), v in ann.items():
-            if ed in out: continue
-            est = []
-            nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
-            if nine: est.append(v - nine[0])
-            three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
-            if len(three) == 3: est.append(v - sum(three))
-            if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
-                continue                                        # calcule Q4 contradictorii → nu comparăm
-            if est: out[ed] = est[0]
-        return out
-    return ({"rev": {t: series(t) for t in SEC_REV}, "ni": {t: series(t) for t in SEC_NI}})
+def yahoo_quarters(t):
+    """{"rev": {sfârșit: valoare}, "ni": {sfârșit: valoare}} din Yahoo quarterly_income_stmt („Total Revenue”, „Net Income”).
+    Yahoo normalizează sfârșitul trimestrului la sfârșit de lună → potrivirea cu fișierul se face la ±12 zile."""
+    q = yf.Ticker(t).quarterly_income_stmt
+    out = {"rev": {}, "ni": {}}
+    if q is None or q.empty: return out
+    for c in q.columns:
+        e = c.date() if hasattr(c, "date") else dt.date.fromisoformat(str(c)[:10])
+        for key, row in (("rev", "Total Revenue"), ("ni", "Net Income")):
+            if row in q.index:
+                try: v = float(q.loc[row, c])
+                except (TypeError, ValueError): continue
+                if v == v: out[key][e] = v                      # NaN → lipsă
+    return out
 
 def nearest(d, series, days=12):
     best = None
@@ -326,70 +307,30 @@ def main():
             if x["pe"] and q["price_earnings_ttm"] and q["price_earnings_ttm"] > 0:
                 grade(r, "pe", t, "P/E", x["pe"], q["price_earnings_ttm"], src_tv, "(TTM calculat diferit)")
 
-    # ---- 3. SEC EDGAR: venituri și profit net pe trimestru
-    global UA
-    cmap, sec_err = {}, []
-    for ua in SEC_UAS:
-        UA = ua
-        try:
-            cmap = {v["ticker"].upper(): int(v["cik_str"]) for v in
-                    http("https://www.sec.gov/files/company_tickers.json", headers={"Accept-Encoding": "gzip"}).values()}
-            notes.append("SEC EDGAR acceptat" + (" (contact din secretul SEC_USER_AGENT)" if ua == os.environ.get("SEC_USER_AGENT") else f" cu User-Agent: {ua}"))
-            break
-        except Exception as e:
-            sec_err.append(str(e)[-60:])
-    if not cmap:                                   # a doua sursă pentru lista ticker → CIK
-        for ua in SEC_UAS:
-            UA = ua
-            try:
-                raw = urllib.request.urlopen(urllib.request.Request("https://www.sec.gov/include/ticker.txt",
-                                             headers={"User-Agent": ua}), timeout=30).read().decode()
-                cmap = {a.upper(): int(b) for a, b in (ln.split("\t") for ln in raw.splitlines() if "\t" in ln)}
-                notes.append("SEC: lista CIK din ticker.txt"); break
-            except Exception as e:
-                sec_err.append("ticker.txt " + str(e)[-40:])
-    if not cmap:                                   # diagnostic: e blocat doar www.sec.gov sau și data.sec.gov?
-        diag = []
-        for ua in SEC_UAS:
-            UA = ua
-            try:
-                http("https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json", headers={"Accept-Encoding": "gzip"}, tries=1)
-                diag.append(f"data.sec.gov OK cu UA #{SEC_UAS.index(ua) + 1}")
-            except Exception as e:
-                diag.append(f"data.sec.gov UA #{SEC_UAS.index(ua) + 1}: {str(e)[-30:]}")
-        secret = "secret SEC_USER_AGENT prezent" if os.environ.get("SEC_USER_AGENT") else "secret SEC_USER_AGENT LIPSĂ"
-        fmt = ""
-        if os.environ.get("SEC_USER_AGENT"):
-            v = os.environ["SEC_USER_AGENT"]
-            quoted = v.strip()[:1] in ("'", '"')
-            fmt = (f", format: {'conține @' if '@' in v else 'FĂRĂ @'}, "
-                   f"{'are nume + spațiu' if ' ' in v.strip() else 'FĂRĂ spațiu'}, ghilimele: {'DA' if quoted else 'nu'}")
-        notes.append(f"SEC EDGAR indisponibil — financiarele neverificate ({secret}{fmt}; {'; '.join(sec_err)}; {'; '.join(diag)})")
-    sec_ok, sec_skip = 0, []
-    for t in stocks:
+    # ---- 3. Yahoo: venituri și profit net pe trimestru (pagina le are din SEC + comunicatele companiei)
+    y_ok, y_skip = 0, []
+    if yf is None: notes.append("yfinance lipsește — financiarele neverificate (pip install yfinance lxml)")
+    for t in stocks if yf else []:
         f = (fin or {}).get(t)
-        if not f or not f.get("q") or t not in cmap: sec_skip.append(t); continue
-        if f.get("cur", "USD") != "USD": sec_skip.append(t); continue
+        if not f or not f.get("q"): y_skip.append(t); continue
         try:
-            sq = sec_quarters(cmap[t]); time.sleep(0.15)   # limita SEC: max 10 cereri/secundă
+            yq = yahoo_quarters(t); time.sleep(0.3)
         except Exception as e:
-            sec_skip.append(t); continue
+            y_skip.append(t); continue
         hit = False
-        for d, rev, ni in f["q"][-3:]:
+        for row in f["q"][-3:]:
+            d, rev, ni = row[:3]
+            tag = row[3] if len(row) > 3 else "?"
             dd = dt.date.fromisoformat(d)
             for key, val, label in (("rev", rev, "venituri"), ("ni", ni, "profit net")):
                 if val is None: continue
-                cands = []
-                for tag, ser in sq[key].items():                 # fișierul e corect dacă se potrivește cu ORICARE definiție oficială
-                    nb = nearest(dd, ser)
-                    if nb: cands.append((abs(val - nb[2] / 1e6), tag, nb))
-                if not cands: continue
-                gap, tag, nb = min(cands)
+                nb = nearest(dd, yq[key])
+                if not nb: continue
                 hit = True
-                if gap <= 0.15: r.ok(); continue                 # rotunjirea din fișier (0.1M)
-                grade(r, "fin", t, f"{label} {d}", val, nb[2] / 1e6, f"SEC {tag} ({nb[1]})")
-        if hit: sec_ok += 1
-        else: sec_skip.append(t)
+                if abs(val - nb[2] / 1e6) <= 0.15: r.ok(); continue      # rotunjirea din fișier (0.1M)
+                grade(r, "fin", t, f"{label} {d} [{tag}]", val, nb[2] / 1e6, f"Yahoo ({nb[1]})", FIN_NOTE)
+        if hit: y_ok += 1
+        else: y_skip.append(t)
 
     # ---- raport
     errs = [i for i in r.items if i[0] == "EROARE"]
@@ -399,8 +340,8 @@ def main():
     L = [f"# Cross-check metoda B — v{n}", "",
          f"Rulat: {stamp} · fișier: `{os.path.basename(path)}` · tickeri: {len(rows)}", "",
          f"**{r.checked} verificări · {okn} OK · {len(errs)} erori · {len(diffs)} diferențe**", "",
-         f"Surse: TradingView scanner ({len(tvq)}/{len(rows)} tickeri cotați) · SEC EDGAR XBRL ({sec_ok} companii verificate; "
-         f"fără date SEC trimestriale: {len(sec_skip)} — ADR/IFRS, ETF sau tag-uri lipsă)", ""]
+         f"Surse: TradingView scanner ({len(tvq)}/{len(rows)} tickeri cotați) · Yahoo Finance financiare ({y_ok} companii verificate; "
+         f"fără comparație: {len(y_skip)} — fără q în fișier sau trimestre lipsă la Yahoo)", ""]
     for title, lst in (("Erori", errs), ("Diferențe", diffs)):
         L += [f"## {title} ({len(lst)})", ""]
         if lst:
@@ -411,14 +352,14 @@ def main():
             L.append("—")
         L.append("")
     if notes: L += ["## Note", ""] + [f"- {x}" for x in sorted(set(notes))] + [""]
-    if sec_skip and cmap: L += [f"Fără verificare SEC: {', '.join(sorted(set(sec_skip)))}", ""]
+    if y_skip and yf: L += [f"Fără verificare financiară (Yahoo): {', '.join(sorted(set(y_skip)))}", ""]
     open(os.path.join(HERE, "crosscheck-report.md"), "w", encoding="utf-8").write("\n".join(L))
     hist = os.path.join(HERE, "crosscheck-history.csv")
     new = not os.path.exists(hist)
     with open(hist, "a", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        if new: w.writerow(["data_utc", "versiune", "verificari", "ok", "erori", "diferente", "tv_cotati", "sec_companii"])
-        w.writerow([stamp, n, r.checked, okn, len(errs), len(diffs), len(tvq), sec_ok])
+        if new: w.writerow(["data_utc", "versiune", "verificari", "ok", "erori", "diferente", "tv_cotati", "fin_companii"])
+        w.writerow([stamp, n, r.checked, okn, len(errs), len(diffs), len(tvq), y_ok])
     print("\n".join(L[:8]))
 
 
