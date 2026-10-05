@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [sec-anomalii]
-    paths: ['diag/sec_dump.py', '.github/workflows/diag-sec.yml']
+    paths: ['diag/sec_docs.py']
 permissions:
   contents: write
 jobs:
@@ -15,12 +15,12 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install yfinance
-      - run: python diag/sec_dump.py
+      - run: python diag/sec_docs.py
         env:
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
       - run: |
           git config user.name  "stack-map-bot"
           git config user.email "stack-map-bot@users.noreply.github.com"
-          git add diag/sec-facts.json.gz
-          git commit -m "DIAG: fapte SEC (temporar)"
+          git add diag/docs
+          git commit -m "DIAG: documente oficiale (temporar)"
           git push
