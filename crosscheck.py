@@ -327,7 +327,33 @@ def main():
             break
         except Exception as e:
             sec_err.append(str(e)[-60:])
-    if not cmap: notes.append(f"SEC EDGAR indisponibil — financiarele neverificate ({'; '.join(sec_err)})")
+    if not cmap:                                   # a doua sursă pentru lista ticker → CIK
+        for ua in SEC_UAS:
+            UA = ua
+            try:
+                raw = urllib.request.urlopen(urllib.request.Request("https://www.sec.gov/include/ticker.txt",
+                                             headers={"User-Agent": ua}), timeout=30).read().decode()
+                cmap = {a.upper(): int(b) for a, b in (ln.split("\t") for ln in raw.splitlines() if "\t" in ln)}
+                notes.append("SEC: lista CIK din ticker.txt"); break
+            except Exception as e:
+                sec_err.append("ticker.txt " + str(e)[-40:])
+    if not cmap:                                   # diagnostic: e blocat doar www.sec.gov sau și data.sec.gov?
+        diag = []
+        for ua in SEC_UAS:
+            UA = ua
+            try:
+                http("https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json", headers={"Accept-Encoding": "gzip"}, tries=1)
+                diag.append(f"data.sec.gov OK cu UA #{SEC_UAS.index(ua) + 1}")
+            except Exception as e:
+                diag.append(f"data.sec.gov UA #{SEC_UAS.index(ua) + 1}: {str(e)[-30:]}")
+        secret = "secret SEC_USER_AGENT prezent" if os.environ.get("SEC_USER_AGENT") else "secret SEC_USER_AGENT LIPSĂ"
+        fmt = ""
+        if os.environ.get("SEC_USER_AGENT"):
+            v = os.environ["SEC_USER_AGENT"]
+            quoted = v.strip()[:1] in ("'", '"')
+            fmt = (f", format: {'conține @' if '@' in v else 'FĂRĂ @'}, "
+                   f"{'are nume + spațiu' if ' ' in v.strip() else 'FĂRĂ spațiu'}, ghilimele: {'DA' if quoted else 'nu'}")
+        notes.append(f"SEC EDGAR indisponibil — financiarele neverificate ({secret}{fmt}; {'; '.join(sec_err)}; {'; '.join(diag)})")
     sec_ok, sec_skip = 0, []
     for t in stocks:
         f = (fin or {}).get(t)
