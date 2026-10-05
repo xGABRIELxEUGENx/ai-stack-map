@@ -8,8 +8,6 @@ on:
     - cron: '*/15 8-23 * * 1-5'   # 08:00–23:45 UTC, luni–vineri
     - cron: '*/15 0-1 * * 2-6'    # 00:00–01:45 UTC, marți–sâmbătă (= seara ET de luni–vineri)
   workflow_dispatch:
-  push:
-    branches: [live-eth]          # TEMPORAR, doar pentru testul de pe ramură — se elimină înainte de integrare
 
 permissions:
   contents: write
