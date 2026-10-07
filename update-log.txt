@@ -144,3 +144,7 @@
 
 === 2026-10-06 01:50 | ai-stack-map-mobile-32.html → ai-stack-map-mobile-33.html | rânduri 148 | fără date: -
   trimestriale: 0 reîmprospătate | fără date: -
+
+=== 2026-10-07 00:55 | ai-stack-map-mobile-33.html → ai-stack-map-mobile-34.html | rânduri 148 | fără date: -
+  INTC: 2026-10-22 AMC estimat  →  2026-10-29 AMC estimat
+  trimestriale: 0 reîmprospătate | fără date: -
