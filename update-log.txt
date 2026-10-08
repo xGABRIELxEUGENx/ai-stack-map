@@ -148,3 +148,9 @@
 === 2026-10-07 00:55 | ai-stack-map-mobile-33.html → ai-stack-map-mobile-34.html | rânduri 148 | fără date: -
   INTC: 2026-10-22 AMC estimat  →  2026-10-29 AMC estimat
   trimestriale: 0 reîmprospătate | fără date: -
+
+=== 2026-10-08 01:12 | ai-stack-map-mobile-34.html → ai-stack-map-mobile-35.html | rânduri 148 | fără date: -
+  NEE: 2026-10-27 BMO estimat  →  2026-10-21 BMO estimat
+  AAPL: 2026-10-29 AMC estimat  →  2026-11-02 AMC estimat
+  EQT: 2026-10-20 AMC estimat  →  2026-10-27 AMC estimat
+  trimestriale: 1 reîmprospătate | fără date: -
