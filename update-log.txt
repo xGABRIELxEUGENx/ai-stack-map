@@ -160,3 +160,7 @@
   APLD: 2026-10-07 AMC confirmat  →  2027-01-06 AMC estimat
   DUOL: 2026-11-04 AMC estimat  →  2026-11-03 AMC estimat
   trimestriale: 1 reîmprospătate | fără date: -
+
+=== 2026-10-09 21:22 | ai-stack-map-mobile-42.html → ai-stack-map-mobile-43.html | rânduri 150 | fără date: -
+  SEC indisponibil — venituri/profit păstrate din versiunea anterioară (unde existau) pentru: BAC
+  trimestriale: 2 reîmprospătate | fără date: -
