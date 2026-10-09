@@ -958,7 +958,7 @@
 
     <div class="layer-box" id="box-mf-l1">
         <div class="layer-header" onclick="toggleLayer('box-mf-l1')">
-            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(22)</span></span></div>
+            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(21)</span></span></div>
             <span class="layer-arrow">▼</span>
         </div>
         <div class="ticker-grid" id="grid-mf-l1">
@@ -1061,11 +1061,6 @@
             <div class="ticker-row" onclick="openDetails('MS','Morgan Stanley','$187.44','-1.20%','#ef4444','294.39B','5.9M','15.14',['macro'],'Investment banking + wealth management. Co-lead pe IPO-urile mega-cap AI (SPCX).')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">MS</span><span class="ticker-company">Morgan Stanley</span><div class="tag-container"><span class="strategy-tag">Investment Bank</span><span class="strategy-tag">Wealth Mgmt</span></div></div>
                 <div class="ticker-perf"><span class="price-badge">$187.44</span><span class="change-badge" style="color:#ef4444;">-1.20%</span></div>
-            </div>
-
-            <div class="ticker-row" onclick="openDetails('SFTBY','SoftBank Group (ADR)','$18.04','+1.18%','#10b981','206.08B','2.5M','—',['macro'],'Holding japonez (TSE: 9984) — NU SoftBank Corp/9434 (telecom). Cel mai mare backer extern al OpenAI (SVF2 + participație directă). Semnal de finanțare AI, nu producător. ADR OTC (SFTBY), ilichid.')">
-                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SFTBY</span><span class="ticker-company">SoftBank Group (ADR)</span><div class="tag-container"><span class="strategy-tag">OpenAI Backer</span><span class="strategy-tag">AI Funding Proxy</span></div></div>
-                <div class="ticker-perf"><span class="price-badge">$18.04</span><span class="change-badge" style="color:#10b981;">+1.18%</span></div>
             </div>
 
             <div class="ticker-row" onclick="openDetails('BAC','Bank of America','$53.61','+0.17%','#10b981','374.88B','28.7M','12.21',['macro'],'A doua bancă US ca active. Barometru pentru consum/credit și pentru finanțarea prin credit sindicalizat/corporativ a capex-ului AI al hyperscalerilor.')">
@@ -1256,10 +1251,9 @@
             'V':'https://investor.visa.com/',
             'MA':'https://investor.mastercard.com/overview/default.aspx',
             'MS':'https://www.morganstanley.com/about-us-ir',
-            'SFTBY':'https://group.softbank/en/ir',
             'BAC':'https://investor.bankofamerica.com/',
         };
-        const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA", "WTI", "BRENT", "SFTBY"];
+        const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA", "WTI", "BRENT"];
         // Petrol: simbolurile WTI/BRENT nu sunt acțiuni (WTI = și W&T Offshore la bursă) → linkuri dedicate
         const SRC_OVERRIDE = {
             WTI: [
@@ -1428,7 +1422,6 @@
             "NBIS": [["2025-06-30",105.1,584.4,"https://www.sec.gov/Archives/edgar/data/1513845/000110465925075028/tm2522866d1_ex99-1.htm","2025-08-07","USD"],["2025-09-30",146.1,-119.6,"https://www.sec.gov/Archives/edgar/data/1513845/000110465925109806/tm2530882d1_ex99-1.htm","2025-11-11","USD"],["2025-12-31",227.7,-249.6,"https://assets.nebius.com/assets/2829268f-924f-4846-87b5-2365b7e58b41/Financial%20results_Q4%202025_11022026.pdf","2026-02-12","USD"],["2026-03-31",399.0,621.2,"https://www.sec.gov/Archives/edgar/data/1513845/000110465926059872/tm2614392d1_ex99-1.htm","2026-05-13","USD"],["2026-06-30",582.3,-190.4,"https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/tm2622968d1_ex99-1.htm","2026-08-12","USD"]],
             "NEE": [["2026-06-30",7534,3144,"https://www.sec.gov/Archives/edgar/data/753308/000075330826000058/neeq22026exhibit99.htm","2026-07-24","USD"]],
             "SAP": [["2025-06-30",9027,1697,"https://www.sec.gov/Archives/edgar/data/1000184/000110465925070485/tm2521516d1_ex99-1.htm","2025-07-22","EUR"],["2025-09-30",9076,2004,"https://www.sec.gov/Archives/edgar/data/1000184/000110465925102307/tm2529346d1_ex99-1.htm","2025-10-22","EUR"],["2025-12-31",9684,1846,"https://www.sec.gov/Archives/edgar/data/1000184/000110465926009465/tm264433d1_ex99-1.htm","2026-01-29","EUR"],["2026-03-31",9555,null,"https://www.sap.com/docs/download/investors/2026/sap-2026-q1-presentation.pdf","2026-04-23","EUR"],["2026-06-30",9878,2180,"https://www.sap.com/docs/download/investors/2026/sap-2026-q2-statement.pdf","2026-07-23","EUR"]],
-            "SFTBY": [["2025-12-31",1982404,248587,"https://group.softbank/media/Project/sbg/sbg/pdf/ir/financials/financial_reports/financial-report_q3fy2025_01_en.pdf","2026-02-12","JPY"],["2026-03-31",2079403,1829618,"https://group.softbank/media/Project/sbg/sbg/pdf/ir/financials/financial_reports/financial-report_q4fy2025_01_en.pdf","2026-05-13","JPY"],["2026-06-30",2019591,347330,"https://group.softbank/media/Project/sbg/sbg/pdf/ir/financials/financial_reports/financial-report_q1fy2026_01_en.pdf","2026-08-06","JPY"]],
             "SKHY": [["2025-06-30",22232000.0,6996200.0,"https://news.skhynix.com/en/sk-hynix-announces-2q25-financial-results/","2025-07-24","KRW"],["2025-09-30",24448900.0,12597500.0,"https://news.skhynix.com/en/sk-hynix-announces-3q25-financial-results/","2025-10-29","KRW"],["2025-12-31",32826700.0,15246000.0,"https://news.skhynix.com/en/sk-hynix-announces-fy25-financial-results/","2026-01-28","KRW"],["2026-03-31",52576300.0,40345900.0,"https://news.skhynix.com/q1-2026-business-results/","2026-04-23","KRW"],["2026-06-30",79318700.0,93922600.0,"https://news.skhynix.com/en/q2-2026-business-results/","2026-07-29","KRW"]],
             "TSM": [["2025-06-30",933790,398270,"https://pr.tsmc.com/english/news/3249","2025-07-17","TWD"],["2025-09-30",989920,452300,"https://pr.tsmc.com/english/news/3264","2025-10-16","TWD"],["2025-12-31",1046090,505740,"https://pr.tsmc.com/english/news/3281","2026-01-15","TWD"],["2026-03-31",1134100,572480,"https://pr.tsmc.com/english/news/3297","2026-04-16","TWD"],["2026-06-30",1270380,706560,"https://pr.tsmc.com/english/news/3326","2026-07-16","TWD"]],
             "V": [["2026-06-30",11633,5628,"https://s1.q4cdn.com/050606653/files/doc_financials/2026/q3/Q3-2026-Earnings-Release_vF.pdf","2026-07-28","USD"]],
@@ -1566,7 +1559,6 @@
             'MS': { date:'2026-10-14', session:'BMO', status:'confirmat', time:'07:30', src:'Morgan Stanley IR – call 09:30 ET' },
             'V': { date:'2026-10-27', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
             'MA': { date:'2026-10-29', session:'BMO', status:'confirmat', time:'', src:'Mastercard IR 8 Oct 2026 – call 09:00 ET' },
-            'SFTBY': { date:'2026-11-10', session:'BMO', status:'confirmat', time:'01:30', src:'SoftBank Group IR 2 Oct 2026 – briefing 16:30 JST (01:30 ET)' },
             'BAC': { date:'2026-10-14', session:'BMO', status:'confirmat', time:'06:45', src:'Bank of America Newsroom 30 Sep 2026 – call 08:30 ET' },
             'P': { date:'2026-11-18', session:'?', status:'estimat', time:'', src:'StockAnalysis 3 Oct 2026' },
             'NNE': { date:'', session:'?', status:'neverificat', time:'', src:'Nicio dată publicată (MarketBeat/Yahoo)' },
@@ -2036,7 +2028,7 @@
             NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC',
             AMEX: 'SPY IWM GLD UUP XLK HYG DIA'
         };
-        const TV_SPECIAL = { VIX:'TVC:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL', SFTBY:'TSE:9984' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
+        const TV_SPECIAL = { VIX:'TVC:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
         function tvSymbol(t) {
             if (TV_SPECIAL[t]) return TV_SPECIAL[t];
             for (const ex in TV_EX) if (TV_EX[ex].split(' ').includes(t)) return ex + ':' + t;
