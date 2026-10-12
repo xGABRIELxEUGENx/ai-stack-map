@@ -2030,15 +2030,15 @@
             NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC',
             AMEX: 'SPY IWM GLD UUP XLK HYG DIA'
         };
-        const TV_SPECIAL = { VIX:'TVC:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL', SFTBY:'TSE:9984' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
+        const TV_SPECIAL = { VIX:'EIGHTCAP:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL', SFTBY:'TSE:9984' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
         function tvSymbol(t) {
             if (TV_SPECIAL[t]) return TV_SPECIAL[t];
             for (const ex in TV_EX) if (TV_EX[ex].split(' ').includes(t)) return ex + ':' + t;
             return t; // lasă TradingView să rezolve bursa
         }
         const TAPE = [
-            ['OANDA:NAS100USD','NAS100'], ['NASDAQ:QQQ','QQQ'], ['AMEX:SPY','SPY'], ['TVC:VIX','VIX'], ['BITSTAMP:BTCUSD','BTC'],
-            ['CAPITALCOM:DXY','DXY'], ['TVC:TNX','US10Y'], ['NASDAQ:NVDA','NVDA'], ['NYSE:TSM','TSM'], ['NASDAQ:AVGO','AVGO'],
+            ['OANDA:NAS100USD','NAS100'], ['NASDAQ:QQQ','QQQ'], ['AMEX:SPY','SPY'], ['EIGHTCAP:VIX','VIX'], ['BITSTAMP:BTCUSD','BTC'],
+            ['CAPITALCOM:DXY','DXY'], ['OANDA:USB10YUSD','10Y NOTE'], ['NASDAQ:NVDA','NVDA'], ['NYSE:TSM','TSM'], ['NASDAQ:AVGO','AVGO'],
             ['NASDAQ:MSFT','MSFT'], ['NASDAQ:META','META'], ['NASDAQ:SMH','SMH']
         ];
 
