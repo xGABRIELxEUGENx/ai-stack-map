@@ -6,7 +6,7 @@ Yahoo Finance (yfinance).
 Independent de update_stack_map.py (nu importă nimic din el). Rulează din .github/workflows/live.yml,
 la 15 minute, luni–vineri; rezultatul se publică pe ramura orfană `live` (un singur commit, force push),
 nu în main. Pagina îl citește pentru acțiuni în afara sesiunii regulate (PRE, POST, închis). Indicii, futures, VIX, petrol,
-SFTBY și banda de sus sunt widget-uri TradingView în orice moment (TradingView decide când sunt deschise), deci nu se cer aici.
+și banda de sus sunt widget-uri TradingView în orice moment (TradingView decide când sunt deschise), deci nu se cer aici.
 
 Ieșire:
   {"generated": "2026-10-05T12:45:00Z",
@@ -43,9 +43,9 @@ from datetime import datetime, time, timezone
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo("America/New_York")
-# rândurile paginii din TV_SPECIAL: pagina le arată mereu din TradingView (indici, futures, petrol cotate ~24h, SFTBY = TSE:9984),
+# rândurile paginii din TV_SPECIAL: pagina le arată mereu din TradingView (indici, futures, petrol cotate ~24h),
 # deci nu intră în quotes.json. La un ticker nou ne-acțiune se adaugă și aici, nu doar în TV_SPECIAL din pagină.
-TV_LIVE = {"NDX", "VIX", "WTI", "BRENT", "SFTBY"}
+TV_LIVE = {"NDX", "VIX", "WTI", "BRENT"}
 WINDOW = (time(4, 0), time(20, 15))
 
 # ------------------------------------------------------------------------------------------------------------------

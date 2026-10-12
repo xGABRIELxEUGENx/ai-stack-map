@@ -8,15 +8,15 @@ adaugi un ticker nou”).
 IMPORTANT — nu se confundă cu SoftBank Corp (TSE: 9434), filiala de telecom japoneză: e o companie
 diferită, cu CIK/ADR diferit. Compania-holding (9984) NU depune nimic la SEC: CIK0001764097 e
 „SoftBank Corp./ADR” și are doar F-6/F-6EF/424B3 (înregistrare ADR), niciun 6-K/20-F financiar —
-deci NO_EDGAR obligatoriu. Nu are ADR pe NYSE/Nasdaq, doar OTC ilichid (SFTBY) → TV_SPECIAL cu
-listarea principală TSE:9984, nu TV_EX.
+deci NO_EDGAR obligatoriu. Nu are ADR pe NYSE/Nasdaq, doar OTC ilichid (SFTBY) → TV_EX['OTC'] (OTC:SFTBY merge în widget-ul gratuit TradingView,
+confirmat de Gabriel; TSE:9984 nu merge în widget).
 
 Ce aplică (idempotent — sare peste tot ce e deja aplicat):
   1. rândul SFTBY în grid-mf-l1 + contorul stratului M1 (+1);
   2. linia SFTBY în EARNINGS (confirmat, din notificarea oficială SoftBank Group IR);
   3. SFTBY în IR_LINKS;
   4. SFTBY în NO_EDGAR;
-  5. SFTBY în TV_SPECIAL → TSE:9984;
+  5. SFTBY în TV_EX['OTC'] → OTC:SFTBY;
   6. FIN_PR — 3 trimestre reale (vezi mai jos).
 
 FIN_PR — sursă și metodă (an fiscal aprilie–martie, cifre în JPY, milioane):
@@ -68,7 +68,7 @@ MS_IR_RE = re.compile(r"            'MS':'[^']*',\n")
 SFTBY_IR_LINE = "            'SFTBY':'https://group.softbank/en/ir',\n"
 
 NO_EDGAR_RE = re.compile(r'(const NO_EDGAR = \[)(.*?)(\];)')
-TV_SPECIAL_RE = re.compile(r"(const TV_SPECIAL = \{ )(.*?)( \}; //[^\n]*\n)")
+TV_EX_AMEX_RE = re.compile(r"(            AMEX: '[^']*')(\n        \};)")
 SAP_FINPR_RE = re.compile(r'            "SAP": \[.*?\],\n')
 SFTBY_FINPR_LINE = (
     '            "SFTBY": '
@@ -128,14 +128,14 @@ def apply(html):
         html = html[:m.start()] + m.group(1) + m.group(2) + ', "SFTBY"' + m.group(3) + html[m.end():]
         steps.append("NO_EDGAR SFTBY: adăugat")
 
-    m = TV_SPECIAL_RE.search(html)
-    if not m:
-        raise ValueError("nu găsesc TV_SPECIAL")
-    if "SFTBY:" in m.group(2):
-        steps.append("TV_SPECIAL SFTBY: deja aplicat")
+    if "OTC: 'SFTBY'" in html:
+        steps.append("TV_EX OTC SFTBY: deja aplicat")
     else:
-        html = html[:m.start()] + m.group(1) + m.group(2) + ", SFTBY:'TSE:9984'" + m.group(3) + html[m.end():]
-        steps.append("TV_SPECIAL SFTBY → TSE:9984: adăugat")
+        m = TV_EX_AMEX_RE.search(html)
+        if not m:
+            raise ValueError("nu găsesc TV_EX (linia AMEX, ancoră pentru inserare)")
+        html = html[:m.end(1)] + ",\n            OTC: 'SFTBY'" + html[m.start(2):]
+        steps.append("TV_EX OTC SFTBY → OTC:SFTBY: adăugat")
 
     if '"SFTBY": [' in html:
         steps.append("FIN_PR SFTBY: deja aplicat")

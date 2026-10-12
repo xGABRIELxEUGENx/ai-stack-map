@@ -35,7 +35,7 @@ Ce face scriptul la fiecare rulare:
 Sesiunea acțiunilor se calculează în browser, în America/New_York, și se reverifică la fiecare minut. Trecerea la 09:30 și la 16:00 ET reconstruiește rândurile de acțiuni fără reîncărcare; banda și rândurile din `TV_SPECIAL` nu depind de sesiune.
 
 - **Principiu (Gabriel): unde TradingView e deschis, e deschis și în pagină.** Pagina nu are calendar propriu pentru instrumentele cotate ~24h; deschiderea o decide TradingView (indici, futures, VIX, DXY, US10Y, petrol, BTC: de duminică 18:00 ET, inclusiv în zile de sărbătoare bancară).
-- **Banda de sus (`ticker-tape`) și rândurile din `TV_SPECIAL` (NDX, VIX, WTI, BRENT, SFTBY):** widget-uri TradingView în ORICE moment, nu depind de ora ET. Banda se încarcă la deschidere și la Refresh.
+- **Banda de sus (`ticker-tape`) și rândurile din `TV_SPECIAL` (NDX, VIX, WTI, BRENT):** widget-uri TradingView în ORICE moment, nu depind de ora ET. Banda se încarcă la deschidere și la Refresh.
 - **Acțiuni și ETF-uri:** TradingView în sesiunea regulată (09:30–16:00 ET, luni–vineri); în PRE (04:00–09:30), POST (16:00–20:00) și închis (noaptea, weekend) widget-urile gratuite TV arată doar sesiunea regulată, deci rândurile trec pe fluxul propriu `quotes.json`:
   - pe rânduri: prețul, % colorat după semn și un badge de sesiune („PRE 08:45 ET”, „POST 17:30 ET”, „ÎNCHIS · POST 19:55 ET”; cu ziua, dacă cotația e din altă zi ET); fără date pentru ticker rămâne prețul din fișier;
   - eticheta: „Acțiuni ETH (acum X min)” sau „Acțiuni închise · ultimele cotații ETH”, cu vârsta datelor, plus „bandă, indici, futures: TradingView live”;
@@ -45,7 +45,7 @@ Sesiunea acțiunilor se calculează în browser, în America/New_York, și se re
 
 **Fluxul ETH (`quotes.json`):**
 - Sursă: Yahoo prin `yfinance`, în două cereri pe loturi: `period="2d", interval="5m", prepost=True` pentru ultimul preț și ora lui; `period="7d", interval="1d"` pentru închiderile regulate.
-- Tickeri: toți `openDetails('T'` din ultima versiune. Fără cele din `TV_LIVE` (NDX, VIX, WTI, BRENT, SFTBY): pagina le arată mereu din TradingView.
+- Tickeri: toți `openDetails('T'` din ultima versiune. Fără cele din `TV_LIVE` (NDX, VIX, WTI, BRENT): pagina le arată mereu din TradingView.
 - Program: `live.yml`, cron `*/15 8-23 * * 1-5` și `*/15 0-1 * * 2-6` (UTC), care acoperă 04:00–20:00 ET și vara, și iarna. Scriptul iese fără să scrie în weekend și în afara intervalului 04:00–20:15 ET (`--force` doar pentru teste). Se poate porni și manual (Run workflow).
 - Format: `{"generated": "…Z", "q": {"NVDA": {"p": preț, "c": % față de ref, "ref": închiderea de referință, "s": "PRE|REG|POST|CLOSED", "t": "ora barei, ISO UTC"}, …}, "missing": [tickeri fără date]}`.
   - `s` = sesiunea după ora barei în ET;
@@ -91,7 +91,7 @@ Sesiunea acțiunilor se calculează în browser, în America/New_York, și se re
 1. Rândul în stratul potrivit și contorul `(N)`.
 2. Linia în `EARNINGS`.
 3. `IR_LINKS` (pagina oficială de investitori).
-4. Bursa în `TV_EX` (NASDAQ/NYSE/AMEX).
+4. Bursa în `TV_EX` (NASDAQ/NYSE/AMEX/OTC).
 5. Dacă nu e acțiune:
    - în pagină: `TV_SPECIAL`, `NO_EDGAR` și eventual `SRC_OVERRIDE`;
    - în script: `YAHOO_SYMBOL` și `NO_EARNINGS`;
