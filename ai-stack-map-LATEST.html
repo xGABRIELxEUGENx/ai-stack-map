@@ -160,15 +160,7 @@
         #tvTape { min-height:46px; background:#070b16; border:1px solid #1a2840; border-radius:8px; overflow:hidden; margin-bottom:14px; }
         #tvLive { min-height:190px; background:#03050d; border:1px solid #0f1828; border-radius:8px; overflow:hidden; margin-bottom:15px; }
         .tv-fail { padding:14px; font-size:0.78rem; color:#7a90aa; line-height:1.5; }
-        /* flux ETH (PRE / POST / închis): banda proprie și prețul pe rând, din quotes.json */
-        .eth-tape { display:flex; overflow:hidden; height:46px; align-items:center; }
-        .eth-track { display:flex; flex-shrink:0; align-items:center; gap:22px; padding-right:22px; white-space:nowrap; animation:ethScroll 50s linear infinite; }
-        .eth-tape:hover .eth-track { animation-play-state:paused; }
-        @keyframes ethScroll { from { transform:translateX(0); } to { transform:translateX(-100%); } }
-        @media (prefers-reduced-motion: reduce) { .eth-tape { overflow-x:auto; } .eth-track { animation:none; } }
-        .eth-item { font-size:0.78rem; font-weight:bold; color:#d8e4f0; }
-        .eth-item b { color:#7a90aa; margin-right:6px; }
-        .eth-item i { font-style:normal; margin-left:6px; }
+        /* flux ETH (doar acțiuni, în PRE / POST / închis): prețul pe rând, din quotes.json */
         .eth-ses { font-size:0.58rem; font-weight:bold; letter-spacing:0.04em; color:#7a90aa; border:1px solid currentColor; border-radius:3px; padding:0 4px; margin-left:6px; white-space:nowrap; }
         .eth-ses.s-PRE { color:#f59e0b; } .eth-ses.s-POST { color:#818cf8; } .eth-ses.s-REG { color:#10b981; }
         .row-live.eth { display:flex; justify-content:space-between; align-items:center; }
@@ -2067,7 +2059,6 @@
         function loadTape() {
             const box = document.getElementById('tvTape');
             if (!box || !navigator.onLine) { if (box) box.innerHTML = '<div class="tv-fail">Offline — prețuri live indisponibile</div>'; return; }
-            if (ethOn()) { ethTape(box); return; }
             tvEmbed(box, 'ticker-tape', {
                 symbols: TAPE.map(([proName, title]) => ({ proName, title })),
                 showSymbolLogo: false, isTransparent: true, displayMode: 'compact', colorTheme: 'dark', locale: 'en'
@@ -2090,16 +2081,16 @@
             const open = document.getElementById('detailsDrawer').classList.contains('open');
             if (open) loadDrawerLive(document.getElementById('drawSymbol').innerText.trim());
             tvStamp = 'actualizat ' + fmtLocalTime(new Date());
+            loadTape();
             if (liveMode === 'TV') liveRender();
-            ethFetch();                       // în PRE/POST/închis, banda și rândurile se redesenează după răspuns
+            ethFetch();                       // în PRE/POST/închis, rândurile de acțiuni se redesenează după răspuns
         }
 
-        // ===== Flux ETH: în afara sesiunii regulate (PRE, POST, închis), prețurile vin din quotes.json
-        // (Yahoo, ~15 min întârziere), generat la 15 minute de .github/workflows/live.yml pe ramura `live`.
-        // În sesiunea regulată (09:30–16:00 ET, luni–vineri) rămân widget-urile TradingView.
+        // ===== Flux ETH, doar pentru ACȚIUNI și ETF-uri: widget-urile gratuite TradingView le arată numai în sesiunea regulată,
+        // deci în PRE, POST și închis prețurile lor vin din quotes.json (Yahoo, generat de .github/workflows/live.yml pe ramura `live`).
+        // Banda de sus și rândurile din TV_SPECIAL (indici, futures, VIX, petrol, SFTBY) sunt TradingView în orice moment:
+        // TradingView decide când sunt deschise (de duminică 18:00 ET, inclusiv în sărbători bancare), nu un calendar din pagină.
         const ETH_URL = 'https://raw.githubusercontent.com/xGABRIELxEUGENx/ai-stack-map/live/quotes.json';
-        const ETH_TAPE_KEY = { NAS100: 'NQ' };          // NAS100 din bandă → contractul futures Nasdaq (NQ=F), care se mișcă în ETH
-        const ETH_NO_DOLLAR = ['NDX', 'VIX', 'NQ', 'DXY', 'US10Y'];
         const ETH_SES = { PRE: 'PRE', REG: 'REG', POST: 'POST', CLOSED: 'ÎNCHIS' };
         let ETH = null, ethErr = false, liveMode = null, liveSes = null, tvStamp = '';
         function nySession(d) {
@@ -2112,7 +2103,7 @@
         const ethPct = c => (c > 0 ? '+' : '') + c.toFixed(2) + '%';
         function ethPrice(k, p) {
             const d = Math.abs(p) < 1 ? 4 : 2;
-            return (ETH_NO_DOLLAR.includes(k) ? '' : '$') + p.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+            return '$' + p.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
         }
         // badge de sesiune: „PRE 08:45 ET”; cu piața închisă: „ÎNCHIS · POST 19:55 ET”; din altă zi (ET): cu ziua
         function ethTag(x) {
@@ -2120,15 +2111,6 @@
             const day = (p.d !== n.d || p.m !== n.m) ? d.toLocaleDateString('ro-RO', { weekday: 'short', timeZone: NY_TZ }) + ' ' : '';
             const tag = `${ETH_SES[x.s] || x.s} ${day}${pad(p.h)}:${pad(p.mi)} ET`;
             return `<span class="eth-ses s-${x.s}">${liveSes === 'CLOSED' && x.s !== 'CLOSED' ? 'ÎNCHIS · ' + tag : tag}</span>`;
-        }
-        function ethTape(box) {
-            const items = TAPE.map(([, title]) => {
-                const k = ETH_TAPE_KEY[title] || title, x = ETH.q[k];
-                return x ? `<span class="eth-item"><b>${k}</b>${ethPrice(k, x.p)}<i style="color:${ethCol(x.c)}">${ethPct(x.c)}</i><span class="eth-ses s-${x.s}">${ETH_SES[x.s] || x.s}</span></span>` : '';
-            }).join('');
-            box.className = '';
-            box.innerHTML = items ? `<div class="eth-tape"><div class="eth-track">${items}</div><div class="eth-track" aria-hidden="true">${items}</div></div>`
-                                  : '<div class="tv-fail">Flux ETH fără date pentru bandă</div>';
         }
         function ethRow(box, t) {
             const x = ETH.q[t];
@@ -2179,15 +2161,15 @@
                 if (ETH) {
                     const g = new Date(ETH.generated), ageMin = (Date.now() - g.getTime()) / 60000;
                     const stale = ageMin > 360;   // peste 6h: flux probabil blocat, nu doar întârziere normală GitHub
-                    txt = (liveSes === 'CLOSED' ? 'Închis · ultimele cotații ETH' : 'ETH') + ' (' + ethAgeLabel(g) + ')';
+                    txt = (liveSes === 'CLOSED' ? 'Acțiuni închise · ultimele cotații ETH' : 'Acțiuni ETH') + ' (' + ethAgeLabel(g) + ')';
                     col = stale ? '#ef4444' : (liveSes === 'CLOSED' ? '#7a90aa' : '#f59e0b');
-                    stamp = stale ? 'flux neactualizat de mult — posibil blocat' : '';
+                    stamp = stale ? 'flux neactualizat de mult — posibil blocat' : 'bandă, indici, futures: TradingView live';
                 }
                 if (ethErr) stamp += (stamp ? ' · ' : '') + 'flux ETH indisponibil';
             }
             src.innerText = txt; st.innerText = stamp; src.parentNode.style.color = col;
         }
-        function liveRender() { loadTape(); rowLiveReset(); liveLabel(); }
+        function liveRender() { rowLiveReset(); liveLabel(); }
         function ethFetch() {
             const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 10000);
             return fetch(`${ETH_URL}?ts=${Date.now()}`, { cache: 'no-store', signal: ctl.signal })
@@ -2204,13 +2186,10 @@
             liveSes = s; liveMode = s === 'REG' ? 'TV' : 'ETH';
             if (liveMode === 'TV') { liveRender(); if (was === null) ethFetch(); }
             else if (was === 'ETH') liveRender();              // PRE → POST → închis: aceleași date, alt badge / etichetă
-            else {                                             // încărcare sau 16:00: banda și rândurile se desenează după răspuns
-                if (was === null) { document.getElementById('tvTape').innerHTML = '<div class="tv-fail">Se încarcă cotațiile ETH…</div>'; liveLabel(); }
-                ethFetch();
-            }
+            else ethFetch();                                   // încărcare sau 16:00: rândurile de acțiuni se desenează după răspuns
         }
 
-        // ===== Preț live pe fiecare rând (widget TradingView sau, în afara sesiunii regulate, flux ETH; doar rândurile vizibile) =====
+        // ===== Preț live pe fiecare rând (widget TradingView; la acțiuni, în afara sesiunii regulate, flux ETH; doar rândurile vizibile) =====
         function rowLiveLoad(row) {
             if (row.dataset.live) return;
             row.dataset.live = '1';
@@ -2218,7 +2197,7 @@
             const perf = row.querySelector('.ticker-perf');
             let box = row.querySelector('.row-live');
             if (!box) { box = document.createElement('div'); perf.parentNode.insertBefore(box, perf); }
-            if (ethOn()) { ethRow(box, t); return; }
+            if (ethOn() && !TV_SPECIAL[t]) { ethRow(box, t); return; }   // TV_SPECIAL (indici, futures, VIX, petrol, SFTBY): mereu TradingView
             box.className = 'row-live';
             tvEmbed(box, 'single-quote', { symbol: tvSymbol(t), width: '100%', isTransparent: true, colorTheme: 'dark', locale: 'en' },
                 () => { box.className = 'row-live'; box.innerHTML = ''; });   // rezervă: rămâne prețul din fișier
@@ -2238,6 +2217,7 @@
             });
         }
         tvStamp = 'încărcat ' + fmtLocalTime(new Date());
+        loadTape();
         liveTick();
         setInterval(liveTick, 60e3);
         setInterval(ethFetch, 5 * 60e3);

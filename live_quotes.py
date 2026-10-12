@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-live_quotes.py — fluxul ETH (pre-market / after-hours) al paginii: scrie quotes.json din Yahoo Finance (yfinance).
+live_quotes.py — fluxul ETH (pre-market / after-hours) al paginii, doar pentru ACȚIUNI și ETF-uri: scrie quotes.json din
+Yahoo Finance (yfinance).
 
 Independent de update_stack_map.py (nu importă nimic din el). Rulează din .github/workflows/live.yml,
 la 15 minute, luni–vineri; rezultatul se publică pe ramura orfană `live` (un singur commit, force push),
-nu în main. Pagina îl citește în afara sesiunii regulate (PRE, POST, închis).
+nu în main. Pagina îl citește pentru acțiuni în afara sesiunii regulate (PRE, POST, închis). Indicii, futures, VIX, petrol,
+SFTBY și banda de sus sunt widget-uri TradingView în orice moment (TradingView decide când sunt deschise), deci nu se cer aici.
 
 Ieșire:
   {"generated": "2026-10-05T12:45:00Z",
@@ -12,7 +14,7 @@ Ieșire:
    "missing": ["XYZ", ...]}
   p = ultimul preț (bara de 5 min, inclusiv pre/post) · t = ora barei (ISO UTC) · s = sesiunea după ora în ET
   (PRE 04:00–09:30, REG 09:30–16:00, POST 16:00–20:00, altfel CLOSED) · ref = închiderea regulată de referință
-  (în PRE/REG cea anterioară, în POST cea de azi; la crypto: închiderea zilei UTC anterioare) · c = % față de ref.
+  (în PRE/REG cea anterioară, în POST cea de azi) · c = % față de ref.
 
 Reguli:
   - iese cu 0, fără să scrie, în weekend (ET) și în afara intervalului 04:00–20:15 ET (--force sare peste filtru);
@@ -41,10 +43,9 @@ from datetime import datetime, time, timezone
 from zoneinfo import ZoneInfo
 
 NY = ZoneInfo("America/New_York")
-# simbolurile paginii care nu sunt acțiuni → simbolul Yahoo
-YAHOO_SYMBOL = {"NDX": "^NDX", "VIX": "^VIX", "WTI": "CL=F", "BRENT": "BZ=F"}
-# doar pentru banda proprie a paginii (cheia din quotes.json → simbolul Yahoo)
-TAPE_EXTRA = {"NQ": "NQ=F", "BTC": "BTC-USD", "DXY": "DX-Y.NYB", "US10Y": "^TNX"}
+# rândurile paginii din TV_SPECIAL: pagina le arată mereu din TradingView (indici, futures, petrol cotate ~24h, SFTBY = TSE:9984),
+# deci nu intră în quotes.json. La un ticker nou ne-acțiune se adaugă și aici, nu doar în TV_SPECIAL din pagină.
+TV_LIVE = {"NDX", "VIX", "WTI", "BRENT", "SFTBY"}
 WINDOW = (time(4, 0), time(20, 15))
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -121,15 +122,12 @@ def to_utc(ts):
     return ts.replace(tzinfo=timezone.utc) if ts.tzinfo is None else ts.astimezone(timezone.utc)
 
 
-def reference_close(daily, t_utc, crypto):
+def reference_close(daily, t_utc):
     """Ultima închidere regulată deja încheiată la momentul t_utc."""
     best = None
     for idx, val in daily.items():
         d = idx.date() if hasattr(idx, "date") else idx
-        if crypto:                         # bara zilnică crypto = ziua UTC; referința = ziua UTC anterioară
-            done = d < t_utc.date()
-        else:                              # închiderea regulată a zilei d are loc la 16:00 ET
-            done = datetime.combine(d, time(16, 0), NY) <= t_utc
+        done = datetime.combine(d, time(16, 0), NY) <= t_utc   # închiderea regulată a zilei d are loc la 16:00 ET
         if done:
             best = float(val)
     return best
@@ -202,11 +200,9 @@ def main():
 
     html_path = a.html or latest_html(os.path.dirname(os.path.abspath(__file__)))
     tickers = page_tickers(open(html_path, encoding="utf-8").read())
-    keys = {t: YAHOO_SYMBOL.get(t, t.replace(".", "-")) for t in tickers}
-    for k, y in TAPE_EXTRA.items():
-        keys.setdefault(k, y)
+    keys = {t: t.replace(".", "-") for t in tickers if t not in TV_LIVE}
     syms = sorted(set(keys.values()))
-    print(f"{os.path.basename(html_path)}: {len(tickers)} tickeri + {len(TAPE_EXTRA)} pentru bandă → {len(syms)} simboluri Yahoo")
+    print(f"{os.path.basename(html_path)}: {len(tickers)} tickeri, din care {len(tickers) - len(keys)} mereu din TradingView → {len(syms)} simboluri Yahoo")
 
     import yfinance as yf
     common = dict(group_by="column", auto_adjust=False, progress=False, threads=True)
@@ -222,7 +218,7 @@ def main():
             continue
         t_utc = to_utc(last.index[-1])
         p = float(last.iloc[-1])
-        ref = reference_close(closes, t_utc, sym.endswith("-USD"))
+        ref = reference_close(closes, t_utc)
         if ref is None or not ref or math.isnan(p) or math.isnan(ref):
             missing.append(key)
             continue
