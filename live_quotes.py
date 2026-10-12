@@ -22,8 +22,8 @@ Reguli:
   - dacă lipsesc peste jumătate dintre tickeri, NU scrie fișierul și iese cu 1.
 
 Pe lângă fluxul ETH de mai sus, scriptul mai calculează la fiecare rulare (orice sesiune, nu doar PRE/POST/închis)
-top 5 gainers și top 5 losers ai componentelor Nasdaq-100 ("Winners & Losers NAS100"), scrise sub cheia `movers`:
-  "movers": {"gainers": [["NVDA", 3.21], ...5], "losers": [["INTC", -2.14], ...5]}  (variația zilnică %, din coloana
+top 10 gainers și top 10 losers ai componentelor Nasdaq-100 (MOVERS_N) ("Winners & Losers NAS100"), scrise sub cheia `movers`:
+  "movers": {"gainers": [["NVDA", 3.21], ...10], "losers": [["INTC", -2.14], ...10]}  (variația zilnică %, din coloana
   `change` a TradingView scanner — același tipar ca în crosscheck.py / update_stack_map.py: scanner.tradingview.com,
   fără cont, fără cheie API — vezi `nas100_movers()`). Motivul elementului separat de bandă: widget-ul gratuit
   TradingView `ticker-tape` (folosit în sesiunea regulată) e un iframe închis, nu poate primi date proprii, deci
@@ -65,6 +65,7 @@ NAS100_CONSTITUENTS = [
     "REGN", "RKLB", "ROP", "ROST", "SNDK", "STX", "SHOP", "SBUX", "SNPS", "TMUS",
     "TTWO", "TER", "TSLA", "TXN", "TRI", "VRTX", "WMT", "WBD", "WDC", "WDAY", "XEL",
 ]
+MOVERS_N = 10   # câți câștigători și câți perdanți se afișează (Gabriel: 10, ca „Magnificent 10”)
 TV_SCAN_URL = "https://scanner.tradingview.com/{market}/scan"
 TV_UA = "AI Stack Map live-quotes-bot@users.noreply.github.com"
 
@@ -156,7 +157,7 @@ def _tv_scan(symbols, columns, market="america", tries=3, timeout=20):
 
 
 def nas100_movers(tickers=NAS100_CONSTITUENTS, chunk=50):
-    """Top 5 gainers și top 5 losers (după `change`, variația zilnică %) din componentele NAS100_CONSTITUENTS,
+    """Top MOVERS_N gainers și top MOVERS_N losers (după `change`, variația zilnică %) din componentele NAS100_CONSTITUENTS,
     citite prin scanner-ul TradingView (toate pe NASDAQ — condiție de membru al indexului). Întoarce None la
     eroare de rețea sau dacă lipsesc date pentru peste jumătate din tickeri (nu blochează restul scriptului:
     e un calcul suplimentar, nu sursa principală de date)."""
@@ -180,8 +181,8 @@ def nas100_movers(tickers=NAS100_CONSTITUENTS, chunk=50):
         print(f"  ! NAS100 movers: date insuficiente ({len(changes)}/{len(uniq)}) — omit `movers`.")
         return None
     ranked = sorted(changes.items(), key=lambda kv: kv[1], reverse=True)
-    gainers = [[t, round(c, 2)] for t, c in ranked[:5]]
-    losers = [[t, round(c, 2)] for t, c in ranked[-5:][::-1]]
+    gainers = [[t, round(c, 2)] for t, c in ranked[:MOVERS_N]]
+    losers = [[t, round(c, 2)] for t, c in ranked[-MOVERS_N:][::-1]]
     return {"gainers": gainers, "losers": losers}
 
 
