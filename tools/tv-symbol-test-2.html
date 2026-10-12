@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test simboluri TradingView v2</title>
+<style>
+  body { background:#050810; color:#d8e4f0; font-family:ui-monospace,Menlo,Consolas,monospace; margin:0; padding:16px; }
+  h1 { font-size:1rem; margin:0 0 4px; } p { color:#7a90aa; font-size:0.78rem; margin:0 0 14px; line-height:1.5; }
+  .row { border:1px solid #1a2840; border-radius:8px; padding:8px 10px; margin-bottom:10px; background:#070b16; }
+  .sym { font-weight:bold; font-size:0.85rem; margin-bottom:4px; } .sym small { color:#7a90aa; font-weight:normal; }
+  .lbl { color:#4a5e7a; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; margin:6px 0 2px; }
+  .w { min-height:46px; }
+</style>
+</head>
+<body>
+<h1>Test simboluri TradingView (widget gratuit)</h1>
+<p>Fiecare simbol e încărcat singur, în aceleași două widget-uri ca în pagină: banda (ticker-tape) și rândul (single-quote). Cercul roșu „!” = simbolul nu merge în widget. Primul rând e de control (merge).</p>
+<div id="out"></div>
+<script>
+const SYMS = [
+  ['CAPITALCOM:DXY', 'control: merge (DXY în pagină din v47)'],
+  ['CAPITALCOM:VIX', 'VIX, alternativă 1'],
+  ['PEPPERSTONE:VIX', 'VIX, alternativă 2'],
+  ['EIGHTCAP:VIX', 'VIX, alternativă 3'],
+  ['CAPITALCOM:US10Y', 'US10Y, alternativă 1'],
+  ['PEPPERSTONE:US10Y', 'US10Y, alternativă 2'],
+  ['OANDA:USB10YUSD', 'US10Y: preț T-Note (nu randament)'],
+  ['FRED:DGS10', 'US10Y: randament, date zilnice'],
+  ['TVC:USOIL', 'WTI în pagină acum (rând)'],
+  ['OANDA:WTICOUSD', 'WTI, alternativă OANDA'],
+  ['CAPITALCOM:OIL_CRUDE', 'WTI, alternativă Capital'],
+  ['TVC:UKOIL', 'Brent în pagină acum (rând)'],
+  ['OANDA:BCOUSD', 'Brent, alternativă OANDA'],
+  ['CAPITALCOM:OIL_BRENT', 'Brent, alternativă Capital'],
+  ['TSE:9984', 'SoftBank Group în pagină acum (rând)']
+];
+function embed(box, widget, cfg) {
+  box.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
+  box.className = 'w tradingview-widget-container';
+  const sc = document.createElement('script');
+  sc.async = true; sc.src = 'https://s3.tradingview.com/external-embedding/embed-widget-' + widget + '.js';
+  sc.innerHTML = JSON.stringify(cfg); box.appendChild(sc);
+}
+const out = document.getElementById('out');
+for (const [s, note] of SYMS) {
+  const r = document.createElement('div'); r.className = 'row';
+  r.innerHTML = '<div class="sym">' + s + ' <small>— ' + note + '</small></div><div class="lbl">bandă (ticker-tape)</div><div class="w t"></div><div class="lbl">rând (single-quote)</div><div class="w q"></div>';
+  out.appendChild(r);
+  embed(r.querySelector('.t'), 'ticker-tape', { symbols: [{ proName: s, title: s.split(':')[1] }], showSymbolLogo: false, isTransparent: true, displayMode: 'compact', colorTheme: 'dark', locale: 'en' });
+  embed(r.querySelector('.q'), 'single-quote', { symbol: s, width: '100%', isTransparent: true, colorTheme: 'dark', locale: 'en' });
+}
+</script>
+</body>
+</html>
