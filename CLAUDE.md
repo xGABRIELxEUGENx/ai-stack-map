@@ -152,7 +152,7 @@ Pentru amândouă:
 
 ### Metoda B (cod automat pe TOȚI tickerii, alte surse; GitHub + Claude Code)
 
-- `crosscheck.py` e un script independent: nu importă nimic din `update_stack_map.py`. Rulează prin `.github/workflows/crosscheck.yml` (luni, miercuri, vineri, 06:10 UTC) și scrie `crosscheck-report.md` și `crosscheck-history.csv`.
+- `crosscheck.py` e un script independent: nu importă nimic din `update_stack_map.py`. Rulează prin `.github/workflows/crosscheck.yml`, pornit automat după fiecare update reușit (`update.yml`, luni–vineri, după închiderea bursei US), nu pe cron propriu: cron-ul GitHub întârzia ore întregi, iar rularea cădea în timpul ședinței. Scrie `crosscheck-report.md` și `crosscheck-history.csv`.
 - **Surse de control**:
   - TradingView scanner pentru preț, %, market cap, volum și P/E;
   - Yahoo Finance (`yfinance`, `quarterly_income_stmt`: „Total Revenue”, „Net Income”) pentru venituri și profit net trimestrial, comparat cu rândurile `q` (potrivire după dată ±12 zile; Yahoo normalizează la sfârșit de lună). EROARE la ≥ 15%, DIFERENȚĂ la ≥ 3%, cu nota „Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)”.
