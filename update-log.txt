@@ -188,3 +188,11 @@
   KMI: 2026-10-28 AMC estimat  →  2026-10-21 AMC estimat
   JPM: 2026-10-13 BMO confirmat  →  2027-01-14 BMO estimat
   trimestriale: 4 reîmprospătate | fără date: -
+
+=== 2026-10-15 23:45 | ai-stack-map-mobile-52.html → ai-stack-map-mobile-53.html | rânduri 150 | fără date: -
+  IRM: 2026-11-04 BMO estimat  →  2026-11-05 BMO estimat
+  CORZ: 2026-10-23 BMO estimat  →  2026-11-05 BMO estimat
+  TEM: 2026-11-03 ? estimat  →  2026-11-02 BMO estimat
+  MS: 2026-10-14 BMO confirmat  →  2027-01-14 BMO estimat
+  BAC: 2026-10-14 BMO confirmat  →  2027-01-15 BMO estimat
+  trimestriale: 4 reîmprospătate | fără date: -
