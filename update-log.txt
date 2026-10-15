@@ -180,3 +180,11 @@
   NET: 2026-10-29 AMC estimat  →  2026-11-05 AMC estimat
   TLN: 2026-11-04 AMC estimat  →  2026-11-03 BMO estimat
   trimestriale: 2 reîmprospătate | fără date: -
+
+=== 2026-10-15 00:01 | ai-stack-map-mobile-51.html → ai-stack-map-mobile-52.html | rânduri 150 | fără date: -
+  TER: 2026-10-21 AMC estimat  →  2026-10-27 AMC estimat
+  VRT: 2026-10-21 BMO estimat  →  2026-10-28 BMO estimat
+  DDOG: 2026-11-05 BMO estimat  →  2026-11-04 BMO estimat
+  KMI: 2026-10-28 AMC estimat  →  2026-10-21 AMC estimat
+  JPM: 2026-10-13 BMO confirmat  →  2027-01-14 BMO estimat
+  trimestriale: 4 reîmprospătate | fără date: -
