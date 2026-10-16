@@ -1,8 +1,8 @@
-# Cross-check metoda B — v53
+# Cross-check metoda B — v55
 
-Rulat: 2026-10-15 23:48 UTC · fișier: `ai-stack-map-mobile-53.html` · tickeri: 150
+Rulat: 2026-10-16 23:49 UTC · fișier: `ai-stack-map-mobile-55.html` · tickeri: 150
 
-**2306 verificări · 2275 OK · 5 erori · 26 diferențe**
+**2305 verificări · 2273 OK · 5 erori · 27 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
@@ -10,27 +10,28 @@ Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| SFTBY | % zi | 1.37 | 1.745 | TradingView scanner | 0.37pp |
-| SFTBY | volum | 2.1e+06 | 9478303 | TradingView scanner | 77.84% (metode de agregare diferite) |
+| SFTBY | % zi | -9.82 | -9.369 | TradingView scanner | 0.45pp |
+| SFTBY | volum | 2e+06 | 9005387 | TradingView scanner | 77.79% (metode de agregare diferite) |
 | BE | profit net 2025-12-31 [SEC] | 1.43 | 1.092 | Yahoo (2025-12-31) | 30.95% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | TLN | venituri 2026-06-30 [SEC] | 747 | 959 | Yahoo (2026-06-30) | 22.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | XE | venituri 2025-06-30 [SEC] | 21.5 | 16.92 | Yahoo (2025-06-30) | 27.08% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 
-## Diferențe (26)
+## Diferențe (27)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
 | RDDT | IR_LINKS | lipsă | link oficial | intern |  |
-| TSM | market cap | 2.19e+12 | 2.005e+12 | TradingView scanner | 9.23% (ADR: prima față de bursa locală) |
-| ASML | P/E | 56.01 | 40.83 | TradingView scanner | 37.19% (TTM calculat diferit) |
-| CBRS | market cap | 3.377e+10 | 3.182e+10 | TradingView scanner | 6.11% |
-| SKHY | market cap | 1.06e+12 | 7.674e+11 | TradingView scanner | 38.12% (ADR: prima față de bursa locală) |
-| CRWD | P/E | 4,891 | 6,851 | TradingView scanner | 28.60% (TTM calculat diferit) |
-| PANW | P/E | 974.4 | 722.5 | TradingView scanner | 34.87% (TTM calculat diferit) |
-| WTI | % zi | -0.42 | -1.919 | TradingView scanner | 1.50pp (se tranzacționează ~24h; momentul citirii diferă) |
-| SMR | market cap | 2.52e+09 | 2.643e+09 | TradingView scanner | 4.65% |
-| SFTBY | market cap | 1.858e+11 | 1.929e+11 | TradingView scanner | 3.69% (ADR: prima față de bursa locală) |
-| TSM | profit net 2025-12-31 [C] | 505740 | 4.855e+05 | Yahoo (2025-12-31) | 4.18% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
+| TSM | market cap | 2.14e+12 | 1.952e+12 | TradingView scanner | 9.62% (ADR: prima față de bursa locală) |
+| CBRS | market cap | 3.022e+10 | 2.848e+10 | TradingView scanner | 6.13% |
+| ARM | market cap | 2.433e+11 | 261435712830 | TradingView scanner | 6.94% |
+| SKHY | market cap | 9.948e+11 | 6.816e+11 | TradingView scanner | 45.96% (ADR: prima față de bursa locală) |
+| SPCX | market cap | 1.92e+12 | 1.982e+12 | TradingView scanner | 3.12% |
+| CRWD | P/E | 3,790 | 6,369 | TradingView scanner | 40.50% (TTM calculat diferit) |
+| PANW | P/E | 855 | 667.3 | TradingView scanner | 28.12% (TTM calculat diferit) |
+| WTI | % zi | 2.63 | 1.072 | TradingView scanner | 1.56pp (se tranzacționează ~24h; momentul citirii diferă) |
+| SMR | market cap | 2.39e+09 | 2.505e+09 | TradingView scanner | 4.60% |
+| SFTBY | preț | 14.7 | 14.8 | TradingView scanner | 0.68% |
+| SFTBY | market cap | 1.676e+11 | 1.752e+11 | TradingView scanner | 4.39% (ADR: prima față de bursa locală) |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | APLD | profit net 2025-11-30 [SEC] | -19.08 | -17.51 | Yahoo (2025-11-30) | 8.96% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
