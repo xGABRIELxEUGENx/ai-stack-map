@@ -196,3 +196,8 @@
   MS: 2026-10-14 BMO confirmat  →  2027-01-14 BMO estimat
   BAC: 2026-10-14 BMO confirmat  →  2027-01-15 BMO estimat
   trimestriale: 4 reîmprospătate | fără date: -
+
+=== 2026-10-16 23:46 | ai-stack-map-mobile-54.html → ai-stack-map-mobile-55.html | rânduri 150 | fără date: -
+  TSM: 2026-10-15 BMO confirmat  →  2027-01-14 BMO estimat
+  SPCX: 2026-11-03 ? estimat  →  2026-10-20 AMC estimat
+  trimestriale: 3 reîmprospătate | fără date: -
