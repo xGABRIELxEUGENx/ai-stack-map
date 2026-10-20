@@ -1,37 +1,34 @@
-# Cross-check metoda B — v55
+# Cross-check metoda B — v56
 
-Rulat: 2026-10-16 23:49 UTC · fișier: `ai-stack-map-mobile-55.html` · tickeri: 150
+Rulat: 2026-10-20 00:38 UTC · fișier: `ai-stack-map-mobile-56.html` · tickeri: 150
 
-**2305 verificări · 2273 OK · 5 erori · 27 diferențe**
+**2304 verificări · 2275 OK · 6 erori · 23 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (5)
+## Erori (6)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| SFTBY | % zi | -9.82 | -9.369 | TradingView scanner | 0.45pp |
-| SFTBY | volum | 2e+06 | 9005387 | TradingView scanner | 77.79% (metode de agregare diferite) |
+| ASML | earnings trecut | 2026-10-14 | după 2026-10-20 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| SFTBY | % zi | 1.9 | 0.9473 | TradingView scanner | 0.95pp |
+| SFTBY | volum | 9.63e+05 | 5870994 | TradingView scanner | 83.60% (metode de agregare diferite) |
 | BE | profit net 2025-12-31 [SEC] | 1.43 | 1.092 | Yahoo (2025-12-31) | 30.95% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | TLN | venituri 2026-06-30 [SEC] | 747 | 959 | Yahoo (2026-06-30) | 22.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | XE | venituri 2025-06-30 [SEC] | 21.5 | 16.92 | Yahoo (2025-06-30) | 27.08% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 
-## Diferențe (27)
+## Diferențe (23)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
 | RDDT | IR_LINKS | lipsă | link oficial | intern |  |
-| TSM | market cap | 2.14e+12 | 1.952e+12 | TradingView scanner | 9.62% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 3.022e+10 | 2.848e+10 | TradingView scanner | 6.13% |
-| ARM | market cap | 2.433e+11 | 261435712830 | TradingView scanner | 6.94% |
-| SKHY | market cap | 9.948e+11 | 6.816e+11 | TradingView scanner | 45.96% (ADR: prima față de bursa locală) |
-| SPCX | market cap | 1.92e+12 | 1.982e+12 | TradingView scanner | 3.12% |
-| CRWD | P/E | 3,790 | 6,369 | TradingView scanner | 40.50% (TTM calculat diferit) |
-| PANW | P/E | 855 | 667.3 | TradingView scanner | 28.12% (TTM calculat diferit) |
-| WTI | % zi | 2.63 | 1.072 | TradingView scanner | 1.56pp (se tranzacționează ~24h; momentul citirii diferă) |
-| SMR | market cap | 2.39e+09 | 2.505e+09 | TradingView scanner | 4.60% |
-| SFTBY | preț | 14.7 | 14.8 | TradingView scanner | 0.68% |
-| SFTBY | market cap | 1.676e+11 | 1.752e+11 | TradingView scanner | 4.39% (ADR: prima față de bursa locală) |
+| TSM | market cap | 2.18e+12 | 1.932e+12 | TradingView scanner | 12.84% (ADR: prima față de bursa locală) |
+| CBRS | market cap | 2.866e+10 | 2.701e+10 | TradingView scanner | 6.11% |
+| SKHY | market cap | 1.04e+12 | 6.907e+11 | TradingView scanner | 50.57% (ADR: prima față de bursa locală) |
+| CRWD | P/E | 3,802 | 6,389 | TradingView scanner | 40.50% (TTM calculat diferit) |
+| PANW | P/E | 867.4 | 677 | TradingView scanner | 28.13% (TTM calculat diferit) |
+| SMR | market cap | 2.34e+09 | 2.445e+09 | TradingView scanner | 4.30% |
+| SFTBY | market cap | 1.707e+11 | 1.787e+11 | TradingView scanner | 4.46% (ADR: prima față de bursa locală) |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | APLD | profit net 2025-11-30 [SEC] | -19.08 | -17.51 | Yahoo (2025-11-30) | 8.96% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
