@@ -40,8 +40,26 @@ TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (
        "pe": (1e9, 15.0),            # P/E: definiții diferite între surse → niciodată „eroare”, doar diferență
        "mcap_adr": (1e9, 3.0),       # ADR: prima față de bursa locală → doar diferență
        "price_24h": (3.0, 1.0), "chg_24h": (2.0, 0.5),
-       "fin": (15.0, 3.0), "shares": (5.0, 2.0)}
+       "fin": (15.0, 3.0), "shares": (5.0, 2.0),
+       "chg_otc": (1e9, 0.10), "vol_otc": (1e9, 15.0),   # OTC: doar diferență (vezi OTC_NOTE)
+       "fin_def": (1e9, 3.0)}        # venit definit diferit, verificat în documentul oficial → doar diferență
 FIN_NOTE = "Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)"
+# OTC (TV_EX → OTC, ex. SFTBY): Yahoo și TradingView agregă volumul diferit și iau altă închidere de referință
+# pentru % zi → diferențe persistente care nu vin dintr-un bug
+OTC_NOTE = "OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView"
+# companii al căror venit raportat („Operating Revenues” în 10-Q/8-K) include câștigul/pierderea nerealizată din
+# derivatele la energie; Yahoo („Total Revenue”) le exclude. Adaugă un ticker doar după ce ai citit situația lui.
+REV_INCL_DERIV = {
+    # T2 2026: 722 energie + 237 capacitate − 212 derivate nerealizate = 747 „Operating Revenues”
+    "TLN": "https://www.sec.gov/Archives/edgar/data/0001622536/000162253626000065/a20260805q22026earningsrel.htm",
+}
+DERIV_NOTE = "venitul raportat include derivatele nerealizate"
+# cifre Yahoo verificate ca greșite față de documentul oficial: (ticker, sfârșit trimestru, "rev"|"ni") → URL sursă.
+# Rămân DIFERENȚĂ (vizibile, cu link), nu OK: dacă cifra din fișier se schimbă, apare din nou în raport.
+YAHOO_WRONG = {
+    # comunicatul T2 2026 dă 21.5 M$ venituri pentru T2 2025; Yahoo 16.92
+    ("XE", "2025-06-30", "rev"): "https://finviz.com/news/381732/x-energy-shares-rise-as-q2-revenue-jumps-154-on-reactor-development-progress",
+}
 
 
 # ------------------------------------------------------------------ rețea
@@ -298,12 +316,15 @@ def main():
         h24 = t in H24
         note24 = "(se tranzacționează ~24h; momentul citirii diferă)" if h24 else ""
         grade(r, "price_24h" if h24 else "price", t, "preț", x["price"], q["close"], src_tv, note24)
-        grade(r, "chg_24h" if h24 else "chg_pp", t, "% zi", x["chg"], q["change"], src_tv, note24)
+        otc = tvex.get(t) == "OTC"
+        grade(r, "chg_otc" if otc else "chg_24h" if h24 else "chg_pp", t, "% zi", x["chg"], q["change"], src_tv,
+              OTC_NOTE if otc else note24)
         if t not in NON_STOCK:
             adr = ((fin or {}).get(t) or {}).get("cur", "USD") != "USD"
             grade(r, "mcap_adr" if adr else "mcap", t, "market cap", x["mcap"], q["market_cap_basic"], src_tv,
                   "(ADR: prima față de bursa locală)" if adr else "")
-            grade(r, "vol", t, "volum", x["vol"], q["volume"], src_tv, "(metode de agregare diferite)")
+            grade(r, "vol_otc" if otc else "vol", t, "volum", x["vol"], q["volume"], src_tv,
+                  OTC_NOTE if otc else "(metode de agregare diferite)")
             if x["pe"] and q["price_earnings_ttm"] and q["price_earnings_ttm"] > 0:
                 grade(r, "pe", t, "P/E", x["pe"], q["price_earnings_ttm"], src_tv, "(TTM calculat diferit)")
 
@@ -328,7 +349,12 @@ def main():
                 if not nb: continue
                 hit = True
                 if abs(val - nb[2] / 1e6) <= 0.15: r.ok(); continue      # rotunjirea din fișier (0.1M)
-                grade(r, "fin", t, f"{label} {d} [{tag}]", val, nb[2] / 1e6, f"Yahoo ({nb[1]})", FIN_NOTE)
+                kind, note = "fin", FIN_NOTE
+                if (t, d, key) in YAHOO_WRONG:
+                    kind, note = "fin_def", f"Yahoo greșit, verificat: {YAHOO_WRONG[(t, d, key)]}"
+                elif key == "rev" and t in REV_INCL_DERIV:
+                    kind, note = "fin_def", f"{DERIV_NOTE}: {REV_INCL_DERIV[t]}"
+                grade(r, kind, t, f"{label} {d} [{tag}]", val, nb[2] / 1e6, f"Yahoo ({nb[1]})", note)
         if hit: y_ok += 1
         else: y_skip.append(t)
 

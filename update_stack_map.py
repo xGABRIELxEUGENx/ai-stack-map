@@ -144,8 +144,10 @@ SEC_REV_TAGS = ["RevenuesNetOfInterestExpense",          # bănci: venitul net t
                 "RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet",
                 "RevenueFromContractWithCustomerIncludingAssessedTax"]
 SEC_NI_TAGS = ["NetIncomeLoss",                          # profitul net atribuibil companiei
-               "NetIncomeLossAvailableToCommonStockholdersBasic",  # atribuibil acționarilor comuni (IRM, APLD nu etichetează NetIncomeLoss)
-               "ProfitLoss"]                             # altfel profitul total (inclusiv minoritarii)
+               "NetIncomeLossAvailableToCommonStockholdersBasic"]  # atribuibil acționarilor comuni (IRM, APLD nu etichetează NetIncomeLoss)
+# profitul total (inclusiv minoritarii): doar ca serie de rezervă, când compania nu are deloc tag atribuibil;
+# nu umple golurile seriei atribuibile (BE T4 2025: ProfitLoss 1.43 în loc de atribuibil 1.091)
+SEC_NI_FALLBACK = "ProfitLoss"
 # doar rapoartele financiare (10-Q/10-K, la emitenții străini 6-K/20-F/40-F, plus 8-K cu situații retratate):
 # DEF 14A / PRE 14A (tabelul „pay versus performance”) repetă profitul anual, uneori în altă unitate
 # (ANET 3,511 „USD” = milioane) și, fiind depus mai târziu, ar înlocui cifra din 10-K → T4 greșit
@@ -184,7 +186,8 @@ def _sec_cik(t):
 
 def _sec_series(g, tag, positive=False):
     """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea periodică (10-Q/10-K) cea mai recentă.
-    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă nu se potrivesc, T4 se omite.
+    T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă diferă cu > 0.5% din
+    max(|an|, |9 luni|, |T1+T2+T3|), T4 se omite (toleranța relativă la T4 însuși respingea un T4 mic, ex. BE ~1 M$).
     T4 derivat se omite și dacă e implauzibil: anul și cele 9 luni la scară diferită (≥ 1000×) sau, la venituri, ≤ 0."""
     latest = {}
     for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
@@ -209,7 +212,7 @@ def _sec_series(g, tag, positive=False):
         if nine: est.append(v - nine[0]); parts.append(nine[0])
         three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
         if len(three) == 3: est.append(v - sum(three)); parts.append(sum(three))
-        if len(est) == 2 and abs(est[0] - est[1]) > 0.01 * max(abs(est[0]), abs(est[1]), 1):
+        if len(est) == 2 and abs(est[0] - est[1]) > 0.005 * max(abs(v), *(abs(p) for p in parts), 1):
             continue
         if any(v and p and max(abs(v), abs(p)) >= 1000 * min(abs(v), abs(p)) for p in parts):
             continue                                       # anul și 9 luni în unități diferite
@@ -244,6 +247,11 @@ def sec_quarters(t):
         raise SecUnavailable(f"{t}: {e}")
     since = dt.date.today() - dt.timedelta(days=550)
     rev, ni = _sec_pick(g, SEC_REV_TAGS, since, positive=True), _sec_pick(g, SEC_NI_TAGS, since)
+    total = _sec_series(g, SEC_NI_FALLBACK)
+    if not any(e > since for e in ni):
+        ni = total
+    else:                                                  # Up-C înainte de IPO (XE T2 2025): atribuibil „—” (0), tot profitul la minoritari
+        ni = {e: v for e, v in ni.items() if v != 0 or not total.get(e)}
     ends = sorted(e for e in rev if e > since)[-5:]
     rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
     return rows or None
@@ -254,7 +262,7 @@ FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// F
 # FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
 FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 6            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
+FIN_SCHEMA = 7            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
 PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
 PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
 PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt
