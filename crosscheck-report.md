@@ -1,44 +1,43 @@
-# Cross-check metoda B — v56
+# Cross-check metoda B — v58
 
-Rulat: 2026-10-20 00:38 UTC · fișier: `ai-stack-map-mobile-56.html` · tickeri: 150
+Rulat: 2026-10-21 00:08 UTC · fișier: `ai-stack-map-mobile-58.html` · tickeri: 150
 
-**2304 verificări · 2275 OK · 6 erori · 23 diferențe**
+**2300 verificări · 2272 OK · 1 erori · 27 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (6)
+## Erori (1)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| ASML | earnings trecut | 2026-10-14 | după 2026-10-20 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| SFTBY | % zi | 1.9 | 0.9473 | TradingView scanner | 0.95pp |
-| SFTBY | volum | 9.63e+05 | 5870994 | TradingView scanner | 83.60% (metode de agregare diferite) |
-| BE | profit net 2025-12-31 [SEC] | 1.43 | 1.092 | Yahoo (2025-12-31) | 30.95% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
-| TLN | venituri 2026-06-30 [SEC] | 747 | 959 | Yahoo (2026-06-30) | 22.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
-| XE | venituri 2025-06-30 [SEC] | 21.5 | 16.92 | Yahoo (2025-06-30) | 27.08% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
+| ASML | earnings trecut | 2026-10-14 | după 2026-10-21 | intern | raportul a trecut, data nu s-a mutat la următorul |
 
-## Diferențe (23)
+## Diferențe (27)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| RDDT | IR_LINKS | lipsă | link oficial | intern |  |
-| TSM | market cap | 2.18e+12 | 1.932e+12 | TradingView scanner | 12.84% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 2.866e+10 | 2.701e+10 | TradingView scanner | 6.11% |
-| SKHY | market cap | 1.04e+12 | 6.907e+11 | TradingView scanner | 50.57% (ADR: prima față de bursa locală) |
-| CRWD | P/E | 3,802 | 6,389 | TradingView scanner | 40.50% (TTM calculat diferit) |
-| PANW | P/E | 867.4 | 677 | TradingView scanner | 28.13% (TTM calculat diferit) |
-| SMR | market cap | 2.34e+09 | 2.445e+09 | TradingView scanner | 4.30% |
-| SFTBY | market cap | 1.707e+11 | 1.787e+11 | TradingView scanner | 4.46% (ADR: prima față de bursa locală) |
+| TSM | market cap | 2.2e+12 | 1.929e+12 | TradingView scanner | 14.03% (ADR: prima față de bursa locală) |
+| CBRS | market cap | 2.809e+10 | 2.647e+10 | TradingView scanner | 6.13% |
+| ARM | market cap | 2.361e+11 | 243557403259 | TradingView scanner | 3.07% |
+| SKHY | market cap | 1.02e+12 | 6.943e+11 | TradingView scanner | 46.90% (ADR: prima față de bursa locală) |
+| DELL | % zi | 1.48 | 1.344 | TradingView scanner | 0.14pp |
+| CRWD | P/E | 4,547 | 6,369 | TradingView scanner | 28.60% (TTM calculat diferit) |
+| PANW | P/E | 850.7 | 664 | TradingView scanner | 28.12% (TTM calculat diferit) |
+| BRENT | % zi | 0.52 | -0.6937 | TradingView scanner | 1.21pp (se tranzacționează ~24h; momentul citirii diferă) |
+| SMR | market cap | 2.29e+09 | 2.398e+09 | TradingView scanner | 4.50% |
+| SFTBY | market cap | 1.663e+11 | 1.745e+11 | TradingView scanner | 4.68% (ADR: prima față de bursa locală) |
+| SFTBY | volum | 7.77e+05 | 7058529 | TradingView scanner | 88.99% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | APLD | profit net 2025-11-30 [SEC] | -19.08 | -17.51 | Yahoo (2025-11-30) | 8.96% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
-| BE | profit net 2026-03-31 [SEC] | 73.69 | 70.65 | Yahoo (2026-03-31) | 4.30% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | SAP | profit net 2025-12-31 [C] | 1846 | 1,680 | Yahoo (2025-12-31) | 9.88% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | UPST | venituri 2025-12-31 [SEC] | 296.1 | 276.2 | Yahoo (2025-12-31) | 7.19% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | CVX | venituri 2026-06-30 [SEC] | 7.006e+04 | 6.72e+04 | Yahoo (2026-06-30) | 4.25% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | EQT | venituri 2025-12-31 [SEC] | 2,388 | 2,274 | Yahoo (2025-12-31) | 5.02% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | EQT | venituri 2026-03-31 [SEC] | 3,379 | 3,617 | Yahoo (2026-03-31) | 6.59% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
-| TLN | venituri 2026-03-31 [SEC] | 1,129 | 1,241 | Yahoo (2026-03-31) | 9.02% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
+| TLN | venituri 2026-03-31 [SEC] | 1,129 | 1,241 | Yahoo (2026-03-31) | 9.02% venitul raportat include derivatele nerealizate: https://www.sec.gov/Archives/edgar/data/0001622536/000162253626000065/a20260805q22026earningsrel.htm |
+| TLN | venituri 2026-06-30 [SEC] | 747 | 959 | Yahoo (2026-06-30) | 22.11% venitul raportat include derivatele nerealizate: https://www.sec.gov/Archives/edgar/data/0001622536/000162253626000065/a20260805q22026earningsrel.htm |
+| XE | venituri 2025-06-30 [SEC] | 21.5 | 16.92 | Yahoo (2025-06-30) | 27.08% Yahoo greșit, verificat: https://finviz.com/news/381732/x-energy-shares-rise-as-q2-revenue-jumps-154-on-reactor-development-progress |
 | XE | venituri 2026-03-31 [SEC] | 43.42 | 39.91 | Yahoo (2026-03-31) | 8.81% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | XE | venituri 2026-06-30 [SEC] | 54.6 | 50.12 | Yahoo (2026-06-30) | 8.94% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | JPM | venituri 2026-06-30 [SEC] | 5.735e+04 | 5.285e+04 | Yahoo (2026-06-30) | 8.50% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
