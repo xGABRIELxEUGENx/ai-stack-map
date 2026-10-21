@@ -205,3 +205,9 @@
 === 2026-10-20 00:31 | ai-stack-map-mobile-55.html → ai-stack-map-mobile-56.html | rânduri 150 | fără date: -
   GS: 2026-10-13 BMO confirmat  →  2027-01-19 BMO estimat
   trimestriale: 123 reîmprospătate | fără date: -
+
+=== 2026-10-21 00:02 | ai-stack-map-mobile-57.html → ai-stack-map-mobile-58.html | rânduri 150 | fără date: -
+  ONTO: 2026-11-05 AMC estimat  →  2026-11-09 AMC estimat
+  CBRS: 2026-11-10 ? estimat  →  2026-11-12 ? estimat
+  SKHY: 2026-10-27 ? estimat  →  2026-10-27 AMC estimat
+  trimestriale: 131 reîmprospătate | fără date: -
