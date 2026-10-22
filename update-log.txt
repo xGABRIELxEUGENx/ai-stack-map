@@ -211,3 +211,8 @@
   CBRS: 2026-11-10 ? estimat  →  2026-11-12 ? estimat
   SKHY: 2026-10-27 ? estimat  →  2026-10-27 AMC estimat
   trimestriale: 131 reîmprospătate | fără date: -
+
+=== 2026-10-22 00:07 | ai-stack-map-mobile-58.html → ai-stack-map-mobile-59.html | rânduri 150 | fără date: -
+  ACLS: 2026-11-03 BMO estimat  →  2026-11-05 BMO estimat
+  MOD: 2026-10-27 AMC estimat  →  2026-11-03 AMC estimat
+  trimestriale: 9 reîmprospătate | fără date: -
