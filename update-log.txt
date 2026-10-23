@@ -216,3 +216,6 @@
   ACLS: 2026-11-03 BMO estimat  →  2026-11-05 BMO estimat
   MOD: 2026-10-27 AMC estimat  →  2026-11-03 AMC estimat
   trimestriale: 9 reîmprospătate | fără date: -
+
+=== 2026-10-23 00:05 | ai-stack-map-mobile-59.html → ai-stack-map-mobile-60.html | rânduri 150 | fără date: -
+  trimestriale: 10 reîmprospătate | fără date: -
