@@ -1,31 +1,34 @@
-# Cross-check metoda B — v59
+# Cross-check metoda B — v60
 
-Rulat: 2026-10-22 00:10 UTC · fișier: `ai-stack-map-mobile-59.html` · tickeri: 150
+Rulat: 2026-10-23 00:07 UTC · fișier: `ai-stack-map-mobile-60.html` · tickeri: 150
 
-**2310 verificări · 2283 OK · 1 erori · 26 diferențe**
+**2285 verificări · 2255 OK · 2 erori · 28 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (1)
+## Erori (2)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| ASML | earnings trecut | 2026-10-14 | după 2026-10-22 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| ASML | earnings trecut | 2026-10-14 | după 2026-10-23 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| BRENT | % zi | 0.05 | 3.997 | TradingView scanner | 3.95pp (se tranzacționează ~24h; momentul citirii diferă) |
 
-## Diferențe (26)
+## Diferențe (28)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| TSM | market cap | 2.24e+12 | 1.913e+12 | TradingView scanner | 17.08% (ADR: prima față de bursa locală) |
-| ASML | market cap | 6.462e+11 | 6.247e+11 | TradingView scanner | 3.44% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 2.803e+10 | 2.641e+10 | TradingView scanner | 6.14% |
-| SKHY | market cap | 1.04e+12 | 6.677e+11 | TradingView scanner | 55.77% (ADR: prima față de bursa locală) |
-| CRWD | P/E | 3,989 | 6,704 | TradingView scanner | 40.50% (TTM calculat diferit) |
-| PANW | P/E | 868.1 | 677.6 | TradingView scanner | 28.12% (TTM calculat diferit) |
-| BRENT | preț | 110.1 | 108.8 | TradingView scanner | 1.14% (se tranzacționează ~24h; momentul citirii diferă) |
-| BRENT | % zi | 1.14 | 0.02758 | TradingView scanner | 1.11pp (se tranzacționează ~24h; momentul citirii diferă) |
-| SMR | market cap | 2.26e+09 | 2.363e+09 | TradingView scanner | 4.38% |
-| SFTBY | volum | 4.35e+05 | 3564666 | TradingView scanner | 87.80% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| TSM | market cap | 2.14e+12 | 1.936e+12 | TradingView scanner | 10.53% (ADR: prima față de bursa locală) |
+| ASML | market cap | 6.015e+11 | 6.409e+11 | TradingView scanner | 6.16% (ADR: prima față de bursa locală) |
+| CBRS | market cap | 2.588e+10 | 2.439e+10 | TradingView scanner | 6.13% |
+| ARM | market cap | 2.244e+11 | 241998116089 | TradingView scanner | 7.28% |
+| SKHY | market cap | 9.598e+11 | 7.074e+11 | TradingView scanner | 35.69% (ADR: prima față de bursa locală) |
+| CRWD | P/E | 4,759 | 6,665 | TradingView scanner | 28.60% (TTM calculat diferit) |
+| PANW | P/E | 887.3 | 692.5 | TradingView scanner | 28.12% (TTM calculat diferit) |
+| TSLA | P/E | 346.8 | 413 | TradingView scanner | 16.03% (TTM calculat diferit) |
+| SOUN | % zi | -2.22 | -2.386 | TradingView scanner | 0.17pp |
+| SMR | market cap | 2.21e+09 | 2.312e+09 | TradingView scanner | 4.41% |
+| SFTBY | market cap | 1.539e+11 | 1.668e+11 | TradingView scanner | 7.75% (ADR: prima față de bursa locală) |
+| SFTBY | volum | 9.97e+05 | 5118980 | TradingView scanner | 80.52% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | APLD | profit net 2025-11-30 [SEC] | -19.08 | -17.51 | Yahoo (2025-11-30) | 8.96% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
