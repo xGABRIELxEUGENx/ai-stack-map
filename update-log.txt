@@ -219,3 +219,7 @@
 
 === 2026-10-23 00:05 | ai-stack-map-mobile-59.html → ai-stack-map-mobile-60.html | rânduri 150 | fără date: -
   trimestriale: 10 reîmprospătate | fără date: -
+
+=== 2026-10-23 23:55 | ai-stack-map-mobile-60.html → ai-stack-map-mobile-61.html | rânduri 150 | fără date: -
+  OKLO: 2026-11-10 BMO estimat  →  2026-11-06 BMO estimat
+  trimestriale: 2 reîmprospătate | fără date: -
