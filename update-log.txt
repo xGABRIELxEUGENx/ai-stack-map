@@ -223,3 +223,8 @@
 === 2026-10-23 23:55 | ai-stack-map-mobile-60.html → ai-stack-map-mobile-61.html | rânduri 150 | fără date: -
   OKLO: 2026-11-10 BMO estimat  →  2026-11-06 BMO estimat
   trimestriale: 2 reîmprospătate | fără date: -
+
+=== 2026-10-27 00:41 | ai-stack-map-mobile-61.html → ai-stack-map-mobile-62.html | rânduri 150 | fără date: -
+  OK TradingView vs SEC KMI 2026-09-30
+  OK TradingView vs SEC TXN 2026-09-30
+  trimestriale: 5 reîmprospătate | fără date: -
