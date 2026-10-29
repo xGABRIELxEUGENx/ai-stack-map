@@ -233,3 +233,11 @@
   CRWV: 2026-11-11 ? estimat  →  2026-11-10 ? estimat
   TTD: 2026-11-05 AMC estimat  →  2026-11-09 AMC estimat
   trimestriale: 120 reîmprospătate | fără date: -
+
+=== 2026-10-29 01:11 | ai-stack-map-mobile-63.html → ai-stack-map-mobile-64.html | rânduri 150 | fără date: -
+  TER: 2026-10-27 AMC estimat  →  2027-01-27 AMC estimat
+  STX: 2026-10-27 AMC estimat  →  2027-01-26 AMC estimat
+  SKHY: 2026-10-27 AMC estimat  →  2027-01-27 AMC estimat
+  V: 2026-10-27 AMC confirmat  →  2027-01-26 AMC estimat
+  OK TradingView vs SEC SPCX 2026-09-30
+  trimestriale: 16 reîmprospătate | fără date: -
