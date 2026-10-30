@@ -1,49 +1,46 @@
-# Cross-check metoda B — v64
+# Cross-check metoda B — v65
 
-Rulat: 2026-10-29 01:14 UTC · fișier: `ai-stack-map-mobile-64.html` · tickeri: 150
+Rulat: 2026-10-30 01:19 UTC · fișier: `ai-stack-map-mobile-65.html` · tickeri: 150
 
-**2292 verificări · 2248 OK · 13 erori · 31 diferențe**
+**2285 verificări · 2244 OK · 16 erori · 25 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (13)
+## Erori (16)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| LRCX | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| ASML | earnings trecut | 2026-10-14 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| TXN | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| WDC | earnings trecut | 2026-10-22 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| META | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| SPCX | earnings trecut | 2026-10-20 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| NEE | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| BE | earnings trecut | 2026-10-22 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| SAP | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| TSLA | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| IBM | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
-| KMI | earnings trecut | 2026-10-21 | după 2026-10-29 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| LRCX | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| ASML | earnings trecut | 2026-10-14 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| TXN | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| CDNS | earnings trecut | 2026-10-26 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| AMKR | earnings trecut | 2026-10-26 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| WDC | earnings trecut | 2026-10-22 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| META | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| SPCX | earnings trecut | 2026-10-20 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| NEE | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| CLS | earnings trecut | 2026-10-26 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| BE | earnings trecut | 2026-10-22 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| SAP | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| TSLA | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| IBM | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
+| KMI | earnings trecut | 2026-10-21 | după 2026-10-30 | intern | raportul a trecut, data nu s-a mutat la următorul |
 | APLD | venituri 2026-08-31 [SEC] | 262.8 | 341.9 | Yahoo (2026-08-31) | 23.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 
-## Diferențe (31)
+## Diferențe (25)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| MRVL | volum | 1.3e+07 | 16339461 | TradingView scanner | 20.44% (metode de agregare diferite) |
-| TSM | market cap | 2.28e+12 | 1.917e+12 | TradingView scanner | 18.92% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 2.674e+10 | 2.52e+10 | TradingView scanner | 6.13% |
-| ARM | market cap | 2.519e+11 | 241114936988 | TradingView scanner | 4.49% |
-| TER | P/E | 43.03 | 35.97 | TradingView scanner | 19.61% (TTM calculat diferit) |
-| STX | P/E | 50.21 | 36.67 | TradingView scanner | 36.93% (TTM calculat diferit) |
-| SKHY | market cap | 1.16e+12 | 7.321e+11 | TradingView scanner | 58.45% (ADR: prima față de bursa locală) |
-| VRT | P/E | 54.96 | 45.41 | TradingView scanner | 21.03% (TTM calculat diferit) |
-| LITE | volum | 4.7e+06 | 5948769 | TradingView scanner | 20.99% (metode de agregare diferite) |
-| CRWD | P/E | 5,333 | 7,469 | TradingView scanner | 28.60% (TTM calculat diferit) |
-| PANW | P/E | 1,012 | 769.7 | TradingView scanner | 31.41% (TTM calculat diferit) |
-| SMR | market cap | 2.33e+09 | 2.437e+09 | TradingView scanner | 4.37% |
-| XE | volum | 4.8e+06 | 5805527 | TradingView scanner | 17.32% (metode de agregare diferite) |
-| SFTBY | % zi | 5.03 | 4.811 | TradingView scanner | 0.22pp OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
-| SFTBY | market cap | 1.736e+11 | 1.617e+11 | TradingView scanner | 7.37% (ADR: prima față de bursa locală) |
-| SFTBY | volum | 4.57e+05 | 4734515 | TradingView scanner | 90.35% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| INTC | volum | 1.121e+08 | 134127256 | TradingView scanner | 16.42% (metode de agregare diferite) |
+| TSM | market cap | 2.24e+12 | 1.937e+12 | TradingView scanner | 15.63% (ADR: prima față de bursa locală) |
+| FORM | P/E | 67.68 | 44.56 | TradingView scanner | 51.89% (TTM calculat diferit) |
+| CBRS | market cap | 2.736e+10 | 2.578e+10 | TradingView scanner | 6.14% |
+| SKHY | market cap | 1.14e+12 | 8.031e+11 | TradingView scanner | 41.95% (ADR: prima față de bursa locală) |
+| CRWD | P/E | 5,223 | 7,315 | TradingView scanner | 28.60% (TTM calculat diferit) |
+| PANW | P/E | 951.4 | 742.6 | TradingView scanner | 28.12% (TTM calculat diferit) |
+| SMR | market cap | 2.43e+09 | 2.544e+09 | TradingView scanner | 4.48% |
+| SFTBY | % zi | -1.64 | -2.033 | TradingView scanner | 0.39pp OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| SFTBY | volum | 1.1e+06 | 3997426 | TradingView scanner | 72.48% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | APLD | profit net 2025-11-30 [SEC] | -19.08 | -17.51 | Yahoo (2025-11-30) | 8.96% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
