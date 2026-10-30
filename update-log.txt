@@ -241,3 +241,11 @@
   V: 2026-10-27 AMC confirmat  →  2027-01-26 AMC estimat
   OK TradingView vs SEC SPCX 2026-09-30
   trimestriale: 16 reîmprospătate | fără date: -
+
+=== 2026-10-30 01:16 | ai-stack-map-mobile-64.html → ai-stack-map-mobile-65.html | rânduri 150 | fără date: -
+  KLAC: 2026-10-28 AMC confirmat  →  2027-01-28 AMC estimat
+  MSFT: 2026-10-28 AMC confirmat  →  2027-01-27 AMC estimat
+  DELL: 2026-11-27 AMC estimat  →  2026-11-24 AMC estimat
+  GEV: 2026-10-28 BMO confirmat  →  2027-01-27 BMO estimat
+  NOW: 2026-10-28 AMC confirmat  →  2027-01-27 AMC estimat
+  trimestriale: 25 reîmprospătate | fără date: -
