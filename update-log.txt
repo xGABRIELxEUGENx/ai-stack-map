@@ -249,3 +249,10 @@
   GEV: 2026-10-28 BMO confirmat  →  2027-01-27 BMO estimat
   NOW: 2026-10-28 AMC confirmat  →  2027-01-27 AMC estimat
   trimestriale: 25 reîmprospătate | fără date: -
+
+=== 2026-10-31 00:57 | ai-stack-map-mobile-65.html → ai-stack-map-mobile-66.html | rânduri 150 | fără date: -
+  INTC: 2026-10-29 AMC confirmat  →  2027-01-28 AMC estimat
+  NBIS: 2026-11-10 BMO estimat  →  2026-11-12 BMO estimat
+  XE: 2026-11-16 BMO estimat  →  2026-11-12 BMO estimat
+  MA: 2026-10-29 BMO confirmat  →  2027-01-28 BMO estimat
+  trimestriale: 17 reîmprospătate | fără date: -
