@@ -78,6 +78,7 @@ Sesiunea acțiunilor se calculează în browser, în America/New_York, și se re
 - **Earnings**: o linie pe ticker, exact așa (`EARN_LINE_RE`):
   `'T': { date:'YYYY-MM-DD', session:'BMO|AMC|?', status:'confirmat|estimat|neverificat|n/a', time:'HH:MM sau gol', src:'...' },`
   Scriptul **nu suprascrie** un `confirmat` cu dată viitoare. Dacă Yahoo arată altă dată, scriptul doar scrie un AVERTISMENT în `update-log.txt`.
+  Sesiunea dedusă în pagină (`deriveSession`), doar la `session:'?'`: rezultatele ies înaintea call-ului, deci ora publicării (`time`) sau ora call-ului/webcast-ului din `src` (ET) < 09:30 → BMO, ≥ 16:00 → AMC, între ele rămâne `?`; call într-o zi ulterioară datei raportului → AMC. Drawer-ul arată „(dedus din ora call-ului)”. Fișierul păstrează `?`.
 - **`FIN`**: blocul dintre `// FIN-START` și `// FIN-END` e scris **doar de script**. Nu-l edita de mână.
   Rândul din `q`: `[sfârșit_trimestru, venituri_M, profit_net_M, "SEC"|"C"|"TV"]`, în moneda raportului. În pagină: `*` = comunicat, `†` = TradingView provizoriu.
 - **`FIN_PR`**: blocul dintre `// FINPR-START` și `// FINPR-END`, imediat după `FIN-END`, e scris **doar de Claude** (scriptul doar îl citește), numai din documentul oficial al companiei (8-K/6-K anexa 99.1 pe sec.gov, comunicatul sau raportul de pe pagina de investitori), cu URL-ul exact. JSON valid, o linie pe ticker, trimestrele în ordine cronologică:
@@ -111,7 +112,7 @@ Sesiunea acțiunilor se calculează în browser, în America/New_York, și se re
    - Sursa principală: pagina oficială din `IR_LINKS` (comunicatul „to report / conference call”).
    - Poți căuta pe web anunțul companiei, dar treci `confirmat` doar dacă vezi comunicatul oficial.
 3. Pentru fiecare confirmare scrie:
-   - data și sesiunea (`BMO`/`AMC`) din comunicat;
+   - data și sesiunea (`BMO`/`AMC`) din comunicat; dacă comunicatul nu scrie sesiunea, `session:'?'`, iar ora call-ului/webcast-ului intră în `src` în forma `call HH:MM ET` (sau `call D Mon HH:MM ET` când call-ul e în altă zi), ca pagina să deducă singură sesiunea;
    - `time` = ora exactă ET a publicării, dacă e anunțată (nu ora call-ului);
    - `src` = sursa și data comunicatului.
    Dacă data oficială diferă de cea din fișier, folosește data oficială.
