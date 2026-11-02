@@ -21,10 +21,10 @@ Link public (GitHub Pages): https://xgabrielxeugenx.github.io/ai-stack-map/ (des
 Ce face scriptul la fiecare rulare:
 1. Pornește de la ultima versiune N și scrie N+1 plus `LATEST`.
 2. Pentru fiecare ticker actualizează prețul, %, market cap, volumul și P/E.
-3. Actualizează datele de earnings, numai ca `estimat`.
+3. Actualizează datele de earnings, numai ca `estimat`. După raport, când Yahoo (`info`) mai arată data trecută, ia primul raport viitor din `get_earnings_dates`; fără niciunul, scrie în `update-log.txt` „AVERTISMENT T: raportul din … a trecut” și lasă linia neschimbată.
 4. Actualizează datele trimestriale (blocul `FIN`):
    - venituri și profit net (`q`), ultimele 5 trimestre:
-     - istoricul din rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`), automat; dacă SEC nu răspunde, păstrează `q` din versiunea anterioară;
+     - istoricul din rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`), automat; dacă SEC nu răspunde, păstrează `q` din versiunea anterioară. La venituri, seria vine din tag-ul cu cele mai multe trimestre, dar pe un trimestru unde un tag cu prioritate mai mare are valoare mai mare, se ia aceea (totalul, nu o componentă; APLD T1 FY27);
      - companiile fără SEC trimestrial (străine: TSM, ASML, SAP, SKHY, CCJ, GFS, NBIS) din comunicatele din `FIN_PR` (marcate `C`); un rând `C` intră și la americani, dacă e la > 45 de zile după ultimul raport SEC;
      - **trimestrul abia raportat**, din seara publicării: TradingView scanner (`revenue_fq`, `net_income_fq`, `fiscal_period_end_fq`), marcat `TV` = provizoriu, doar dacă e la > 45 de zile după ultimul rând oficial și doar în USD (TradingView convertește companiile străine în USD, deci la ele nu se folosește). Rândul `TV` e înlocuit automat când apare trimestrul în SEC sau în `FIN_PR`; atunci scriptul scrie în `update-log.txt` „OK/DIFERENȚĂ TradingView vs SEC|C …”;
    - EPS raportat vs estimat, consensul trimestrului următor (`nx`) și reacția prețului (`rx`): Yahoo;
@@ -107,7 +107,7 @@ Sesiunea acțiunilor se calculează în browser, în America/New_York, și se re
 ## Confirmarea zilnică a earnings (luni–vineri, făcută de Claude)
 
 1. Ia starea curentă: ultimul `ai-stack-map-mobile-N.html` din repo, după `git pull`.
-2. Verifică tickerii din `EARNINGS` care au data în următoarele ~21 de zile și nu sunt încă `confirmat`, plus cei `neverificat`.
+2. Verifică tickerii din `EARNINGS` care au data în următoarele ~21 de zile și nu sunt încă `confirmat`, plus cei `neverificat` și cei cu data deja trecută (raportul a avut loc, iar Yahoo nu are încă data următoare: caută anunțul oficial al raportului următor).
    - Sursa principală: pagina oficială din `IR_LINKS` (comunicatul „to report / conference call”).
    - Poți căuta pe web anunțul companiei, dar treci `confirmat` doar dacă vezi comunicatul oficial.
 3. Pentru fiecare confirmare scrie:
@@ -167,5 +167,6 @@ Pentru amândouă:
   - P/E calculat diferit între surse;
   - prima ADR față de bursa locală;
   - instrumente care se tranzacționează ~24h (WTI, BRENT, VIX), unde contează momentul citirii;
-  - dividend la data ex-dividend.
+  - dividend la data ex-dividend (detectat automat: % TradingView = preț(N)/preț(N−1), iar % Yahoo mai mare cu 0–3% din preț);
+  - market cap TradingView calculat încă cu închiderea anterioară, după o mișcare ≥ 3% (detectat automat).
 - **Rolul lui Claude Code** (sarcina programată, 09:54 ora României): citește raportul B al zilei, investighează fiecare EROARE până la cauza probabilă (bug de script, sursă, definiție) și raportează lui Gabriel. Nu repetă metoda A.

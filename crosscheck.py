@@ -42,7 +42,9 @@ TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (
        "price_24h": (3.0, 1.0), "chg_24h": (2.0, 0.5),
        "fin": (15.0, 3.0), "shares": (5.0, 2.0),
        "chg_otc": (1e9, 0.10), "vol_otc": (1e9, 15.0),   # OTC: doar diferență (vezi OTC_NOTE)
-       "fin_def": (1e9, 3.0)}        # venit definit diferit, verificat în documentul oficial → doar diferență
+       "fin_def": (1e9, 3.0),        # venit definit diferit, verificat în documentul oficial → doar diferență
+       "chg_div": (1e9, 0.10),       # ex-dividend: Yahoo scade dividendul din închiderea anterioară → doar diferență
+       "mcap_stale": (1e9, 3.0)}     # TradingView: market cap calculat încă cu închiderea anterioară → doar diferență
 FIN_NOTE = "Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)"
 # OTC (TV_EX → OTC, ex. SFTBY): Yahoo și TradingView agregă volumul diferit și iau altă închidere de referință
 # pentru % zi → diferențe persistente care nu vin dintr-un bug
@@ -215,6 +217,15 @@ def grade(r, kind, t, field, fv, cv, src, note=""):
     elif d >= warn: r.add("DIFERENȚĂ", t, field, fv, cv, src, f"{d:.2f}{unit} {note}".strip())
     else: r.ok()
 
+def ex_dividend(price, chg, prev_price, tv_chg, move):
+    """Dividendul implicit (în $) când % din fișier (Yahoo) diferă de TradingView doar prin ajustarea ex-dividend:
+    TradingView = preț(N)/preț(N−1), iar Yahoo arată un % mai mare cu o sumă de 0–3% din preț. Altfel None.
+    Versiunile N−1 și N trebuie să fie zile de bursă consecutive, altfel `move` nu se potrivește cu TradingView."""
+    if None in (price, chg, prev_price, tv_chg, move) or abs(move - tv_chg) > 0.05 or chg <= tv_chg:
+        return None
+    d = prev_price - price / (1 + chg / 100)
+    return d if 0 < d <= 0.03 * prev_price else None
+
 def src_tv_name(): return "TradingView scanner"
 
 def latest_versions():
@@ -279,8 +290,8 @@ def main():
                 r.add("EROARE", t, "confirmat fără sursă oficială", e["src"] or "—", "comunicat oficial", "intern")
             else: r.ok()
     # acțiuni = mcap/preț stabile față de versiunea anterioară
-    if len(vers) > 1:
-        prev = {x["t"]: x for x in parse_page(open(vers[-2][1], encoding="utf-8").read())[0]}
+    prev = {x["t"]: x for x in parse_page(open(vers[-2][1], encoding="utf-8").read())[0]} if len(vers) > 1 else {}
+    if prev:
         for x in rows:
             p0 = prev.get(x["t"])
             if p0 and x["mcap"] and p0["mcap"] and x["price"] and p0["price"]:
@@ -317,12 +328,19 @@ def main():
         note24 = "(se tranzacționează ~24h; momentul citirii diferă)" if h24 else ""
         grade(r, "price_24h" if h24 else "price", t, "preț", x["price"], q["close"], src_tv, note24)
         otc = tvex.get(t) == "OTC"
-        grade(r, "chg_otc" if otc else "chg_24h" if h24 else "chg_pp", t, "% zi", x["chg"], q["change"], src_tv,
-              OTC_NOTE if otc else note24)
+        p0 = prev.get(t)
+        move = (x["price"] / p0["price"] - 1) * 100 if p0 and p0["price"] and x["price"] else None   # preț(N)/preț(N−1)
+        div = ex_dividend(x["price"], x["chg"], p0["price"] if p0 else None, q["change"], move)
+        grade(r, "chg_otc" if otc else "chg_24h" if h24 else "chg_div" if div else "chg_pp", t, "% zi", x["chg"],
+              q["change"], src_tv, OTC_NOTE if otc else note24 if h24 else
+              f"ex-dividend: Yahoo scade ~{div:.2f} din închiderea anterioară; preț(N)/preț(N−1) = TradingView" if div else "")
         if t not in NON_STOCK:
             adr = ((fin or {}).get(t) or {}).get("cur", "USD") != "USD"
-            grade(r, "mcap_adr" if adr else "mcap", t, "market cap", x["mcap"], q["market_cap_basic"], src_tv,
-                  "(ADR: prima față de bursa locală)" if adr else "")
+            stale = (not adr and move is not None and abs(move) >= 3 and x["mcap"] and q["market_cap_basic"]
+                     and pdiff(q["market_cap_basic"], x["mcap"] / (1 + move / 100)) < 1.0)
+            grade(r, "mcap_adr" if adr else "mcap_stale" if stale else "mcap", t, "market cap", x["mcap"],
+                  q["market_cap_basic"], src_tv, "(ADR: prima față de bursa locală)" if adr else
+                  "(TradingView: calculat încă cu închiderea anterioară)" if stale else "")
             grade(r, "vol_otc" if otc else "vol", t, "volum", x["vol"], q["volume"], src_tv,
                   OTC_NOTE if otc else "(metode de agregare diferite)")
             if x["pe"] and q["price_earnings_ttm"] and q["price_earnings_ttm"] > 0:

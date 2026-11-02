@@ -88,6 +88,17 @@ def js_str(s):
 
 
 # ---------------------------------------------------------------- citire date Yahoo
+def next_earnings_ts(sym):
+    """Timestamp-ul primului raport viitor din `get_earnings_dates`, sau None (fără dată publică → nu ghicim)."""
+    try:
+        ed = yf.Ticker(sym).get_earnings_dates(limit=8)
+    except Exception:
+        return None
+    if ed is None or ed.empty:
+        return None
+    future = [ts.timestamp() for ts in ed.index if ts.timestamp() > time.time()]
+    return int(min(future)) if future else None
+
 def fetch(t):
     """Întoarce dict cu datele Yahoo pentru ticker, sau None dacă eșuează."""
     sym = YAHOO_SYMBOL.get(t, t)
@@ -100,14 +111,19 @@ def fetch(t):
             chg = info.get("regularMarketChangePercent")
             if chg is None and info.get("regularMarketPreviousClose"):
                 chg = (price / info["regularMarketPreviousClose"] - 1) * 100
+            earn_ts = info.get("earningsTimestampStart") or info.get("earningsTimestamp")
+            earn_est = info.get("isEarningsDateEstimate")
+            if not earn_ts or earn_ts < time.time() - 86400:
+                # după raport, `info` mai arată zile întregi data trecută → primul raport viitor din calendarul Yahoo
+                earn_ts, earn_est = next_earnings_ts(sym), None
             return {
                 "price": float(price),
                 "chg": float(chg or 0.0),
                 "mcap": info.get("marketCap"),
                 "vol": info.get("regularMarketVolume") or info.get("volume"),
                 "pe": info.get("trailingPE"),
-                "earn_ts": info.get("earningsTimestampStart") or info.get("earningsTimestamp"),
-                "earn_est": info.get("isEarningsDateEstimate"),
+                "earn_ts": earn_ts,
+                "earn_est": earn_est,
                 "fcur": info.get("financialCurrency"),
             }
         except Exception as e:
@@ -224,10 +240,15 @@ def _sec_series(g, tag, positive=False):
 def _sec_pick(g, tags, since, positive=False):
     """Seria unei companii: tag-ul cu cele mai multe trimestre după `since` (la egalitate, ordinea din listă),
     apoi golurile completate din celelalte tag-uri, în ordinea listei. Așa nu se amestecă un sub-total
-    (ex. NTAP „Revenues” apărut doar în ultimele rapoarte) cu totalul folosit în restul seriei."""
+    (ex. NTAP „Revenues” apărut doar în ultimele rapoarte) cu totalul folosit în restul seriei.
+    Excepție: un tag cu prioritate mai mare și valoare MAI MARE pe același trimestru e totalul, iar tag-ul ales
+    e doar o componentă (APLD T1 FY27: „Revenues” 341.9 = servicii 262.8 + chirii 79.1, chiriile apar abia acum)."""
     series = [_sec_series(g, tag, positive) for tag in tags]
     best = max(range(len(tags)), key=lambda i: (sum(1 for e in series[i] if e > since), -i))
     out = dict(series[best])
+    for s in series[:best]:
+        for e, v in s.items():
+            if e in out and v > out[e]: out[e] = v
     for s in series:
         for e, v in s.items(): out.setdefault(e, v)
     return out
@@ -599,6 +620,8 @@ def main():
             return m.group(0)
         y = earnings_from_yahoo(data.get(t), today)
         if not y:
+            if date and date < today.isoformat() and data.get(t):
+                log.append(f"AVERTISMENT {t}: raportul din {date} a trecut, Yahoo nu are data următoare — verifică pe IR")
             return m.group(0)
         ydate, yses, yest = y
         upcoming = bool(date) and date >= today.isoformat()
