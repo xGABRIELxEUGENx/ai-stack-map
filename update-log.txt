@@ -256,3 +256,48 @@
   XE: 2026-11-16 BMO estimat  →  2026-11-12 BMO estimat
   MA: 2026-10-29 BMO confirmat  →  2027-01-28 BMO estimat
   trimestriale: 17 reîmprospătate | fără date: -
+
+=== 2026-11-03 03:00 | ai-stack-map-mobile-68.html → ai-stack-map-mobile-69.html | rânduri 150 | fără date: -
+  LRCX: 2026-10-21 AMC confirmat  →  2027-01-27 AMC estimat
+  ASML: 2026-10-14 BMO confirmat  →  2027-01-27 BMO estimat
+  TXN: 2026-10-21 AMC confirmat  →  2027-01-26 AMC estimat
+  MPWR: 2026-10-29 AMC confirmat  →  2027-02-04 AMC estimat
+  FORM: 2026-10-28 AMC confirmat  →  2027-02-03 AMC estimat
+  CBRS: 2026-11-12 ? estimat  →  2026-11-12 AMC estimat
+  CDNS: 2026-10-26 AMC confirmat  →  2027-02-18 AMC estimat
+  AMKR: 2026-10-26 AMC confirmat  →  2027-02-08 AMC estimat
+  ENTG: 2026-10-29 BMO estimat  →  2027-02-04 BMO estimat
+  WDC: 2026-10-22 AMC confirmat  →  2027-01-28 AMC estimat
+  SNDK: 2026-10-29 AMC confirmat  →  2027-02-15 AMC estimat
+  AMZN: 2026-10-29 AMC estimat  →  2027-02-04 AMC estimat
+  GOOGL: 2026-10-28 AMC confirmat  →  2027-02-03 AMC estimat
+  META: 2026-10-21 AMC confirmat  →  2027-01-27 AMC estimat
+  SPCX: 2026-10-20 AMC estimat  →  2027-02-09 AMC estimat
+  CRWV: 2026-11-10 ? estimat  →  2026-11-10 AMC estimat
+  EQIX: 2026-10-28 AMC confirmat  →  2027-02-10 AMC estimat
+  DLR: 2026-10-29 AMC confirmat  →  2027-02-11 AMC estimat
+  VRT: 2026-10-28 BMO estimat  →  2027-02-10 BMO estimat
+  NEE: 2026-10-21 BMO confirmat  →  2027-01-27 BMO estimat
+  FSLR: 2026-10-29 AMC estimat  →  2027-02-23 AMC estimat
+  MSTR: 2026-10-29 AMC confirmat  →  2027-02-04 AMC estimat
+  COIN: 2026-10-29 AMC estimat  →  2027-02-11 AMC estimat
+  HOOD: 2026-10-27 AMC confirmat  →  2027-02-10 AMC estimat
+  AVERTISMENT LITE: confirmat 2026-11-05 în fișier, Yahoo arată 2026-11-02 — verifică pe IR
+  CLS: 2026-10-26 AMC confirmat  →  2027-01-27 AMC estimat
+  HPE: 2026-12-03 AMC estimat  →  2026-11-23 AMC estimat
+  PWR: 2026-10-29 BMO estimat  →  2027-02-18 BMO estimat
+  BE: 2026-10-22 AMC confirmat  →  2027-02-04 AMC estimat
+  SAP: 2026-10-21 AMC confirmat  →  2027-01-28 BMO estimat
+  AI: 2026-12-02 AMC estimat  →  2026-12-09 AMC estimat
+  TSLA: 2026-10-21 AMC confirmat  →  2027-01-27 AMC estimat
+  IBM: 2026-10-21 AMC confirmat  →  2027-01-27 AMC estimat
+  FTNT: 2026-10-28 AMC confirmat  →  2027-02-04 AMC estimat
+  RDDT: 2026-10-29 AMC estimat  →  2027-02-04 AMC estimat
+  XOM: 2026-10-30 BMO estimat  →  2027-01-29 BMO estimat
+  CVX: 2026-10-30 BMO confirmat  →  2027-01-29 BMO estimat
+  EQT: 2026-10-27 AMC confirmat  →  2027-02-23 AMC estimat
+  KMI: 2026-10-21 AMC confirmat  →  2027-01-27 AMC estimat
+  CCJ: 2026-10-30 BMO estimat  →  2027-02-12 BMO estimat
+  P: 2026-11-18 ? estimat  →  2026-11-18 AMC estimat
+  NNE: — ? neverificat  →  2026-12-17 ? estimat
+  trimestriale: 13 reîmprospătate | fără date: -
