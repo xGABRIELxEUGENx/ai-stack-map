@@ -301,3 +301,19 @@
   P: 2026-11-18 ? estimat  →  2026-11-18 AMC estimat
   NNE: — ? neverificat  →  2026-12-17 ? estimat
   trimestriale: 13 reîmprospătate | fără date: -
+
+=== 2026-11-04 01:34 | ai-stack-map-mobile-69.html → ai-stack-map-mobile-70.html | rânduri 150 | fără date: -
+  ON: 2026-11-02 AMC confirmat  →  2027-02-08 AMC estimat
+  SLAB: 2026-11-03 BMO estimat  →  2026-11-09 BMO estimat
+  CIFR: 2026-11-02 BMO confirmat  →  2027-02-23 BMO estimat
+  AVERTISMENT LITE: confirmat 2026-11-05 în fișier, Yahoo arată 2027-02-02 — verifică pe IR
+  PLTR: 2026-11-02 AMC confirmat  →  2027-02-01 AMC estimat
+  PANW: 2026-11-19 AMC estimat  →  2026-11-18 AMC estimat
+  AAPL: 2026-11-02 ? confirmat  →  2027-01-28 ? estimat
+  TEM: 2026-11-02 BMO confirmat  →  2027-02-23 BMO estimat
+  WMB: 2026-11-02 AMC confirmat  →  2027-02-09 AMC estimat
+  BWXT: 2026-11-02 AMC confirmat  →  2027-02-22 AMC estimat
+  OK TradingView vs SEC BAC 2026-09-30
+  OK TradingView vs SEC GS 2026-09-30
+  OK TradingView vs SEC JPM 2026-09-30
+  trimestriale: 86 reîmprospătate | fără date: -
