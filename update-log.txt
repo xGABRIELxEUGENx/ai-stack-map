@@ -317,3 +317,19 @@
   OK TradingView vs SEC GS 2026-09-30
   OK TradingView vs SEC JPM 2026-09-30
   trimestriale: 86 reîmprospătate | fără date: -
+
+=== 2026-11-05 01:41 | ai-stack-map-mobile-70.html → ai-stack-map-mobile-71.html | rânduri 150 | fără date: -
+  AMD: 2026-11-03 AMC confirmat  →  2027-02-02 AMC estimat
+  SMCI: 2026-11-03 ? confirmat  →  2027-02-02 ? estimat
+  ALAB: 2026-11-03 AMC confirmat  →  2027-02-09 AMC estimat
+  NVTS: 2026-11-03 AMC confirmat  →  2027-02-22 AMC estimat
+  ETN: 2026-11-03 BMO confirmat  →  2027-02-02 BMO estimat
+  ANET: 2026-11-03 AMC confirmat  →  2027-02-09 AMC estimat
+  AVERTISMENT LITE: confirmat 2026-11-05 în fișier, Yahoo arată 2027-02-02 — verifică pe IR
+  MOD: 2026-11-03 AMC confirmat  →  2027-02-03 AMC estimat
+  DUOL: 2026-11-03 AMC confirmat  →  2027-02-25 AMC estimat
+  UPST: 2026-11-03 BMO confirmat  →  2027-02-09 BMO estimat
+  TLN: 2026-11-03 ? confirmat  →  2027-02-25 ? estimat
+  OK TradingView vs SEC STX 2026-10-02
+  OK TradingView vs SEC TER 2026-09-27
+  trimestriale: 28 reîmprospătate | fără date: -
