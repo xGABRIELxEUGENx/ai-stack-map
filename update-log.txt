@@ -352,3 +352,17 @@
   OK TradingView vs SEC FORM 2026-09-26
   OK TradingView vs SEC FTNT 2026-09-30
   trimestriale: 24 reîmprospătate | fără date: -
+
+=== 2026-11-07 01:03 | ai-stack-map-mobile-72.html → ai-stack-map-mobile-73.html | rânduri 150 | fără date: -
+  ACLS: 2026-11-05 BMO confirmat  →  2027-02-16 BMO estimat
+  MTSI: 2026-11-05 BMO confirmat  →  2027-02-04 BMO estimat
+  IRM: 2026-11-05 BMO confirmat  →  2027-02-11 BMO estimat
+  CORZ: 2026-11-05 BMO confirmat  →  2027-03-01 BMO estimat
+  IREN: 2026-11-05 ? confirmat  →  2027-02-04 ? estimat
+  LITE: 2026-11-05 AMC confirmat  →  2027-02-02 BMO estimat
+  NET: 2026-11-05 AMC confirmat  →  2027-02-09 AMC estimat
+  SOUN: 2026-11-05 AMC confirmat  →  2027-02-25 AMC estimat
+  COP: 2026-11-05 BMO confirmat  →  2027-02-04 BMO estimat
+  SMR: 2026-11-05 ? confirmat  →  2027-02-25 ? estimat
+  OK TradingView vs SEC MPWR 2026-09-30
+  trimestriale: 16 reîmprospătate | fără date: -
