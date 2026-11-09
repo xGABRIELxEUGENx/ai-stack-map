@@ -116,10 +116,17 @@ def fetch(t):
             if not earn_ts or earn_ts < time.time() - 86400:
                 # după raport, `info` mai arată zile întregi data trecută → primul raport viitor din calendarul Yahoo
                 earn_ts, earn_est = next_earnings_ts(sym), None
+            # market cap: Yahoo `marketCap` sare la unele companii cu două clase de acțiuni între „doar clasa A” și
+            # „toate clasele” (NBIS v71–v73: 2,539e8 ↔ 2,718e8). `impliedSharesOutstanding` include toate clasele →
+            # când e cu 3–50% mai mare decât marketCap/preț, market cap = preț × implied. Doar la raportare în USD
+            # (la ADR-uri, implied poate fi în acțiuni locale, alt raport față de ADS).
+            mcap, implied = info.get("marketCap"), info.get("impliedSharesOutstanding")
+            if mcap and implied and info.get("financialCurrency", "USD") == "USD" and 1.03 <= implied / (mcap / price) <= 1.5:
+                mcap = implied * price
             return {
                 "price": float(price),
                 "chg": float(chg or 0.0),
-                "mcap": info.get("marketCap"),
+                "mcap": mcap,
                 "vol": info.get("regularMarketVolume") or info.get("volume"),
                 "pe": info.get("trailingPE"),
                 "earn_ts": earn_ts,
@@ -164,6 +171,11 @@ SEC_NI_TAGS = ["NetIncomeLoss",                          # profitul net atribuib
 # profitul total (inclusiv minoritarii): doar ca serie de rezervă, când compania nu are deloc tag atribuibil;
 # nu umple golurile seriei atribuibile (BE T4 2025: ProfitLoss 1.43 în loc de atribuibil 1.091)
 SEC_NI_FALLBACK = "ProfitLoss"
+# partea minoritarilor, scăzută din ProfitLoss când acesta e folosit ca rezervă → profitul atribuibil companiei
+# (APLD T2 FY26: ProfitLoss −14,45 − minoritari 3,06 = atribuibil −17,51, cum e în comunicat)
+SEC_NCI_TAG = "NetIncomeLossAttributableToNoncontrollingInterest"
+SEC_NCI_PARTS = ["NetIncomeLossAttributableToRedeemableNoncontrollingInterest",
+                 "NetIncomeLossAttributableToNonredeemableNoncontrollingInterest"]
 # doar rapoartele financiare (10-Q/10-K, la emitenții străini 6-K/20-F/40-F, plus 8-K cu situații retratate):
 # DEF 14A / PRE 14A (tabelul „pay versus performance”) repetă profitul anual, uneori în altă unitate
 # (ANET 3,511 „USD” = milioane) și, fiind depus mai târziu, ar înlocui cifra din 10-K → T4 greșit
@@ -269,10 +281,16 @@ def sec_quarters(t):
     since = dt.date.today() - dt.timedelta(days=550)
     rev, ni = _sec_pick(g, SEC_REV_TAGS, since, positive=True), _sec_pick(g, SEC_NI_TAGS, since)
     total = _sec_series(g, SEC_NI_FALLBACK)
+    nci, parts = _sec_series(g, SEC_NCI_TAG), [_sec_series(g, tag) for tag in SEC_NCI_PARTS]
+    for p in parts:                                        # fără tag-ul total: suma redeemable + nonredeemable
+        for e in p:
+            if e not in nci: nci[e] = sum(x.get(e, 0) for x in parts)
     if not any(e > since for e in ni):
-        ni = total
+        ni = {e: v - nci.get(e, 0) for e, v in total.items()}
     else:                                                  # Up-C înainte de IPO (XE T2 2025): atribuibil „—” (0), tot profitul la minoritari
         ni = {e: v for e, v in ni.items() if v != 0 or not total.get(e)}
+        # „atribuibil” identic cu ProfitLoss deși minoritarii au profit/pierdere → e de fapt totalul (etichetare greșită)
+        ni = {e: v - nci[e] if nci.get(e) and total.get(e) == v else v for e, v in ni.items()}
     ends = sorted(e for e in rev if e > since)[-5:]
     rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
     return rows or None
@@ -283,7 +301,7 @@ FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// F
 # FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
 FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 7            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
+FIN_SCHEMA = 8            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
 PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
 PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
 PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt
@@ -357,8 +375,8 @@ def tv_latest(tickers, tv_ex):
 
 def build_quarters(t, srows, pr, tvq, log):
     """Rândurile q [data, venituri, profit, "SEC"|"C"|"TV"] + moneda lor (sau None dacă moneda vine din Yahoo).
-    SEC are prioritate; comunicatul („C”) doar pentru trimestrele de după ultimul raport SEC (> 45 zile)
-    sau pentru companiile fără SEC; TradingView („TV”, provizoriu) doar pentru un trimestru și mai nou (> 45 zile),
+    SEC are prioritate; comunicatul („C”) doar pentru trimestrele de după ultimul raport SEC (> 45 zile),
+    pentru un trimestru lipsă din SEC între primul și ultimul rând SEC, sau pentru companiile fără SEC; TradingView („TV”, provizoriu) doar pentru un trimestru și mai nou (> 45 zile),
     și doar în USD. Ultimele 5."""
     pr = pr or []
     for p in pr:                                           # comunicat vs SEC pe același trimestru → log la diferențe
@@ -370,9 +388,15 @@ def build_quarters(t, srows, pr, tvq, log):
         if diffs:
             log.append(f"DIFERENȚĂ comunicat vs SEC {t} {p[0]}: " + "; ".join(diffs) + f" (sursă comunicat: {p[3]})")
     if srows:
-        last = _d(srows[-1][0])
-        q, cur = srows + [[p[0], p[1], p[2], "C"] for p in pr
-                          if p[5] == "USD" and _d(p[0]) > last + dt.timedelta(days=PR_GAP_DAYS)], None
+        first, last = _d(srows[0][0]), _d(srows[-1][0])
+        # comunicatul intră după ultimul trimestru SEC (> 45 zile) sau umple un trimestru lipsă din SEC
+        # (APLD T4 FY26: T4 derivat din 10-K omis, rândul din FIN_PR rămânea pe dinafară)
+        gap = lambda p: (first < _d(p[0]) < last and
+                         not any(abs((_d(r[0]) - _d(p[0])).days) <= PR_MATCH_DAYS for r in srows))
+        q = sorted(srows + [[p[0], p[1], p[2], "C"] for p in pr
+                            if p[5] == "USD" and (_d(p[0]) > last + dt.timedelta(days=PR_GAP_DAYS) or gap(p))],
+                   key=lambda r: r[0])
+        cur = None
     elif pr:
         cur = pr[-1][5]                                    # moneda ultimului comunicat; rânduri în altă monedă nu se amestecă
         q = [[p[0], p[1], p[2], "C"] for p in pr if p[5] == cur]
@@ -598,9 +622,16 @@ def main():
     print()
 
     # 1) rândurile din planșe
+    share_log = []
     def upd_row(m):
         t = m.group(2); d = data.get(t)
         if not d: return m.group(0)
+        old = re.match(r"'\$?([\d,.]+)','[^']*','[^']*','([\d.]+)([TBM])'", m.group(0)[len(m.group(1)):])
+        if old and d["mcap"] and d["price"] and t not in NO_EARNINGS:
+            o_sh = float(old.group(2)) * {"T": 1e12, "B": 1e9, "M": 1e6}[old.group(3)] / float(old.group(1).replace(",", ""))
+            n_sh = d["mcap"] / d["price"]
+            if abs(n_sh / o_sh - 1) > 0.03:
+                share_log.append(f"AVERTISMENT {t}: număr de acțiuni (mcap/preț) {o_sh:.4g} → {n_sh:.4g} — verifică")
         price, chg = fmt_price(t, d["price"]), fmt_chg(d["chg"])
         col = RED if chg.startswith("-") else GREEN
         etf = t in NO_EARNINGS
@@ -613,7 +644,7 @@ def main():
     nrows = sum(1 for m in ROW_RE.finditer(html) if m.group(2) in data)
 
     # 2) calendarul de earnings
-    log = []
+    log = list(share_log)
     def upd_earn(m):
         ind, t, date, ses, st, tm, srcx = m.groups()
         if t in NO_EARNINGS or st in ("n/a", "delistat"):

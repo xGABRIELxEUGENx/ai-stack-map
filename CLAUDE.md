@@ -20,12 +20,12 @@ Link public (GitHub Pages): https://xgabrielxeugenx.github.io/ai-stack-map/ (des
 
 Ce face scriptul la fiecare rulare:
 1. Pornește de la ultima versiune N și scrie N+1 plus `LATEST`.
-2. Pentru fiecare ticker actualizează prețul, %, market cap, volumul și P/E.
+2. Pentru fiecare ticker actualizează prețul, %, market cap, volumul și P/E. Market cap = Yahoo `marketCap`; la raportare în USD, când `impliedSharesOutstanding` (toate clasele de acțiuni) e cu 3–50% peste `marketCap`/preț, market cap = preț × implied (NBIS: Yahoo sărea între clasa A și toate clasele). Un salt > 3% al numărului de acțiuni față de versiunea anterioară intră în `update-log.txt` ca AVERTISMENT.
 3. Actualizează datele de earnings, numai ca `estimat`. După raport, când Yahoo (`info`) mai arată data trecută, ia primul raport viitor din `get_earnings_dates`; fără niciunul, scrie în `update-log.txt` „AVERTISMENT T: raportul din … a trecut” și lasă linia neschimbată.
 4. Actualizează datele trimestriale (blocul `FIN`):
    - venituri și profit net (`q`), ultimele 5 trimestre:
-     - istoricul din rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`), automat; dacă SEC nu răspunde, păstrează `q` din versiunea anterioară. La venituri, seria vine din tag-ul cu cele mai multe trimestre, dar pe un trimestru unde un tag cu prioritate mai mare are valoare mai mare, se ia aceea (totalul, nu o componentă; APLD T1 FY27);
-     - companiile fără SEC trimestrial (străine: TSM, ASML, SAP, SKHY, CCJ, GFS, NBIS) din comunicatele din `FIN_PR` (marcate `C`); un rând `C` intră și la americani, dacă e la > 45 de zile după ultimul raport SEC;
+     - istoricul din rapoartele SEC 10-Q/10-K (XBRL, marcate `SEC`), automat; dacă SEC nu răspunde, păstrează `q` din versiunea anterioară. La venituri, seria vine din tag-ul cu cele mai multe trimestre, dar pe un trimestru unde un tag cu prioritate mai mare are valoare mai mare, se ia aceea (totalul, nu o componentă; APLD T1 FY27). Profitul net e cel atribuibil companiei: când compania n-are tag atribuibil (sau „atribuibilul” e identic cu `ProfitLoss` deși minoritarii au profit), se scade partea minoritarilor (`NetIncomeLossAttributableToNoncontrollingInterest`, altfel redeemable + nonredeemable; APLD T2 FY26: −14,45 − 3,06 = −17,51);
+     - companiile fără SEC trimestrial (străine: TSM, ASML, SAP, SKHY, CCJ, GFS, NBIS) din comunicatele din `FIN_PR` (marcate `C`); un rând `C` intră și la americani, dacă e la > 45 de zile după ultimul raport SEC sau dacă umple un trimestru lipsă din SEC între primul și ultimul rând SEC (de ex. T4 derivat din 10-K omis; APLD T4 FY26);
      - **trimestrul abia raportat**, din seara publicării: TradingView scanner (`revenue_fq`, `net_income_fq`, `fiscal_period_end_fq`), marcat `TV` = provizoriu, doar dacă e la > 45 de zile după ultimul rând oficial și doar în USD (TradingView convertește companiile străine în USD, deci la ele nu se folosește). Rândul `TV` e înlocuit automat când apare trimestrul în SEC sau în `FIN_PR`; atunci scriptul scrie în `update-log.txt` „OK/DIFERENȚĂ TradingView vs SEC|C …”;
    - EPS raportat vs estimat, consensul trimestrului următor (`nx`) și reacția prețului (`rx`): Yahoo;
    - scrie în `update-log.txt` „DIFERENȚĂ comunicat vs SEC …” când un trimestru din `FIN_PR` diferă cu > 0.5% de valoarea SEC (sfârșit ±12 zile).
@@ -163,11 +163,11 @@ Pentru amândouă:
   - EARNINGS ↔ rânduri; culoarea % față de semn; badge-ul față de drawer;
   - acțiuni (mcap/preț) stabile între versiuni;
   - nicio dată de earnings trecută; niciun `confirmat` fără sursă oficială;
-  - vechimea `FIN`; bursa din `TV_EX` față de bursa reală.
+  - vechimea `FIN`; trimestre lipsă la mijlocul seriei `q` (> 100 de zile între rânduri, DIFERENȚĂ); bursa din `TV_EX` față de bursa reală.
 - **Clasificare**: „EROARE” = probabil greșit; „DIFERENȚĂ” = poate avea cauză legitimă:
   - P/E calculat diferit între surse;
   - prima ADR față de bursa locală;
   - instrumente care se tranzacționează ~24h (WTI, BRENT, VIX), unde contează momentul citirii;
   - dividend la data ex-dividend (detectat automat: % TradingView = preț(N)/preț(N−1), iar % Yahoo mai mare cu 0–3% din preț);
-  - market cap TradingView calculat încă cu închiderea anterioară, după o mișcare ≥ 3% (detectat automat).
+  - market cap TradingView calculat cu o închidere din ultimele 3 versiuni (N−1..N−3), după o mișcare ≥ 3% (detectat automat; ARM v73: valoarea TV rămăsese la închiderea de acum 2 zile).
 - **Rolul lui Claude Code** (sarcina programată, 09:54 ora României): citește raportul B al zilei, investighează fiecare EROARE până la cauza probabilă (bug de script, sursă, definiție) și raportează lui Gabriel. Nu repetă metoda A.
