@@ -366,3 +366,17 @@
   SMR: 2026-11-05 ? confirmat  →  2027-02-25 ? estimat
   OK TradingView vs SEC MPWR 2026-09-30
   trimestriale: 16 reîmprospătate | fără date: -
+
+=== 2026-11-10 03:43 | ai-stack-map-mobile-73.html → ai-stack-map-mobile-74.html | rânduri 150 | fără date: -
+  AVERTISMENT OKLO: număr de acțiuni (mcap/preț) 1.86e+08 → 1.953e+08 — verifică
+  AVERTISMENT IREN: număr de acțiuni (mcap/preț) 4.048e+08 → 4.244e+08 — verifică
+  AVERTISMENT SOUN: număr de acțiuni (mcap/preț) 4.501e+08 → 4.889e+08 — verifică
+  AVERTISMENT OKLO: număr de acțiuni (mcap/preț) 1.86e+08 → 1.953e+08 — verifică
+  OKLO: 2026-11-06 BMO confirmat  →  2027-03-16 BMO estimat
+  VST: 2026-11-06 ? confirmat  →  2027-02-25 ? estimat
+  WULF: 2026-11-06 ? confirmat  →  2027-02-25 ? estimat
+  OK TradingView vs SEC CVX 2026-09-30
+  OK TradingView vs SEC MS 2026-09-30
+  OK TradingView vs SEC SMCI 2026-09-30
+  OK TradingView vs SEC V 2026-09-30
+  trimestriale: 131 reîmprospătate | fără date: -
