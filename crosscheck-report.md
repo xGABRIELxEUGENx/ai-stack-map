@@ -1,8 +1,8 @@
-# Cross-check metoda B — v74
+# Cross-check metoda B — v75
 
-Rulat: 2026-11-10 03:50 UTC · fișier: `ai-stack-map-mobile-74.html` · tickeri: 150
+Rulat: 2026-11-11 01:26 UTC · fișier: `ai-stack-map-mobile-75.html` · tickeri: 150
 
-**2796 verificări · 2750 OK · 3 erori · 43 diferențe**
+**2796 verificări · 2756 OK · 3 erori · 37 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
@@ -10,40 +10,34 @@ Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| SOUN | acțiuni (mcap/preț) | 4.889e+08 | 4.501e+08 | v73 | 8.61% număr de acțiuni schimbat brusc |
-| SOUN | market cap | 1.98e+09 | 1.822e+09 | TradingView scanner | 8.67% |
+| NBIS | acțiuni (mcap/preț) | 2.719e+08 | 2.539e+08 | v74 | 7.09% număr de acțiuni schimbat brusc |
+| SOUN | market cap | 1.89e+09 | 1.741e+09 | TradingView scanner | 8.56% |
 | APLD | profit net 2026-08-31 [SEC] | -184.1 | -235.5 | Yahoo (2026-08-31) | 21.86% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 
-## Diferențe (43)
+## Diferențe (37)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| OKLO | acțiuni (mcap/preț) | 1.952e+08 | 1.86e+08 | v73 | 4.97% număr de acțiuni schimbat brusc |
-| IREN | acțiuni (mcap/preț) | 4.246e+08 | 4.048e+08 | v73 | 4.88% număr de acțiuni schimbat brusc |
-| OKLO | acțiuni (mcap/preț) | 1.952e+08 | 1.86e+08 | v73 | 4.97% număr de acțiuni schimbat brusc |
 | CBRS | FIN trimestru lipsă | 2025-06-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
 | SPCX | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
 | OKLO | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
 | IREN | FIN trimestru lipsă | 2026-03-31 → 2026-09-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
 | XOM | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
 | XE | FIN trimestru lipsă | 2025-06-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| TSM | market cap | 2.02e+12 | 1.687e+12 | TradingView scanner | 19.75% (ADR: prima față de bursa locală) |
-| ASML | market cap | 5.832e+11 | 5.463e+11 | TradingView scanner | 6.77% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 2.297e+10 | 2.165e+10 | TradingView scanner | 6.12% (TradingView: calculat cu o închidere din ultimele 3 zile) |
-| ARM | market cap | 1.993e+11 | 185805330915 | TradingView scanner | 7.28% (TradingView: calculat cu o închidere din ultimele 3 zile) |
-| SKHY | market cap | 9.476e+11 | 6.015e+11 | TradingView scanner | 57.55% (ADR: prima față de bursa locală) |
-| NBIS | market cap | 3.591e+10 | 3.845e+10 | TradingView scanner | 6.62% |
-| CEG | P/E | 26.99 | 22.12 | TradingView scanner | 22.00% (TTM calculat diferit) |
-| OKLO | market cap | 5.24e+09 | 4.993e+09 | TradingView scanner | 4.95% |
-| IREN | market cap | 9.09e+09 | 8.663e+09 | TradingView scanner | 4.93% |
-| ORCL | market cap | 3.735e+11 | 3.622e+11 | TradingView scanner | 3.11% (TradingView: calculat cu o închidere din ultimele 3 zile) |
-| CRWD | P/E | 3,810 | 6,403 | TradingView scanner | 40.50% (TTM calculat diferit) |
-| PANW | P/E | 827.2 | 645.6 | TradingView scanner | 28.13% (TTM calculat diferit) |
-| CEG | P/E | 26.99 | 22.12 | TradingView scanner | 22.00% (TTM calculat diferit) |
-| OKLO | market cap | 5.24e+09 | 4.993e+09 | TradingView scanner | 4.95% |
-| SMR | market cap | 2.23e+09 | 2.338e+09 | TradingView scanner | 4.61% |
-| SFTBY | market cap | 1.339e+11 | 1.278e+11 | TradingView scanner | 4.82% (ADR: prima față de bursa locală) |
-| SFTBY | volum | 2.2e+06 | 10440869 | TradingView scanner | 78.93% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| TSM | market cap | 2.06e+12 | 1.768e+12 | TradingView scanner | 16.52% (ADR: prima față de bursa locală) |
+| CBRS | market cap | 2.225e+10 | 2.097e+10 | TradingView scanner | 6.13% |
+| SKHY | market cap | 9.143e+11 | 6.144e+11 | TradingView scanner | 48.82% (ADR: prima față de bursa locală) |
+| ETN | % zi | -1.11 | -1.414 | TradingView scanner | 0.30pp ex-dividend: Yahoo scade ~1.10 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| IREN | market cap | 8.37e+09 | 7.983e+09 | TradingView scanner | 4.85% |
+| ORCL | market cap | 3.678e+11 | 3.567e+11 | TradingView scanner | 3.11% |
+| CRWD | P/E | 3,763 | 6,324 | TradingView scanner | 40.50% (TTM calculat diferit) |
+| PANW | P/E | 815.9 | 636.8 | TradingView scanner | 28.12% (TTM calculat diferit) |
+| TTD | P/E | 18.58 | 22.38 | TradingView scanner | 16.97% (TTM calculat diferit) |
+| IBM | % zi | 0.05 | -0.642 | TradingView scanner | 0.69pp ex-dividend: Yahoo scade ~1.70 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| SMR | market cap | 2.14e+09 | 2.243e+09 | TradingView scanner | 4.60% (TradingView: calculat cu o închidere din ultimele 3 zile) |
+| V | % zi | 0.38 | 0.199 | TradingView scanner | 0.18pp ex-dividend: Yahoo scade ~0.76 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| SFTBY | market cap | 1.285e+11 | 1.229e+11 | TradingView scanner | 4.54% (ADR: prima față de bursa locală) |
+| SFTBY | volum | 1.9e+06 | 10090244 | TradingView scanner | 81.17% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | SAP | profit net 2025-12-31 [C] | 1846 | 1,680 | Yahoo (2025-12-31) | 9.88% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
