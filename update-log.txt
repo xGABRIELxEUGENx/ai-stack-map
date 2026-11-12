@@ -388,3 +388,12 @@
   CEG: 2026-11-09 BMO estimat  →  2027-02-24 BMO estimat
   TTD: 2026-11-09 AMC estimat  →  2027-02-25 AMC estimat
   trimestriale: 8 reîmprospătate | fără date: -
+
+=== 2026-11-12 02:24 | ai-stack-map-mobile-76.html → ai-stack-map-mobile-77.html | rânduri 150 | fără date: -
+  AVERTISMENT NBIS: număr de acțiuni (mcap/preț) 2.719e+08 → 2.539e+08 — verifică
+  CRDO: 2026-11-30 AMC estimat  →  2026-12-01 AMC estimat
+  SLAB: 2026-11-10 AMC estimat  →  2027-02-03 AMC estimat
+  CRWV: 2026-11-10 AMC estimat  →  2027-02-25 AMC estimat
+  SFTBY: 2026-11-10 BMO confirmat  →  2027-02-11 BMO estimat
+  NNE: 2026-12-17 ? estimat  →  2026-11-30 AMC estimat
+  trimestriale: 4 reîmprospătate | fără date: -
