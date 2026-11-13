@@ -1,18 +1,14 @@
-# Cross-check metoda B — v78
+# Cross-check metoda B — v79
 
-Rulat: 2026-11-13 02:05 UTC · fișier: `ai-stack-map-mobile-78.html` · tickeri: 150
+Rulat: 2026-11-13 07:30 UTC · fișier: `ai-stack-map-mobile-79.html` · tickeri: 150
 
-**2810 verificări · 2777 OK · 3 erori · 30 diferențe**
+**2810 verificări · 2780 OK · 0 erori · 30 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (3)
+## Erori (0)
 
-| Ticker | Câmp | Fișier | Control | Sursă | Notă |
-|---|---|---|---|---|---|
-| NBIS | acțiuni (mcap/preț) | 2.718e+08 | 2.539e+08 | v77 | 7.06% număr de acțiuni schimbat brusc |
-| SOUN | market cap | 1.76e+09 | 1.62e+09 | TradingView scanner | 8.67% |
-| APLD | profit net 2026-08-31 [SEC] | -184.1 | -235.5 | Yahoo (2026-08-31) | 21.86% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
+—
 
 ## Diferențe (30)
 
@@ -27,7 +23,7 @@ Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare
 | TSM | market cap | 2.1e+12 | 1.886e+12 | TradingView scanner | 11.32% (ADR: prima față de bursa locală) |
 | CBRS | market cap | 2.322e+10 | 2.188e+10 | TradingView scanner | 6.12% |
 | SKHY | market cap | 9.711e+11 | 6.916e+11 | TradingView scanner | 40.42% (ADR: prima față de bursa locală) |
-| ORCL | market cap | 3.963e+11 | 3.843e+11 | TradingView scanner | 3.11% |
+| ORCL | market cap | 3.963e+11 | 3.843e+11 | TradingView scanner | 3.11% (mai multe clase de acțiuni: fișierul toate clasele, TradingView doar clasa cotată) |
 | CRWD | P/E | 4,597 | 6,439 | TradingView scanner | 28.60% (TTM calculat diferit) |
 | PANW | P/E | 806.6 | 629.6 | TradingView scanner | 28.12% (TTM calculat diferit) |
 | SMR | market cap | 1.98e+09 | 2.072e+09 | TradingView scanner | 4.45% |
