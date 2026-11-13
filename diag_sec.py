@@ -1,33 +1,30 @@
-import json, os, sys, datetime as dt, urllib.request
+import re, json, time, urllib.request, sys
 sys.path.insert(0, ".")
-import update_stack_map as u
-
-KEYS = ("Noncontrolling", "Redeemable", "Preferred", "Dividend", "Attributable", "Available", "ProfitLoss", "NetIncome", "MinorityInterest", "Accretion")
-ENDS = {"2025-08-31", "2025-11-30", "2026-02-28", "2026-05-31", "2026-08-31"}
-cik = u._sec_cik("APLD")
-facts = u._sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json")["facts"]
-print("=== APLD CIK", cik, "namespaces", list(facts))
-for ns, g in facts.items():
-    for tag, d in sorted(g.items()):
-        if not any(k in tag for k in KEYS): continue
-        for unit, arr in d.get("units", {}).items():
-            for it in arr:
-                if it.get("end") in ENDS and "start" in it:
-                    days = (dt.date.fromisoformat(it["end"]) - dt.date.fromisoformat(it["start"])).days
-                    print(f"{ns}:{tag} [{unit}] {it['start']}..{it['end']} ({days}d) val={it['val']} form={it.get('form')} filed={it.get('filed')}")
-g = facts.get("us-gaap", {})
-print("=== sec_quarters(APLD)", u.sec_quarters("APLD"))
-for tag in u.SEC_NI_TAGS + [u.SEC_NI_FALLBACK, u.SEC_NCI_TAG] + u.SEC_NCI_PARTS:
-    print("series", tag, {str(k): v for k, v in sorted(u._sec_series(g, tag).items())[-6:]})
-
-print("=== SOUN dei")
-c2 = u._sec_cik("SOUN")
-f2 = u._sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c2:010d}.json")["facts"]
-for it in f2.get("dei", {}).get("EntityCommonStockSharesOutstanding", {}).get("units", {}).get("shares", [])[-8:]:
-    print(it)
-import yfinance as yf
-for t in ("SOUN", "NBIS", "APLD", "GOOGL", "META"):
-    i = yf.Ticker(t).info
-    print("=== yahoo", t, {k: i.get(k) for k in ("currentPrice", "regularMarketPrice", "marketCap", "sharesOutstanding", "impliedSharesOutstanding", "floatShares", "financialCurrency")})
-req = urllib.request.Request("https://scanner.tradingview.com/america/scan", data=json.dumps({"symbols": {"tickers": ["NASDAQ:SOUN", "NASDAQ:NBIS"]}, "columns": ["close", "market_cap_basic", "total_shares_outstanding", "total_shares_outstanding_fundamental", "float_shares_outstanding"]}).encode(), headers={"Content-Type": "application/json"})
-print("=== TV", urllib.request.urlopen(req, timeout=30).read().decode())
+import old_usm as o, new_usm as n
+html = open("page.html", encoding="utf-8").read()
+tickers = sorted(set(re.findall(r"openDetails\('([A-Z.]+)'", html)))
+changed = 0
+for t in tickers:
+    try:
+        a = o.sec_quarters(t); b = n.sec_quarters(t)
+    except Exception as e:
+        print("ERR", t, e); continue
+    if a != b:
+        changed += 1
+        print("DIFF", t, "\n  old", a, "\n  new", b)
+print("tickers", len(tickers), "changed", changed)
+# SOUN: coperta ultimului 10-Q (clase de acțiuni)
+UA = n.SEC_UA
+def get(url):
+    r = urllib.request.Request(url, headers={"User-Agent": UA}); return urllib.request.urlopen(r, timeout=40).read().decode("utf-8", "replace")
+for t, cik in (("SOUN", 1840856), ("NBIS", 1513845)):
+    sub = json.loads(get(f"https://data.sec.gov/submissions/CIK{cik:010d}.json"))["filings"]["recent"]
+    for i, f in enumerate(sub["form"]):
+        if f in ("10-Q", "10-K", "6-K", "20-F"):
+            acc = sub["accessionNumber"][i].replace("-", ""); doc = sub["primaryDocument"][i]
+            url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
+            txt = re.sub(r"<[^>]+>", " ", get(url)); txt = re.sub(r"&#160;|&nbsp;|\s+", " ", txt)
+            print("===", t, f, sub["filingDate"][i], url)
+            for m in re.finditer(r"[^.]{0,200}(Class A|Class B)[^.]{0,250}outstanding[^.]{0,120}", txt[:60000]):
+                print("  ", m.group(0)[:500])
+            break
