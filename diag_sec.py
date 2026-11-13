@@ -25,6 +25,7 @@ for t, cik in (("SOUN", 1840856), ("NBIS", 1513845)):
             url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
             txt = re.sub(r"<[^>]+>", " ", get(url)); txt = re.sub(r"&#160;|&nbsp;|\s+", " ", txt)
             print("===", t, f, sub["filingDate"][i], url)
-            for m in re.finditer(r"[^.]{0,200}(Class A|Class B)[^.]{0,250}outstanding[^.]{0,120}", txt[:60000]):
-                print("  ", m.group(0)[:500])
+            for m in re.finditer(r"outstanding", txt[:120000], re.I):
+                seg = txt[max(0, m.start()-300):m.end()+200]
+                if re.search(r"Class|ordinary|common stock", seg): print("  ...", seg)
             break

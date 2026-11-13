@@ -290,6 +290,8 @@ def sec_quarters(t):
         ni = {e: v - nci.get(e, 0) for e, v in total.items()}
     else:                                                  # Up-C înainte de IPO (XE T2 2025): atribuibil „—” (0), tot profitul la minoritari
         ni = {e: v for e, v in ni.items() if v != 0 or not total.get(e)}
+        # „atribuibil” identic cu ProfitLoss deși minoritarii au profit/pierdere → e de fapt totalul (etichetare greșită)
+        ni = {e: v - nci[e] if nci.get(e) and total.get(e) == v else v for e, v in ni.items()}
     # dividendele pe preferențialele unei filiale (temporary equity, deținute de terți) sunt partea lor din profit;
     # APLD le scade abia după NetIncomeLoss → atribuibil = disponibil acționarilor comuni + dividendele preferențialelor
     # proprii (T1 FY27: −237,08 + 1,54 = −235,54, cum e în comunicat; NetIncomeLoss −184,06; T2 FY26: −19,08 + 1,57 = −17,51)
