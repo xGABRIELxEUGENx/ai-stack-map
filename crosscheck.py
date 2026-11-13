@@ -44,7 +44,8 @@ TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (
        "chg_otc": (1e9, 0.10), "vol_otc": (1e9, 15.0),   # OTC: doar diferență (vezi OTC_NOTE)
        "fin_def": (1e9, 3.0),        # venit definit diferit, verificat în documentul oficial → doar diferență
        "chg_div": (1e9, 0.10),       # ex-dividend: Yahoo scade dividendul din închiderea anterioară → doar diferență
-       "mcap_stale": (1e9, 3.0)}     # TradingView: market cap calculat cu o închidere din N−1..N−3 → doar diferență
+       "mcap_stale": (1e9, 3.0),     # TradingView: market cap calculat cu o închidere din N−1..N−3 → doar diferență
+       "mcap_class": (1e9, 3.0)}     # mai multe clase de acțiuni: TradingView uneori doar clasa cotată → doar diferență
 FIN_NOTE = "Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări)"
 # OTC (TV_EX → OTC, ex. SFTBY): Yahoo și TradingView agregă volumul diferit și iau altă închidere de referință
 # pentru % zi → diferențe persistente care nu vin dintr-un bug
@@ -153,7 +154,7 @@ def tv_quotes(tickers, tvex):
             c = first + [f"{ex}:{t}" for ex in ("NASDAQ", "NYSE", "AMEX", "CBOE") if f"{ex}:{t}" not in first]
         cands[t] = c
         for s in c: back[s] = t
-    cols = ["close", "change", "market_cap_basic", "volume", "price_earnings_ttm"]
+    cols = ["close", "change", "market_cap_basic", "volume", "price_earnings_ttm", "total_shares_outstanding"]
     got = {}
     for market in ("america", "futures", "cfd", "global"):
         need = [s for s, t in back.items() if s not in got and not any(x in got for x in cands[t])]
@@ -348,9 +349,15 @@ def main():
             stale = (not adr and x["mcap"] and x["price"] and q["market_cap_basic"] and any(
                 o.get(t) and o[t]["price"] and abs(x["price"] / o[t]["price"] - 1) >= 0.03
                 and pdiff(q["market_cap_basic"], x["mcap"] * o[t]["price"] / x["price"]) < 1.0 for o in olders))
-            grade(r, "mcap_adr" if adr else "mcap_stale" if stale else "mcap", t, "market cap", x["mcap"],
-                  q["market_cap_basic"], src_tv, "(ADR: prima față de bursa locală)" if adr else
-                  "(TradingView: calculat cu o închidere din ultimele 3 zile)" if stale else "")
+            # mai multe clase de acțiuni (SOUN: A 455,9 M + B 32,5 M, coperta 10-Q): fișierul = toate clasele, iar
+            # TradingView calculează uneori market cap-ul doar cu clasa cotată (total_shares_outstanding)
+            tsh = q.get("total_shares_outstanding")
+            cls = (not adr and not stale and tsh and x["mcap"] and x["price"] and q["market_cap_basic"] and q["close"]
+                   and 1.03 <= x["mcap"] / x["price"] / tsh <= 1.5 and pdiff(q["market_cap_basic"], q["close"] * tsh) < 2.0)
+            grade(r, "mcap_adr" if adr else "mcap_stale" if stale else "mcap_class" if cls else "mcap", t, "market cap",
+                  x["mcap"], q["market_cap_basic"], src_tv, "(ADR: prima față de bursa locală)" if adr else
+                  "(TradingView: calculat cu o închidere din ultimele 3 zile)" if stale else
+                  "(mai multe clase de acțiuni: fișierul toate clasele, TradingView doar clasa cotată)" if cls else "")
             grade(r, "vol_otc" if otc else "vol", t, "volum", x["vol"], q["volume"], src_tv,
                   OTC_NOTE if otc else "(metode de agregare diferite)")
             if x["pe"] and q["price_earnings_ttm"] and q["price_earnings_ttm"] > 0:

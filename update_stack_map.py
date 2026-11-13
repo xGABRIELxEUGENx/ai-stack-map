@@ -172,10 +172,11 @@ SEC_NI_TAGS = ["NetIncomeLoss",                          # profitul net atribuib
 # nu umple golurile seriei atribuibile (BE T4 2025: ProfitLoss 1.43 în loc de atribuibil 1.091)
 SEC_NI_FALLBACK = "ProfitLoss"
 # partea minoritarilor, scăzută din ProfitLoss când acesta e folosit ca rezervă → profitul atribuibil companiei
-# (APLD T2 FY26: ProfitLoss −14,45 − minoritari 3,06 = atribuibil −17,51, cum e în comunicat)
 SEC_NCI_TAG = "NetIncomeLossAttributableToNoncontrollingInterest"
 SEC_NCI_PARTS = ["NetIncomeLossAttributableToRedeemableNoncontrollingInterest",
                  "NetIncomeLossAttributableToNonredeemableNoncontrollingInterest"]
+SEC_COMMON_TAG, SEC_PREF_TAG = "NetIncomeLossAvailableToCommonStockholdersBasic", "PreferredStockDividendsIncomeStatementImpact"
+SEC_TEMPEQ_TAG = "TemporaryEquityDividendsAdjustment"      # dividende pe preferențialele din „temporary equity”
 # doar rapoartele financiare (10-Q/10-K, la emitenții străini 6-K/20-F/40-F, plus 8-K cu situații retratate):
 # DEF 14A / PRE 14A (tabelul „pay versus performance”) repetă profitul anual, uneori în altă unitate
 # (ANET 3,511 „USD” = milioane) și, fiind depus mai târziu, ar înlocui cifra din 10-K → T4 greșit
@@ -291,6 +292,11 @@ def sec_quarters(t):
         ni = {e: v for e, v in ni.items() if v != 0 or not total.get(e)}
         # „atribuibil” identic cu ProfitLoss deși minoritarii au profit/pierdere → e de fapt totalul (etichetare greșită)
         ni = {e: v - nci[e] if nci.get(e) and total.get(e) == v else v for e, v in ni.items()}
+    # dividendele pe preferențialele unei filiale (temporary equity, deținute de terți) sunt partea lor din profit;
+    # APLD le scade abia după NetIncomeLoss → atribuibil = disponibil acționarilor comuni + dividendele preferențialelor
+    # proprii (T1 FY27: −237,08 + 1,54 = −235,54, cum e în comunicat; NetIncomeLoss −184,06; T2 FY26: −19,08 + 1,57 = −17,51)
+    common, pref, tempeq = (_sec_series(g, tag) for tag in (SEC_COMMON_TAG, SEC_PREF_TAG, SEC_TEMPEQ_TAG))
+    ni.update({e: v + pref.get(e, 0) for e, v in common.items() if tempeq.get(e)})
     ends = sorted(e for e in rev if e > since)[-5:]
     rows = [[e.isoformat(), round(rev[e] / 1e6, 2), None if e not in ni else round(ni[e] / 1e6, 2), "SEC"] for e in ends]
     return rows or None
@@ -301,7 +307,7 @@ FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// F
 # FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
 FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 8            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
+FIN_SCHEMA = 9            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
 PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
 PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
 PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt
@@ -630,7 +636,13 @@ def main():
         if old and d["mcap"] and d["price"] and t not in NO_EARNINGS:
             o_sh = float(old.group(2)) * {"T": 1e12, "B": 1e9, "M": 1e6}[old.group(3)] / float(old.group(1).replace(",", ""))
             n_sh = d["mcap"] / d["price"]
-            if abs(n_sh / o_sh - 1) > 0.03:
+            if 0.5 <= n_sh / o_sh < 0.97:
+                # Yahoo (marketCap și uneori și impliedSharesOutstanding) sare la companiile cu mai multe clase între
+                # „doar clasa A” și „toate clasele” (NBIS v73–v78: 2,539e8 ↔ 2,718e8) → o scădere bruscă de 3–50% nu e
+                # buyback: se păstrează numărul de acțiuni din versiunea anterioară
+                d["mcap"] = o_sh * d["price"]
+                share_log.append(f"AVERTISMENT {t}: Yahoo dă {n_sh:.4g} acțiuni (mcap/preț), păstrat {o_sh:.4g} din versiunea anterioară")
+            elif abs(n_sh / o_sh - 1) > 0.03:
                 share_log.append(f"AVERTISMENT {t}: număr de acțiuni (mcap/preț) {o_sh:.4g} → {n_sh:.4g} — verifică")
         price, chg = fmt_price(t, d["price"]), fmt_chg(d["chg"])
         col = RED if chg.startswith("-") else GREEN
