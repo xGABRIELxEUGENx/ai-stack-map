@@ -1,8 +1,8 @@
-# Cross-check metoda B — v79
+# Cross-check metoda B — v81
 
-Rulat: 2026-11-13 07:30 UTC · fișier: `ai-stack-map-mobile-79.html` · tickeri: 150
+Rulat: 2026-11-13 07:50 UTC · fișier: `ai-stack-map-mobile-81.html` · tickeri: 150
 
-**2810 verificări · 2780 OK · 0 erori · 30 diferențe**
+**2800 verificări · 2771 OK · 0 erori · 29 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
@@ -10,7 +10,7 @@ Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare
 
 —
 
-## Diferențe (30)
+## Diferențe (29)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
@@ -29,7 +29,6 @@ Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare
 | SMR | market cap | 1.98e+09 | 2.072e+09 | TradingView scanner | 4.45% |
 | SFTBY | volum | 1.3e+06 | 5734049 | TradingView scanner | 77.33% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
-| NBIS | profit net 2025-12-31 [C] | -249.6 | -268.8 | Yahoo (2025-12-31) | 7.14% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | SAP | profit net 2025-12-31 [C] | 1846 | 1,680 | Yahoo (2025-12-31) | 9.88% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | CVX | venituri 2026-06-30 [SEC] | 7.006e+04 | 6.72e+04 | Yahoo (2026-06-30) | 4.25% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | CVX | venituri 2026-09-30 [SEC] | 6.78e+04 | 6.524e+04 | Yahoo (2026-09-30) | 3.93% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
