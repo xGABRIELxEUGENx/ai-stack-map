@@ -402,3 +402,13 @@
   AVERTISMENT NBIS: număr de acțiuni (mcap/preț) 2.539e+08 → 2.719e+08 — verifică
   VEEV: 2026-11-25 AMC estimat  →  2026-12-03 AMC estimat
   trimestriale: 8 reîmprospătate | fără date: -
+
+=== 2026-11-13 07:24 | ai-stack-map-mobile-78.html → ai-stack-map-mobile-79.html | rânduri 150 | fără date: -
+  AVERTISMENT AMAT: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
+  AVERTISMENT CBRS: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
+  AVERTISMENT NBIS: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
+  AVERTISMENT CSCO: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
+  AVERTISMENT XE: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
+  OK TradingView vs SEC CRWV 2026-09-30
+  OK TradingView vs SEC MTSI 2026-10-02
+  trimestriale: 131 reîmprospătate | fără date: -
