@@ -421,3 +421,11 @@
   AVERTISMENT CSCO: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
   AVERTISMENT XE: raportul din 2026-11-12 a trecut, Yahoo nu are data următoare — verifică pe IR
   trimestriale: 4 reîmprospătate | fără date: -
+
+=== 2026-11-14 01:37 | ai-stack-map-mobile-83.html → ai-stack-map-mobile-84.html | rânduri 150 | fără date: -
+  AMAT: — ? neverificat  →  2027-02-11 ? estimat
+  CBRS: — ? neverificat  →  2027-03-18 ? estimat
+  NBIS: — ? neverificat  →  2027-02-11 ? estimat
+  CSCO: — ? neverificat  →  2027-02-10 AMC estimat
+  XE: — ? neverificat  →  2027-03-18 ? estimat
+  trimestriale: 6 reîmprospătate | fără date: -
