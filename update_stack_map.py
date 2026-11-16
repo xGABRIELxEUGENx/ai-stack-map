@@ -181,8 +181,11 @@ SEC_TEMPEQ_TAG = "TemporaryEquityDividendsAdjustment"      # dividende pe prefer
 # DEF 14A / PRE 14A (tabelul „pay versus performance”) repetă profitul anual, uneori în altă unitate
 # (ANET 3,511 „USD” = milioane) și, fiind depus mai târziu, ar înlocui cifra din 10-K → T4 greșit
 SEC_FORMS = {f + a for f in ("10-Q", "10-K", "10-QT", "10-KT", "6-K", "20-F", "40-F", "8-K") for a in ("", "/A")}
+# emitent succesor cu CIK nou (company_tickers.json dă doar CIK-ul nou): trimestrele de dinainte sunt sub CIK-ul vechi.
+# XOM: mutarea în Texas (8-K12B, 2026) → CIK 2115436, raportările până la T1 2026 sub 34088 (T4 2025 și T1 2026 lipseau)
+SEC_CIK_PRED = {"XOM": [34088]}
 _SEC_CIK = None
-_SEC_CIK_ERR = None                                      # motivul pentru care lista CIK nu s-a putut citi
+_SEC_CIK_ERR = None                                     # motivul pentru care lista CIK nu s-a putut citi
 
 class SecUnavailable(Exception):
     """SEC nu a răspuns (rețea, secret lipsă) — diferit de „compania nu are CIK”."""
@@ -279,13 +282,19 @@ def sec_quarters(t):
     cik = _sec_cik(t)
     if not cik:
         return None
-    try:
-        g = _sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json").get("facts", {}).get("us-gaap", {})
-        time.sleep(0.15)                                   # limita SEC: max 10 cereri/secundă
-    except Exception as e:
-        if getattr(e, "code", None) == 404:                # CIK fără date XBRL
-            return None
-        raise SecUnavailable(f"{t}: {e}")
+    g = {}
+    for c in [cik] + SEC_CIK_PRED.get(t, []):              # CIK-ul curent + predecesorii: aceleași serii, concatenate
+        try:
+            gc = _sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{c:010d}.json").get("facts", {}).get("us-gaap", {})
+            time.sleep(0.15)                               # limita SEC: max 10 cereri/secundă
+        except Exception as e:
+            if getattr(e, "code", None) == 404:            # CIK fără date XBRL
+                continue
+            raise SecUnavailable(f"{t}: {e}")
+        for tag, d in gc.items():
+            g.setdefault(tag, {"units": {"USD": []}})["units"]["USD"] += (d.get("units") or {}).get("USD", [])
+    if not g:
+        return None
     since = dt.date.today() - dt.timedelta(days=550)
     rev, ni = _sec_pick(g, SEC_REV_TAGS, since, positive=True), _sec_pick(g, SEC_NI_TAGS, since)
     total = _sec_series(g, SEC_NI_FALLBACK)
