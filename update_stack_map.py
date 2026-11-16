@@ -217,29 +217,36 @@ def _sec_series(g, tag, positive=False):
     """{data_sfârșit: valoare trimestrială}; fiecare perioadă din raportarea periodică (10-Q/10-K) cea mai recentă.
     T4 lipsește ca trimestru în 10-K → an − 9 luni, verificat cu an − (T1+T2+T3); dacă diferă cu > 0.5% din
     max(|an|, |9 luni|, |T1+T2+T3|), T4 se omite (toleranța relativă la T4 însuși respingea un T4 mic, ex. BE ~1 M$).
-    T4 derivat se omite și dacă e implauzibil: anul și cele 9 luni la scară diferită (≥ 1000×) sau, la venituri, ≤ 0."""
-    latest = {}
+    T4 derivat se omite și dacă e implauzibil: anul și cele 9 luni la scară diferită (≥ 1000×) sau, la venituri, ≤ 0.
+    Cele 9 luni și T1–T3 din verificare sunt valorile cunoscute la depunerea 10-K-ului: o re-etichetare ulterioară
+    (IREN, 10-Q nov. 2026: T1 FY26 = 7 M$, o componentă, față de 240,3 M$ inițial) nu mai elimină T4."""
+    filings = {}
     for it in (g.get(tag, {}).get("units", {}) or {}).get("USD", []):
         if "start" not in it or it.get("form") not in SEC_FORMS:
             continue
-        k = (it["start"], it["end"])
-        if k not in latest or it.get("filed", "") > latest[k].get("filed", ""):
-            latest[k] = it
+        filings.setdefault((it["start"], it["end"]), []).append(it)
+    latest = {k: max(v, key=lambda x: x.get("filed", "")) for k, v in filings.items()}
+
+    def asof(k, filed):
+        known = [x for x in filings[k] if x.get("filed", "") <= filed]
+        return (max(known, key=lambda x: x.get("filed", "")) if known else latest[k])["val"]
+
     q, ann, ytd9 = {}, {}, {}
-    for (st, en), it in latest.items():
-        sd, ed = dt.date.fromisoformat(st), dt.date.fromisoformat(en)
+    for k, it in latest.items():
+        sd, ed = dt.date.fromisoformat(k[0]), dt.date.fromisoformat(k[1])
         d = (ed - sd).days
-        if 80 <= d <= 100: q[ed] = (sd, it["val"])
-        elif 350 <= d <= 380: ann[(sd, ed)] = it["val"]
-        elif 260 <= d <= 285: ytd9[(sd, ed)] = it["val"]
-    out = {e: v for e, (sd, v) in q.items()}
-    for (sd, ed), v in ann.items():
+        if 80 <= d <= 100: q[ed] = (sd, k, it["val"])
+        elif 350 <= d <= 380: ann[(sd, ed)] = it
+        elif 260 <= d <= 285: ytd9[(sd, ed)] = k
+    out = {e: v for e, (sd, k, v) in q.items()}
+    for (sd, ed), it in ann.items():
         if ed in out:
             continue
+        v, filed = it["val"], it.get("filed", "")
         est, parts = [], []
-        nine = [val for (s9, e9), val in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
+        nine = [asof(k, filed) for (s9, e9), k in ytd9.items() if s9 == sd and 60 < (ed - e9).days < 110]
         if nine: est.append(v - nine[0]); parts.append(nine[0])
-        three = [val for e3, (s3, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
+        three = [asof(k, filed) for e3, (s3, k, val) in q.items() if sd <= s3 and e3 < ed - dt.timedelta(days=60)]
         if len(three) == 3: est.append(v - sum(three)); parts.append(sum(three))
         if len(est) == 2 and abs(est[0] - est[1]) > 0.005 * max(abs(v), *(abs(p) for p in parts), 1):
             continue
@@ -307,7 +314,7 @@ FIN_RE = re.compile(r"(// FIN-START[^\n]*\n\s*const FIN = )\{.*?\}(;\s*\n\s*// F
 # FIN_PR: cifrele din comunicatele oficiale, scrise DOAR de Claude; scriptul doar le citește, nu scrie niciodată aici.
 FINPR_RE = re.compile(r"// FINPR-START[^\n]*\n\s*const FIN_PR = (\{.*?\});\s*\n\s*// FINPR-END", re.S)
 FIN_MAX_AGE_DAYS = 7      # reîmprospătare completă săptămânal + imediat după fiecare raport
-FIN_SCHEMA = 9            # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
+FIN_SCHEMA = 10           # crește când se schimbă formatul sau regulile de calcul → toate intrările se reîmprospătează
 PR_GAP_DAYS = 45          # un trimestru din comunicat intră doar dacă e la > 45 zile după ultimul trimestru SEC
 PR_MATCH_DAYS = 12        # același trimestru: sfârșit la ±12 zile (SEC folosește data exactă, comunicatul uneori sfârșit de lună)
 PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „TradingView vs oficial” în update-log.txt

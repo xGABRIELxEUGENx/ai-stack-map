@@ -118,8 +118,9 @@ def parse_page(html):
         tail = html[m.end(): m.end() + 3000]
         badge = re.search(r'price-badge">([^<]*)</span><span class="change-badge" style="color:([^;]*);">([^<]*)<', tail)
         layer = re.findall(r'<div class="layer-box" id="(box-[^"]+)">', html[:m.start()])
+        ipo = 'badge-new">IPO' in tail.split('<div class="ticker-row"')[0]   # badge „IPO …” doar din rândul propriu
         rows.append({"t": a[0], "layer": layer[-1] if layer else "", "price": num(a[2]), "chg": num(a[3]), "col": a[4], "mcap": num(a[5]),
-                     "vol": num(a[6]), "pe": num(a[7]), "pos": m.start(),
+                     "vol": num(a[6]), "pe": num(a[7]), "pos": m.start(), "ipo": ipo,
                      "badge": badge.groups() if badge else None})
     layers = []
     boxes = [(m.start(), m.group(1)) for m in re.finditer(r'<div class="layer-box" id="(box-[^"]+)">', html)]
@@ -303,6 +304,7 @@ def main():
     # FIN — plauzibilitate
     if fin is None: r.add("EROARE", "—", "FIN", "lipsă", "bloc", "intern")
     else:
+        ipo = {x["t"] for x in rows if x["ipo"]}
         for t in dict.fromkeys(stocks):                   # un ticker în două straturi se verifică o singură dată
             f = fin.get(t)
             if not f: r.add("DIFERENȚĂ", t, "FIN", "lipsă", "date trimestriale", "intern"); continue
@@ -313,8 +315,11 @@ def main():
             if [x[0] for x in q] != sorted(x[0] for x in q): r.add("EROARE", t, "FIN ordine", "nesortat", "cronologic", "intern")
             for a, b in zip(q, q[1:]):                     # trimestru lipsă la mijlocul seriei (ex. T4 derivat din 10-K omis)
                 gap = (dt.date.fromisoformat(b[0]) - dt.date.fromisoformat(a[0])).days
-                if gap > 100: r.add("DIFERENȚĂ", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
-                                    "lipsește în SEC și în FIN_PR (la IPO poate fi legitim)")
+                # legitim doar la un IPO recent (badge „IPO …”): trimestrele dinainte de listare pot lipsi din SEC
+                if gap > 100 and t in ipo: r.add("DIFERENȚĂ", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
+                                                 "lipsește în SEC și în FIN_PR (IPO recent: poate fi legitim)")
+                elif gap > 100: r.add("EROARE", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
+                                      "lipsește în SEC și în FIN_PR, deși compania nu e IPO recent")
                 else: r.ok()
             for d, ses, pct in f.get("rx") or []:
                 if abs(pct) > 60: r.add("DIFERENȚĂ", t, f"reacție {d}", f"{pct}%", "< 60%", "intern", "mișcare extremă — verifică")
