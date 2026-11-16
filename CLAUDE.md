@@ -163,7 +163,7 @@ Pentru amândouă:
   - EARNINGS ↔ rânduri; culoarea % față de semn; badge-ul față de drawer;
   - acțiuni (mcap/preț) stabile între versiuni;
   - nicio dată de earnings trecută; niciun `confirmat` fără sursă oficială;
-  - vechimea `FIN`; trimestre lipsă la mijlocul seriei `q` (> 100 de zile între rânduri: DIFERENȚĂ doar la un IPO recent, cu badge „IPO …” pe rând; altfel EROARE); bursa din `TV_EX` față de bursa reală.
+  - vechimea `FIN`; trimestre lipsă la mijlocul seriei `q` (> 100 de zile între rânduri, DIFERENȚĂ; nota spune dacă e IPO recent, cu badge „IPO …” pe rând); bursa din `TV_EX` față de bursa reală.
 - **Clasificare**: „EROARE” = probabil greșit; „DIFERENȚĂ” = poate avea cauză legitimă:
   - P/E calculat diferit între surse;
   - prima ADR față de bursa locală;

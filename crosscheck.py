@@ -315,11 +315,10 @@ def main():
             if [x[0] for x in q] != sorted(x[0] for x in q): r.add("EROARE", t, "FIN ordine", "nesortat", "cronologic", "intern")
             for a, b in zip(q, q[1:]):                     # trimestru lipsă la mijlocul seriei (ex. T4 derivat din 10-K omis)
                 gap = (dt.date.fromisoformat(b[0]) - dt.date.fromisoformat(a[0])).days
-                # legitim doar la un IPO recent (badge „IPO …”): trimestrele dinainte de listare pot lipsi din SEC
-                if gap > 100 and t in ipo: r.add("DIFERENȚĂ", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
-                                                 "lipsește în SEC și în FIN_PR (IPO recent: poate fi legitim)")
-                elif gap > 100: r.add("EROARE", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
-                                      "lipsește în SEC și în FIN_PR, deși compania nu e IPO recent")
+                # la un IPO recent (badge „IPO …”) trimestrele dinainte de listare pot lipsi legitim din SEC
+                if gap > 100: r.add("DIFERENȚĂ", t, "FIN trimestru lipsă", f"{a[0]} → {b[0]}", "≤ 100 zile", "intern",
+                                    "lipsește în SEC și în FIN_PR (" + ("IPO recent: poate fi legitim)" if t in ipo else
+                                                                        "nu e IPO recent: verifică sursa)"))
                 else: r.ok()
             for d, ses, pct in f.get("rx") or []:
                 if abs(pct) > 60: r.add("DIFERENȚĂ", t, f"reacție {d}", f"{pct}%", "< 60%", "intern", "mișcare extremă — verifică")
