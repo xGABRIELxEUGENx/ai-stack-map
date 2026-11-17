@@ -1,36 +1,50 @@
-# Cross-check metoda B — v84
+# Cross-check metoda B — v85
 
-Rulat: 2026-11-14 01:40 UTC · fișier: `ai-stack-map-mobile-84.html` · tickeri: 150
+Rulat: 2026-11-17 04:12 UTC · fișier: `ai-stack-map-mobile-85.html` · tickeri: 150
 
-**2795 verificări · 2763 OK · 0 erori · 32 diferențe**
+**2806 verificări · 2761 OK · 4 erori · 41 diferențe**
 
 Surse: TradingView scanner (148/150 tickeri cotați) · Yahoo Finance financiare (132 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
-## Erori (0)
-
-—
-
-## Diferențe (32)
+## Erori (4)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
-| CBRS | FIN trimestru lipsă | 2025-09-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| SPCX | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| OKLO | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| IREN | FIN trimestru lipsă | 2026-03-31 → 2026-09-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| XOM | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| XE | FIN trimestru lipsă | 2025-09-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (la IPO poate fi legitim) |
-| TSM | market cap | 2.07e+12 | 1.837e+12 | TradingView scanner | 12.69% (ADR: prima față de bursa locală) |
-| CBRS | market cap | 2.583e+10 | 2.434e+10 | TradingView scanner | 6.14% |
-| ARM | market cap | 2.039e+11 | 212576966106 | TradingView scanner | 4.10% (TradingView: calculat cu o închidere din ultimele 3 zile) |
-| SKHY | market cap | 9.294e+11 | 6.809e+11 | TradingView scanner | 36.48% (ADR: prima față de bursa locală) |
-| ORCL | market cap | 3.908e+11 | 3.79e+11 | TradingView scanner | 3.11% (mai multe clase de acțiuni: fișierul toate clasele, TradingView doar clasa cotată) |
-| SAP | volum | 1.5e+06 | 2056076 | TradingView scanner | 27.05% (metode de agregare diferite) |
-| CRWD | P/E | 4,532 | 6,348 | TradingView scanner | 28.60% (TTM calculat diferit) |
-| PANW | P/E | 805.6 | 628.8 | TradingView scanner | 28.12% (TTM calculat diferit) |
-| SMR | market cap | 1.91e+09 | 2.003e+09 | TradingView scanner | 4.66% |
-| SFTBY | market cap | 1.248e+11 | 1.335e+11 | TradingView scanner | 6.47% (ADR: prima față de bursa locală) |
-| SFTBY | volum | 1.6e+06 | 7660386 | TradingView scanner | 79.11% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| NBIS | acțiuni (mcap/preț) | 2.929e+08 | 2.718e+08 | v84 | 7.76% număr de acțiuni schimbat brusc |
+| CBRS | market cap | 2.454e+10 | 1.927e+10 | TradingView scanner | 27.33% |
+| SLAB | volum | 4.21e+05 | 814366 | TradingView scanner | 48.30% (metode de agregare diferite) |
+| XE | venituri 2026-09-30 [SEC] | 66.34 | 51.56 | Yahoo (2026-09-30) | 28.65% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
+
+## Diferențe (41)
+
+| Ticker | Câmp | Fișier | Control | Sursă | Notă |
+|---|---|---|---|---|---|
+| CBRS | acțiuni (mcap/preț) | 2.43e+08 | 2.376e+08 | v84 | 2.28% număr de acțiuni schimbat brusc |
+| CBRS | FIN trimestru lipsă | 2025-09-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (IPO recent: poate fi legitim) |
+| SPCX | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (IPO recent: poate fi legitim) |
+| OKLO | FIN trimestru lipsă | 2025-09-30 → 2026-06-30 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (nu e IPO recent: verifică sursa) |
+| APP | FIN trimestru lipsă | 2025-09-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (nu e IPO recent: verifică sursa) |
+| XE | FIN trimestru lipsă | 2025-09-30 → 2026-03-31 | ≤ 100 zile | intern | lipsește în SEC și în FIN_PR (IPO recent: poate fi legitim) |
+| KLAC | % zi | -5.35 | -5.488 | TradingView scanner | 0.14pp ex-dividend: Yahoo scade ~0.22 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| TSM | market cap | 1.94e+12 | 1.85e+12 | TradingView scanner | 4.84% (ADR: prima față de bursa locală) |
+| ASML | market cap | 5.422e+11 | 5.636e+11 | TradingView scanner | 3.80% (ADR: prima față de bursa locală) |
+| ARM | market cap | 1.873e+11 | 202734454601 | TradingView scanner | 7.61% (TradingView: calculat cu o închidere din ultimele 3 zile) |
+| SKHY | market cap | 8.616e+11 | 659407513875 | TradingView scanner | 30.66% (ADR: prima față de bursa locală) |
+| NBIS | market cap | 3.138e+10 | 2.911e+10 | TradingView scanner | 7.81% |
+| NBIS | P/E | 83.7 | 489 | TradingView scanner | 82.88% (TTM calculat diferit) |
+| CEG | % zi | -0.7 | -0.8494 | TradingView scanner | 0.15pp ex-dividend: Yahoo scade ~0.42 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| ORCL | market cap | 3.713e+11 | 3.601e+11 | TradingView scanner | 3.11% (mai multe clase de acțiuni: fișierul toate clasele, TradingView doar clasa cotată) |
+| SAP | volum | 1.4e+06 | 1815365 | TradingView scanner | 22.88% (metode de agregare diferite) |
+| CRWD | P/E | 4,464 | 6,252 | TradingView scanner | 28.60% (TTM calculat diferit) |
+| PANW | P/E | 810.5 | 616.8 | TradingView scanner | 31.41% (TTM calculat diferit) |
+| XOM | % zi | -1.56 | -2.181 | TradingView scanner | 0.62pp ex-dividend: Yahoo scade ~1.08 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| COP | % zi | -0.59 | -1.237 | TradingView scanner | 0.65pp ex-dividend: Yahoo scade ~0.93 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| CEG | % zi | -0.7 | -0.8494 | TradingView scanner | 0.15pp ex-dividend: Yahoo scade ~0.42 din închiderea anterioară; preț(N)/preț(N−1) = TradingView |
+| SMR | market cap | 1.75e+09 | 1.836e+09 | TradingView scanner | 4.67% |
+| SFTBY | preț | 10.44 | 10.4 | TradingView scanner | 0.38% |
+| SFTBY | % zi | -4.66 | -5.023 | TradingView scanner | 0.36pp OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
+| SFTBY | market cap | 1.19e+11 | 1.268e+11 | TradingView scanner | 6.12% (ADR: prima față de bursa locală) |
+| SFTBY | volum | 1.5e+06 | 6783929 | TradingView scanner | 77.89% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | SAP | profit net 2025-12-31 [C] | 1846 | 1,680 | Yahoo (2025-12-31) | 9.88% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | CVX | venituri 2026-06-30 [SEC] | 7.006e+04 | 6.72e+04 | Yahoo (2026-06-30) | 4.25% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
