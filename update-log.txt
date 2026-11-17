@@ -433,3 +433,9 @@
 === 2026-11-17 04:05 | ai-stack-map-mobile-84.html → ai-stack-map-mobile-85.html | rânduri 150 | fără date: -
   AVERTISMENT NBIS: număr de acțiuni (mcap/preț) 2.718e+08 → 2.929e+08 — verifică
   trimestriale: 131 reîmprospătate | fără date: -
+
+=== 2026-11-17 14:36 | ai-stack-map-mobile-86.html → ai-stack-map-mobile-87.html | rânduri 155 | fără date: -
+  OKTA: 2026-12-01 ? estimat  →  2026-12-01 AMC estimat
+  RBRK: 2026-12-03 ? estimat  →  2026-11-30 AMC estimat
+  VRNS: — ? neverificat  →  2027-02-09 ? estimat
+  trimestriale: 6 reîmprospătate | fără date: -
