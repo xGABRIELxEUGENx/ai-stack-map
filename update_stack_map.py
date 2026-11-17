@@ -47,7 +47,7 @@ except Exception:
 YAHOO_SYMBOL = {"NDX": "^NDX", "VIX": "^VIX",          # indici
                 "WTI": "CL=F", "BRENT": "BZ=F"}        # petrol: futures, luna activă
 NO_EARNINGS = {"NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP",
-               "SMH", "XLK", "IBIT", "HYG", "DIA",
+               "SMH", "XLK", "IBIT", "HYG", "DIA", "CIBR", "BUG",
                "WTI", "BRENT"}                            # ETF-uri / indici / mărfuri
 INDEX_NO_DOLLAR = {"NDX", "VIX"}
 GREEN, RED = "#10b981", "#ef4444"
