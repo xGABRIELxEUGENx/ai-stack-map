@@ -501,7 +501,7 @@
     <!-- L3 · INFRASTRUCTURĂ -->
     <div class="layer-box" id="box-ai-l3">
         <div class="layer-header" onclick="toggleLayer('box-ai-l3')">
-            <div class="layer-header-left"><span class="layer-id" style="color:#7c3aed;">L3</span><span class="layer-name">· Infrastructură (Cloud, Neocloud & Rețea)<span class="layer-count">(35)</span></span></div>
+            <div class="layer-header-left"><span class="layer-id" style="color:#7c3aed;">L3</span><span class="layer-name">· Infrastructură (Cloud, Neocloud & Rețea)<span class="layer-count">(36)</span></span></div>
             <span class="layer-arrow">▼</span>
         </div>
         <div class="ticker-grid" id="grid-ai-l3">
@@ -539,6 +539,11 @@
             <div class="ticker-row" onclick="openDetails('NBIS','Nebius Group','$106.03','-1.02%','#ef4444','31.06B','28.5M','82.84',['infra'],'AI Neocloud, GPU Cloud. +240% YTD 2026. Intrat în Nasdaq-100 pe 22 iunie 2026.')">
                 <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">NBIS</span><span class="badge-new">NDX Jun'26</span></div><span class="ticker-company">Nebius Group</span><div class="tag-container"><span class="strategy-tag">AI Neocloud</span><span class="strategy-tag">GPU Cloud</span></div></div>
                 <div class="ticker-perf"><span class="price-badge">$106.03</span><span class="change-badge" style="color:#ef4444;">-1.02%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('AGPU','Axe Compute','$7.99','+2.83%','#10b981','92.61M','154K','—',['infra'],'Neocloud GPU (fost Predictive Oncology / POAI, redenumit dec. 2025): capacitate GPU prin rețeaua Aethir + trezorerie în token ATH. Contract de construcție Blackwell B300 de 1,5 mld. $ (iul. 2026), 55 MW cu Duos Technologies, parteneriat Penguin Solutions. T3 2026: venituri 7,2 M$, profit net 11,5 M$.')">
+                <div class="ticker-meta"><div class="ticker-symbol-wrapper"><span class="ticker-symbol" style="color:#7c3aed;">AGPU</span></div><span class="ticker-company">Axe Compute</span><div class="tag-container"><span class="strategy-tag">GPU Cloud</span><span class="strategy-tag">Micro-cap</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$7.99</span><span class="change-badge" style="color:#10b981;">+2.83%</span></div>
             </div>
 
             <div class="ticker-row" onclick="openDetails('EQIX','Equinix','$1,034.83','-0.79%','#ef4444','102.44B','595K','62.15',['infra'],'Cel mai mare operator colocation datacenter global. Nod central pentru AI cloud interconnects.')">
@@ -1208,6 +1213,7 @@
             'SPCX':'https://ir.spacex.com/investors/default.aspx',
             'CRWV':'https://investors.coreweave.com/overview/default.aspx',
             'NBIS':'https://nebius.com/investor-hub',
+            'AGPU':'https://axecompute.com',
             'EQIX':'https://investor.equinix.com/',
             'DLR':'https://investor.digitalrealty.com/',
             'VRT':'https://investors.vertiv.com/overview/default.aspx',
@@ -1527,6 +1533,7 @@
             'SPCX': { date:'2027-02-09', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'CRWV': { date:'2027-02-25', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-11' },
             'NBIS': { date:'2027-02-11', session:'?', status:'estimat', time:'', src:'Yahoo Finance 2026-11-13' },
+            'AGPU': { date:'', session:'?', status:'neverificat', time:'', src:'Nicio dată publicată pentru raportul următor (ultimul: T3 2026, 17 nov 2026, 8-K ex. 99.1)' },
             'EQIX': { date:'2027-02-10', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'DLR': { date:'2027-02-11', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'VRT': { date:'2027-02-10', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
@@ -2099,7 +2106,7 @@
 
         // ================= TRADINGVIEW LIVE (widget-uri publice, fără cont) =================
         const TV_EX = {
-            NASDAQ: 'NVDA AMD AVGO INTC MRVL QCOM AMAT LRCX KLAC ASML TXN ON MPWR SMCI ACLS FORM ALAB CBRS ARM SNPS CDNS CRDO TER AMKR ADI GFS MTSI ENTG NVTS MU WDC STX NTAP NTNX MDB SLAB SNDK SKHY MSFT AMZN GOOGL META SPCX CRWV NBIS EQIX CEG CSCO FSLR MSTR COIN HOOD CORZ IREN APLD CIFR WULF LITE ADBE WDAY PLTR GTLB DDOG CRWD ZS PANW TTD DUOL UPST AAPL TSLA APP INTU FTNT TEM SOUN NNE TLN QQQ SOXX TLT SMH IBIT OKTA VRNS CIBR BUG',
+            NASDAQ: 'NVDA AMD AVGO INTC MRVL QCOM AMAT LRCX KLAC ASML TXN ON MPWR SMCI ACLS FORM ALAB CBRS ARM SNPS CDNS CRDO TER AMKR ADI GFS MTSI ENTG NVTS MU WDC STX NTAP NTNX MDB SLAB SNDK SKHY MSFT AMZN GOOGL META SPCX CRWV NBIS AGPU EQIX CEG CSCO FSLR MSTR COIN HOOD CORZ IREN APLD CIFR WULF LITE ADBE WDAY PLTR GTLB DDOG CRWD ZS PANW TTD DUOL UPST AAPL TSLA APP INTU FTNT TEM SOUN NNE TLN QQQ SOXX TLT SMH IBIT OKTA VRNS CIBR BUG',
             NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC RBRK',
             AMEX: 'SPY IWM GLD UUP XLK HYG DIA',
             OTC: 'SFTBY'
