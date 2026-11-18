@@ -439,3 +439,6 @@
   RBRK: 2026-12-03 ? estimat  →  2026-11-30 AMC estimat
   VRNS: — ? neverificat  →  2027-02-09 ? estimat
   trimestriale: 6 reîmprospătate | fără date: -
+
+=== 2026-11-18 03:03 | ai-stack-map-mobile-87.html → ai-stack-map-mobile-88.html | rânduri 155 | fără date: -
+  trimestriale: 3 reîmprospătate | fără date: -
