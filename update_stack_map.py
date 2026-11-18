@@ -26,6 +26,7 @@ Reguli pentru earnings (ca să nu strice ce e verificat):
     'confirmat' se pune doar manual, după anunțul oficial al companiei (IR / comunicat).
     Un 'confirmat' care provine de la Yahoo (src începe cu 'Yahoo Finance') e retrogradat la 'estimat'.
   - Sesiunea BMO/AMC se ia din Yahoo doar dacă lipsește ('?') sau data s-a schimbat; altfel rămâne cea existentă.
+    La o dată nouă fără sesiune la sursă (estimare Yahoo, TradingView), sesiunea devine '?'.
 
 Instalare (o singură dată):   pip install yfinance
 Rulare manuală:               python update_stack_map.py
@@ -724,9 +725,9 @@ def main():
                 log.append(f"AVERTISMENT {t}: confirmat {date} în fișier, {ysrc.split()[0]} arată {ydate} — verifică pe IR")
             return m.group(0)
         new_st = "estimat"                 # Yahoo / TradingView nu sunt surse oficiale
-        new_ses = yses if (ses == "?" or ydate != date) and yses != "?" else ses   # nu suprascrie o sesiune deja știută
-        if ysrc.startswith("TradingView") and ydate != date:
-            new_ses = "?"                  # TradingView nu dă sesiunea; cea veche era a raportului trecut
+        # dată nouă → sesiunea sursei ('?' dacă n-o dă: cea veche era a raportului trecut);
+        # aceeași dată → nu suprascrie o sesiune deja știută
+        new_ses = yses if ydate != date else (yses if ses == "?" else ses)
         new_tm = "" if (ydate != date) else tm
         new_src = ysrc
         if (ydate, new_ses, new_st) == (date, ses, st):
