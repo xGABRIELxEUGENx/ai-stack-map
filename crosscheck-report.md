@@ -1,8 +1,8 @@
-# Cross-check metoda B — v90
+# Cross-check metoda B — v91
 
-Rulat: 2026-11-18 08:40 UTC · fișier: `ai-stack-map-mobile-90.html` · tickeri: 156
+Rulat: 2026-11-18 08:49 UTC · fișier: `ai-stack-map-mobile-91.html` · tickeri: 156
 
-**2905 verificări · 2871 OK · 2 erori · 32 diferențe**
+**2905 verificări · 2870 OK · 2 erori · 33 diferențe**
 
 Surse: TradingView scanner (154/156 tickeri cotați) · Yahoo Finance financiare (136 companii verificate; fără comparație: 1 — fără q în fișier sau trimestre lipsă la Yahoo)
 
@@ -13,7 +13,7 @@ Surse: TradingView scanner (154/156 tickeri cotați) · Yahoo Finance financiare
 | CBRS | market cap | 2.532e+10 | 1.988e+10 | TradingView scanner | 27.35% |
 | XE | venituri 2026-09-30 [SEC] | 66.34 | 51.56 | Yahoo (2026-09-30) | 28.65% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 
-## Diferențe (32)
+## Diferențe (33)
 
 | Ticker | Câmp | Fișier | Control | Sursă | Notă |
 |---|---|---|---|---|---|
@@ -30,9 +30,10 @@ Surse: TradingView scanner (154/156 tickeri cotați) · Yahoo Finance financiare
 | SAP | market cap | 2.568e+11 | 2.74e+11 | TradingView scanner | 6.25% (ADR: prima față de bursa locală) |
 | PANW | P/E | 773.2 | 603.5 | TradingView scanner | 28.13% (TTM calculat diferit) |
 | CRWD | P/E | 4,392 | 6,151 | TradingView scanner | 28.60% (TTM calculat diferit) |
-| WTI | preț | 84.29 | 83.15 | TradingView scanner | 1.37% (se tranzacționează ~24h; momentul citirii diferă) |
-| WTI | % zi | -2 | -3.325 | TradingView scanner | 1.33pp (se tranzacționează ~24h; momentul citirii diferă) |
-| SMR | market cap | 1.68e+09 | 1.758e+09 | TradingView scanner | 4.45% (TradingView: calculat cu o închidere din ultimele 3 zile) |
+| WTI | % zi | -2.01 | -3.558 | TradingView scanner | 1.55pp (se tranzacționează ~24h; momentul citirii diferă) |
+| BRENT | preț | 89.04 | 91.65 | TradingView scanner | 2.85% (se tranzacționează ~24h; momentul citirii diferă) |
+| SMR | market cap | 1.68e+09 | 1.758e+09 | TradingView scanner | 4.45% |
+| VIX | % zi | -5.69 | -6.287 | TradingView scanner | 0.60pp (se tranzacționează ~24h; momentul citirii diferă) |
 | SFTBY | volum | 3.8e+06 | 16430927 | TradingView scanner | 76.87% OTC: agregare volum / închidere de referință diferită între Yahoo și TradingView |
 | WDC | profit net 2026-07-03 [SEC] | 3,195 | 3,069 | Yahoo (2026-06-30) | 4.11% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
 | SAP | profit net 2025-12-31 [C] | 1846 | 1,680 | Yahoo (2025-12-31) | 9.88% Yahoo definește unele cifre diferit (bănci, derivate la energie, ajustări) |
