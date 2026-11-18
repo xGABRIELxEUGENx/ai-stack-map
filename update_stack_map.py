@@ -20,7 +20,8 @@ Ce face la fiecare rulare:
 Reguli pentru earnings (ca să nu strice ce e verificat):
   - O dată 'confirmat' din fișier NU e suprascrisă cât timp e în viitor; dacă Yahoo arată altă dată,
     doar se notează în log ca AVERTISMENT, ca s-o verifici.
-  - După ce data a trecut (compania a raportat), se ia următoarea dată de la Yahoo.
+  - După ce data a trecut (compania a raportat), se ia următoarea dată de la Yahoo; dacă Yahoo nu o are încă,
+    din TradingView scanner (`earnings_release_next_date`), tot ca 'estimat', cu sesiunea '?'.
   - Tickerii 'estimat' / 'neverificat' primesc data Yahoo, MEREU cu status 'estimat'.
     'confirmat' se pune doar manual, după anunțul oficial al companiei (IR / comunicat).
     Un 'confirmat' care provine de la Yahoo (src începe cu 'Yahoo Finance') e retrogradat la 'estimat'.
@@ -330,6 +331,7 @@ PR_DIFF_PCT = 0.5         # prag pentru „DIFERENȚĂ comunicat vs SEC” / „
 TV_SCAN_URL = "https://scanner.tradingview.com/america/scan"
 # revenue_fq: la NEE a dat venitul raportat (total_revenue_fq nu); la celelalte cele două coincid → revenue_fq întâi
 TV_COLS = ["revenue_fq", "total_revenue_fq", "net_income_fq", "fiscal_period_end_fq", "fundamental_currency_code"]
+TV_EARN_COLS = ["earnings_release_next_date"]
 
 def _num(x):
     try:
@@ -365,14 +367,14 @@ def read_tv_ex(html):
     m = re.search(r"const TV_EX = \{(.*?)\};", html, re.S)
     return {t: ex for ex, lst in re.findall(r"(\w+): '([^']*)'", m.group(1)) for t in lst.split()} if m else {}
 
-def tv_latest(tickers, tv_ex):
-    """{ticker: [sfârșit_trim, venituri_M, profit_M]} = ultimul trimestru raportat, din TradingView scanner
-    (o singură cerere pentru toți tickerii). Doar cifre în USD. None dacă scanner-ul nu răspunde."""
+def tv_scan(tickers, tv_ex, cols, what):
+    """[(ticker, {coloană: valoare})] din TradingView scanner, o singură cerere pentru toți tickerii (bursa din TV_EX;
+    fără ea, NASDAQ/NYSE/AMEX — primul rând găsit câștigă). None dacă scanner-ul nu răspunde."""
     back = {}
     for t in tickers:
         for ex in ([tv_ex[t]] if t in tv_ex else ["NASDAQ", "NYSE", "AMEX"]):
             back[f"{ex}:{t}"] = t
-    body = json.dumps({"symbols": {"tickers": list(back), "query": {"types": []}}, "columns": TV_COLS}).encode()
+    body = json.dumps({"symbols": {"tickers": list(back), "query": {"types": []}}, "columns": cols}).encode()
     req = urllib.request.Request(TV_SCAN_URL, data=body, headers={
         "Content-Type": "application/json", "Origin": "https://www.tradingview.com",
         "Referer": "https://www.tradingview.com/", "User-Agent": "Mozilla/5.0"})
@@ -380,11 +382,33 @@ def tv_latest(tickers, tv_ex):
         with urllib.request.urlopen(req, timeout=40) as r:
             rows = json.loads(r.read().decode("utf-8")).get("data", [])
     except Exception as e:
-        print(f"  ! TradingView scanner: {e} — trimestrele provizorii rămân cele din versiunea anterioară")
+        print(f"  ! TradingView scanner: {e} — {what}")
+        return None
+    return [(back.get(row.get("s")), dict(zip(cols, row.get("d") or []))) for row in rows]
+
+def tv_next_earnings(tickers, tv_ex, today):
+    """{ticker: data_iso} = următorul raport din TradingView scanner (`earnings_release_next_date`), doar date
+    de azi încolo. Rezerva pentru Yahoo, care după raport rămâne zile întregi fără data următoare."""
+    rows = tv_scan(tickers, tv_ex, TV_EARN_COLS, "datele de earnings rămân cele de la Yahoo") if tickers else None
+    out = {}
+    for t, d in rows or []:
+        ts = _num(d.get("earnings_release_next_date"))
+        if not t or t in out or not ts:
+            continue
+        day = dt.datetime.fromtimestamp(int(ts), dt.timezone.utc).astimezone(NY).date() if NY else \
+            dt.datetime.fromtimestamp(int(ts), dt.timezone.utc).date()
+        if day >= today:
+            out[t] = day.isoformat()
+    return out
+
+def tv_latest(tickers, tv_ex):
+    """{ticker: [sfârșit_trim, venituri_M, profit_M]} = ultimul trimestru raportat, din TradingView scanner
+    (o singură cerere pentru toți tickerii). Doar cifre în USD. None dacă scanner-ul nu răspunde."""
+    rows = tv_scan(tickers, tv_ex, TV_COLS, "trimestrele provizorii rămân cele din versiunea anterioară")
+    if rows is None:
         return None
     out = {}
-    for row in rows:
-        t, d = back.get(row.get("s")), dict(zip(TV_COLS, row.get("d") or []))
+    for t, d in rows:
         rev = _num(d.get("revenue_fq"))
         rev = rev if rev is not None else _num(d.get("total_revenue_fq"))
         end = d.get("fiscal_period_end_fq")
@@ -673,14 +697,23 @@ def main():
 
     # 2) calendarul de earnings
     log = list(share_log)
+    # Yahoo rămâne după raport zile întregi fără data următoare → rezerva: TradingView scanner (tot `estimat`)
+    no_yahoo = [m.group(2) for m in EARN_LINE_RE.finditer(html) if data.get(m.group(2))
+                and m.group(2) not in NO_EARNINGS and m.group(5) not in ("n/a", "delistat")
+                and not earnings_from_yahoo(data[m.group(2)], today)]
+    tv_earn = tv_next_earnings(no_yahoo, read_tv_ex(html), today)
     def upd_earn(m):
         ind, t, date, ses, st, tm, srcx = m.groups()
         if t in NO_EARNINGS or st in ("n/a", "delistat"):
             return m.group(0)
         y = earnings_from_yahoo(data.get(t), today)
+        if not y and t in tv_earn:
+            y, ysrc = (tv_earn[t], "?", True), f"TradingView {today.isoformat()} (Yahoo fără dată)"
+        elif y:
+            ysrc = f"Yahoo Finance {today.isoformat()}" + ("" if y[2] else " (Yahoo: dată neestimată — verifică IR)")
         if not y:
             if date and date < today.isoformat() and data.get(t):
-                log.append(f"AVERTISMENT {t}: raportul din {date} a trecut, Yahoo nu are data următoare — verifică pe IR")
+                log.append(f"AVERTISMENT {t}: raportul din {date} a trecut, Yahoo și TradingView nu au data următoare — verifică pe IR")
             return m.group(0)
         ydate, yses, yest = y
         upcoming = bool(date) and date >= today.isoformat()
@@ -688,12 +721,14 @@ def main():
             st = "yahoo-confirmat"          # nu e anunț oficial → îl tratăm ca estimat
         if st == "confirmat" and upcoming:
             if ydate != date:
-                log.append(f"AVERTISMENT {t}: confirmat {date} în fișier, Yahoo arată {ydate} — verifică pe IR")
+                log.append(f"AVERTISMENT {t}: confirmat {date} în fișier, {ysrc.split()[0]} arată {ydate} — verifică pe IR")
             return m.group(0)
-        new_st = "estimat"                 # Yahoo nu e sursă oficială
+        new_st = "estimat"                 # Yahoo / TradingView nu sunt surse oficiale
         new_ses = yses if (ses == "?" or ydate != date) and yses != "?" else ses   # nu suprascrie o sesiune deja știută
+        if ysrc.startswith("TradingView") and ydate != date:
+            new_ses = "?"                  # TradingView nu dă sesiunea; cea veche era a raportului trecut
         new_tm = "" if (ydate != date) else tm
-        new_src = f"Yahoo Finance {today.isoformat()}" + ("" if yest else " (Yahoo: dată neestimată — verifică IR)")
+        new_src = ysrc
         if (ydate, new_ses, new_st) == (date, ses, st):
             return m.group(0)
         st = "confirmat(Yahoo)" if st == "yahoo-confirmat" else st
