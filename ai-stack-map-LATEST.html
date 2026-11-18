@@ -894,13 +894,13 @@
             <span class="layer-arrow">▼</span>
         </div>
         <div class="ticker-grid" id="grid-en-l1">
-            <div class="ticker-row" onclick="openDetails('WTI','Crude Oil WTI (futures, luna activă)','$84.29','-2.00%','#ef4444','—','7K','—',['energy'],'Benchmark-ul petrolului american (NYMEX/CME, Cushing). Preț per baril; contractul din luna activă.')">
+            <div class="ticker-row" onclick="openDetails('WTI','Crude Oil WTI (futures, luna activă)','$82.95','-2.01%','#ef4444','—','30K','—',['energy'],'Benchmark-ul petrolului american (NYMEX/CME, Cushing). Preț per baril; contractul din luna activă.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">WTI</span><span class="ticker-company">Crude Oil WTI (futures, luna activă)</span><div class="tag-container"><span class="strategy-tag">Benchmark SUA</span><span class="strategy-tag">NYMEX</span></div></div>
-                <div class="ticker-perf"><span class="price-badge">$84.29</span><span class="change-badge" style="color:#ef4444;">-2.00%</span></div>
+                <div class="ticker-perf"><span class="price-badge">$82.95</span><span class="change-badge" style="color:#ef4444;">-2.01%</span></div>
             </div>
-            <div class="ticker-row" onclick="openDetails('BRENT','Brent Crude (futures, luna activă)','$91.76','-1.48%','#ef4444','—','3K','—',['energy'],'Benchmark-ul global al petrolului (ICE, Marea Nordului). Preț per baril; contractul din luna activă.')">
+            <div class="ticker-row" onclick="openDetails('BRENT','Brent Crude (futures, luna activă)','$89.04','-1.47%','#ef4444','—','5K','—',['energy'],'Benchmark-ul global al petrolului (ICE, Marea Nordului). Preț per baril; contractul din luna activă.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">BRENT</span><span class="ticker-company">Brent Crude (futures, luna activă)</span><div class="tag-container"><span class="strategy-tag">Benchmark Global</span><span class="strategy-tag">ICE</span></div></div>
-                <div class="ticker-perf"><span class="price-badge">$91.76</span><span class="change-badge" style="color:#ef4444;">-1.48%</span></div>
+                <div class="ticker-perf"><span class="price-badge">$89.04</span><span class="change-badge" style="color:#ef4444;">-1.47%</span></div>
             </div>
             <div class="ticker-row" onclick="openDetails('XOM','Exxon Mobil Corp.','$167.21','+0.20%','#10b981','682.09B','10.4M','17.20',['energy'],'Major petrolier integrat. Producție și explorare globală, expunere indirectă la cererea energetică AI.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#7a90aa;">XOM</span><span class="ticker-company">Exxon Mobil Corp.</span><div class="tag-container"><span class="strategy-tag">PRODUCȚIE</span><span class="strategy-tag">EXPLORARE</span></div></div>
@@ -1015,9 +1015,9 @@
                 <div class="ticker-perf"><span class="price-badge">$269.05</span><span class="change-badge" style="color:#ef4444;">-1.43%</span></div>
             </div>
 
-            <div class="ticker-row" onclick="openDetails('VIX','CBOE Volatility Index','24.06','-5.50%','#ef4444','—','—','—',['macro'],'Indicele fricii. Nivel scăzut = complacency; spike-uri corelate cu vânzări de gamma dealer.')">
+            <div class="ticker-row" onclick="openDetails('VIX','CBOE Volatility Index','24.01','-5.69%','#ef4444','—','—','—',['macro'],'Indicele fricii. Nivel scăzut = complacency; spike-uri corelate cu vânzări de gamma dealer.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">VIX</span><span class="ticker-company">CBOE Volatility Index</span><div class="tag-container"><span class="strategy-tag">Fear Gauge</span><span class="strategy-tag">Vol Regime</span></div></div>
-                <div class="ticker-perf"><span class="price-badge">24.06</span><span class="change-badge" style="color:#ef4444;">-5.50%</span></div>
+                <div class="ticker-perf"><span class="price-badge">24.01</span><span class="change-badge" style="color:#ef4444;">-5.69%</span></div>
             </div>
 
             <div class="ticker-row" onclick="openDetails('SOXX','iShares Semiconductor ETF','$141.46','+0.17%','#10b981','—','37.6M','—',['macro'],'Coș semiconductori. Lead/lag indicator pentru apetitul de risc pe AI hardware.')">
@@ -1482,7 +1482,7 @@
         // Calendar earnings — verificat 27 Sep 2026. date = zi ET; session BMO/AMC/? ; time = oră ET exactă doar dacă e anunțată de companie.
         // status: 'confirmat' = anunțat oficial de companie · 'estimat' = MarketBeat/Yahoo, neconfirmat · 'neverificat' = nicio dată publică.
         const EARNINGS = {
-            'NVDA': { date:'2026-11-17', session:'AMC', status:'confirmat', time:'16:20', src:'NVIDIA comunicat (nvidianews.nvidia.com) 28 Oct 2026 – rezultate ~16:20 ET (13:20 PT), call 17:00 ET' },
+            'NVDA': { date:'2027-02-24', session:'?', status:'estimat', time:'', src:'TradingView 2026-11-18 (Yahoo fără dată)' },
             'AMD': { date:'2027-02-02', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-04' },
             'AVGO': { date:'2026-12-09', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-10-03 (Yahoo: dată neestimată — verifică IR)' },
             'INTC': { date:'2027-01-28', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-10-30' },
@@ -1534,7 +1534,7 @@
             'SPCX': { date:'2027-02-09', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'CRWV': { date:'2027-02-25', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-11' },
             'NBIS': { date:'2027-02-11', session:'?', status:'estimat', time:'', src:'Yahoo Finance 2026-11-13' },
-            'AGPU': { date:'', session:'?', status:'neverificat', time:'', src:'Nicio dată publicată pentru raportul următor (ultimul: T3 2026, 17 nov 2026, 8-K ex. 99.1)' },
+            'AGPU': { date:'2027-04-01', session:'?', status:'estimat', time:'', src:'TradingView 2026-11-18 (Yahoo fără dată)' },
             'EQIX': { date:'2027-02-10', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'DLR': { date:'2027-02-11', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
             'VRT': { date:'2027-02-10', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-11-02' },
