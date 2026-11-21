@@ -454,3 +454,14 @@
 
 === 2026-11-19 02:43 | ai-stack-map-mobile-91.html → ai-stack-map-mobile-92.html | rânduri 156 | fără date: -
   trimestriale: 5 reîmprospătate | fără date: -
+
+=== 2026-11-21 02:41 | ai-stack-map-mobile-96.html → ai-stack-map-mobile-97.html | rânduri 157 | fără date: -
+  AVERTISMENT SNDK: număr de acțiuni (mcap/preț) 1.423e+08 → 1.138e+09 — verifică
+  AVERTISMENT AGPU: număr de acțiuni (mcap/preț) 1.159e+07 → 1.365e+07 — verifică
+  MU: 2026-12-23 AMC estimat  →  2026-12-17 AMC estimat
+  ESTC: 2026-11-19 AMC estimat  →  2027-02-25 ? estimat
+  ANT: — ? neverificat  →  2027-02-24 ? estimat
+  PANW: 2026-11-18 AMC estimat  →  2027-02-16 ? estimat
+  INTU: 2026-11-19 AMC estimat  →  2027-02-25 ? estimat
+  P: 2026-11-18 AMC estimat  →  2027-02-24 ? estimat
+  trimestriale: 7 reîmprospătate | fără date: -
