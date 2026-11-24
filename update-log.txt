@@ -465,3 +465,10 @@
   INTU: 2026-11-19 AMC estimat  →  2027-02-25 ? estimat
   P: 2026-11-18 AMC estimat  →  2027-02-24 ? estimat
   trimestriale: 7 reîmprospătate | fără date: -
+
+=== 2026-11-24 05:26 | ai-stack-map-mobile-97.html → ai-stack-map-mobile-98.html | rânduri 157 | fără date: -
+  HPE: 2026-11-23 AMC estimat  →  2027-03-02 ? estimat
+  AVERTISMENT CRWD: confirmat 2026-12-01 în fișier, TradingView arată 2027-03-09 — verifică pe IR
+  ZS: 2026-12-02 AMC estimat  →  2027-03-04 ? estimat
+  OK TradingView vs SEC CSCO 2026-10-24
+  trimestriale: 129 reîmprospătate | fără date: -
