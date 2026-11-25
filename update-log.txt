@@ -472,3 +472,14 @@
   ZS: 2026-12-02 AMC estimat  →  2027-03-04 ? estimat
   OK TradingView vs SEC CSCO 2026-10-24
   trimestriale: 129 reîmprospătate | fără date: -
+
+=== 2026-11-25 04:29 | ai-stack-map-mobile-98.html → ai-stack-map-mobile-99.html | rânduri 157 | fără date: -
+  AMAT: 2027-02-11 ? estimat  →  2027-02-11 AMC estimat
+  SMCI: 2027-02-02 ? estimat  →  2027-02-02 AMC estimat
+  GFS: 2027-02-10 ? estimat  →  2027-02-10 BMO estimat
+  NBIS: 2027-02-11 ? estimat  →  2027-02-11 BMO estimat
+  AI: 2026-12-09 AMC estimat  →  2026-12-02 AMC estimat
+  AVERTISMENT CRWD: confirmat 2026-12-01 în fișier, Yahoo arată 2027-03-02 — verifică pe IR
+  ZS: 2027-03-04 ? estimat  →  2027-02-25 ? estimat
+  AAPL: 2027-01-28 ? estimat  →  2027-01-28 AMC estimat
+  trimestriale: 7 reîmprospătate | fără date: -
