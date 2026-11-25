@@ -995,7 +995,7 @@
 
     <div class="layer-box" id="box-mf-l1">
         <div class="layer-header" onclick="toggleLayer('box-mf-l1')">
-            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(23)</span></span></div>
+            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(27)</span></span></div>
             <span class="layer-arrow">▼</span>
         </div>
         <div class="ticker-grid" id="grid-mf-l1">
@@ -1040,9 +1040,29 @@
                 <div class="ticker-perf"><span class="price-badge">$81.49</span><span class="change-badge" style="color:#ef4444;">-0.24%</span></div>
             </div>
 
+            <div class="ticker-row" onclick="openDetails('SGOV','iShares 0-3 Month Treasury Bond ETF','$100.66','+0.02%','#10b981','—','21.4M','—',['macro'],'Bonuri de trezorerie de 0–3 luni, practic cash. Intrările arată lichiditate parcată la randamentul fără risc (așteptare / risk-off).')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SGOV</span><span class="ticker-company">iShares 0-3 Month Treasury Bond ETF</span><div class="tag-container"><span class="strategy-tag">T-Bills</span><span class="strategy-tag">Cash Parking</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$100.66</span><span class="change-badge" style="color:#10b981;">+0.02%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('BIL','SPDR Bloomberg 1-3 Month T-Bill ETF','$91.61','+0.01%','#10b981','—','9.0M','—',['macro'],'Bonuri de trezorerie de 1–3 luni, practic cash. Împreună cu SGOV: cât capital stă pe margine, la dobânda Fed.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">BIL</span><span class="ticker-company">SPDR Bloomberg 1-3 Month T-Bill ETF</span><div class="tag-container"><span class="strategy-tag">T-Bills</span><span class="strategy-tag">Cash Parking</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$91.61</span><span class="change-badge" style="color:#10b981;">+0.01%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('SHV','iShares 0-1 Year Treasury Bond ETF','$110.29','+0.01%','#10b981','—','3.8M','—',['macro'],'Trezorerie sub 1 an. Cu SGOV / BIL și TLT: curba de la cash la 20+ ani — unde migrează lichiditatea macro.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">SHV</span><span class="ticker-company">iShares 0-1 Year Treasury Bond ETF</span><div class="tag-container"><span class="strategy-tag">Short Treasury</span><span class="strategy-tag">Cash Parking</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$110.29</span><span class="change-badge" style="color:#10b981;">+0.01%</span></div>
+            </div>
+
             <div class="ticker-row" onclick="openDetails('GLD','SPDR Gold Shares','$325.45','-2.27%','#ef4444','—','9.0M','—',['macro'],'Refugiu clasic. Divergență GLD vs BTC arată apetitul relativ pentru hedge digital vs. fizic.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">GLD</span><span class="ticker-company">SPDR Gold Shares</span><div class="tag-container"><span class="strategy-tag">Gold</span><span class="strategy-tag">Safe Haven</span></div></div>
                 <div class="ticker-perf"><span class="price-badge">$325.45</span><span class="change-badge" style="color:#ef4444;">-2.27%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('XAUUSD','Gold Spot XAU/USD','$3,544.00','-1.31%','#ef4444','—','75K','—',['macro'],'Aurul spot (live: TradingView OANDA:XAUUSD; prețul din fișier: futures COMEX, luna activă). Refugiul macro clasic; față de BTC arată unde migrează lichiditatea între hedge-ul fizic și cel digital.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">XAUUSD</span><span class="ticker-company">Gold Spot XAU/USD</span><div class="tag-container"><span class="strategy-tag">Gold</span><span class="strategy-tag">Safe Haven</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$3,544.00</span><span class="change-badge" style="color:#ef4444;">-1.31%</span></div>
             </div>
 
             <div class="ticker-row" onclick="openDetails('UUP','Invesco DB US Dollar Bullish ETF','$29.63','-0.50%','#ef4444','—','1.9M','—',['macro'],'Proxy DXY tranzacționabil. Dolar puternic = presiune pe multiple-uri growth și pe BTC.')">
@@ -1308,7 +1328,7 @@
             'BAC':'https://investor.bankofamerica.com/',
 'WFC':'https://www.wellsfargo.com/about/investor-relations/',
         };
-        const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA", "CIBR", "BUG", "WTI", "BRENT", "SFTBY"];
+        const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA", "CIBR", "BUG", "WTI", "BRENT", "SFTBY", "XAUUSD", "SGOV", "BIL", "SHV"];
         // Petrol: simbolurile WTI/BRENT nu sunt acțiuni (WTI = și W&T Offshore la bursă) → linkuri dedicate
         const SRC_OVERRIDE = {
             WTI: [
@@ -1320,6 +1340,11 @@
                 { label:'🏛️ ICE — contractul oficial Brent', url:'https://www.ice.com/products/219/Brent-Crude-Futures', off:true },
                 { label:'📈 TradingView', url:'https://www.tradingview.com/chart/?symbol=TVC%3AUKOIL' },
                 { label:'💹 Yahoo Finance', url:'https://finance.yahoo.com/quote/BZ%3DF/' },
+            ],
+            XAUUSD: [
+                { label:'🏛️ CME / COMEX — contractul oficial pe aur', url:'https://www.cmegroup.com/markets/metals/precious/gold.html', off:true },
+                { label:'📈 TradingView', url:'https://www.tradingview.com/chart/?symbol=OANDA%3AXAUUSD' },
+                { label:'💹 Yahoo Finance', url:'https://finance.yahoo.com/quote/GC%3DF/' },
             ],
         };
         const SOURCES = [
@@ -1641,6 +1666,10 @@
             'IGV': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
             'TLT': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
             'GLD': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+'XAUUSD': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+'SGOV': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+'BIL': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
+'SHV': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
             'UUP': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
             'SMH': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
             'CIBR': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
@@ -2123,11 +2152,11 @@
         // ================= TRADINGVIEW LIVE (widget-uri publice, fără cont) =================
         const TV_EX = {
             NASDAQ: 'NVDA AMD AVGO INTC MRVL QCOM AMAT LRCX KLAC ASML TXN ON MPWR SMCI ACLS FORM ALAB CBRS ARM SNPS CDNS CRDO TER AMKR ADI GFS MTSI ENTG NVTS MU WDC STX NTAP NTNX MDB SLAB SNDK SKHY MSFT AMZN GOOGL META SPCX CRWV NBIS AGPU ANT EQIX CEG CSCO FSLR MSTR COIN HOOD CORZ IREN APLD CIFR WULF LITE ADBE WDAY PLTR GTLB DDOG CRWD ZS PANW TTD DUOL UPST AAPL TSLA APP INTU FTNT TEM SOUN NNE TLN QQQ SOXX TLT SMH IBIT OKTA VRNS CIBR BUG',
-            NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC RBRK WFC',
-            AMEX: 'SPY IWM GLD UUP XLK HYG DIA',
+            NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC RBRK WFC SGOV SHV',
+            AMEX: 'SPY IWM GLD UUP XLK HYG DIA BIL',
             OTC: 'SFTBY'
         };
-        const TV_SPECIAL = { VIX:'EIGHTCAP:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
+        const TV_SPECIAL = { VIX:'EIGHTCAP:VIX', NDX:'OANDA:NAS100USD', WTI:'TVC:USOIL', BRENT:'TVC:UKOIL', XAUUSD:'OANDA:XAUUSD' }; // NDX e blocat în widget-uri (licență Nasdaq) → CFD Nasdaq-100
         function tvSymbol(t) {
             if (TV_SPECIAL[t]) return TV_SPECIAL[t];
             for (const ex in TV_EX) if (TV_EX[ex].split(' ').includes(t)) return ex + ':' + t;

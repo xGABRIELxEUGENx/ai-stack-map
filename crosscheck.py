@@ -30,10 +30,10 @@ except ImportError:
 UA = "AI Stack Map crosscheck stack-map-bot@users.noreply.github.com"
 HERE = os.path.dirname(os.path.abspath(__file__))
 NON_STOCK = {"NDX", "VIX", "SPY", "QQQ", "IWM", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK",
-             "IBIT", "HYG", "DIA", "CIBR", "BUG", "WTI", "BRENT"}
+             "IBIT", "HYG", "DIA", "CIBR", "BUG", "WTI", "BRENT", "XAUUSD", "SGOV", "BIL", "SHV"}
 TV_NON_STOCK = {"VIX": ["TVC:VIX", "CBOE:VIX"], "NDX": ["NASDAQ:NDX"], "WTI": ["NYMEX:CL1!", "TVC:USOIL"],
-                "BRENT": ["ICEEUR:BRN1!", "ICE:BRN1!", "TVC:UKOIL"]}
-H24 = {"WTI", "BRENT", "VIX"}      # se tranzacționează aproape non-stop → prețul depinde de momentul citirii
+                "BRENT": ["ICEEUR:BRN1!", "ICE:BRN1!", "TVC:UKOIL"], "XAUUSD": ["COMEX:GC1!", "OANDA:XAUUSD"]}
+H24 = {"WTI", "BRENT", "VIX", "XAUUSD"}      # se tranzacționează aproape non-stop → prețul depinde de momentul citirii
 
 # toleranțe → (eroare, diferență)
 TOL = {"price": (1.0, 0.3), "chg_pp": (0.30, 0.10), "mcap": (8.0, 3.0), "vol": (40.0, 15.0),

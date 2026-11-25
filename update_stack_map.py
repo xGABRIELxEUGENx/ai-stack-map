@@ -47,10 +47,12 @@ except Exception:
     NY = None
 
 YAHOO_SYMBOL = {"NDX": "^NDX", "VIX": "^VIX",          # indici
-                "WTI": "CL=F", "BRENT": "BZ=F"}        # petrol: futures, luna activă
+                "WTI": "CL=F", "BRENT": "BZ=F",        # petrol: futures, luna activă
+                "XAUUSD": "GC=F"}                      # aur: Yahoo nu mai are spotul (XAUUSD=X) → futures COMEX, luna activă
 NO_EARNINGS = {"NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP",
                "SMH", "XLK", "IBIT", "HYG", "DIA", "CIBR", "BUG",
-               "WTI", "BRENT"}                            # ETF-uri / indici / mărfuri
+               "WTI", "BRENT", "XAUUSD",
+               "SGOV", "BIL", "SHV"}                      # ETF-uri / indici / mărfuri (SGOV / BIL / SHV = trezoreria scurtă)
 INDEX_NO_DOLLAR = {"NDX", "VIX"}
 GREEN, RED = "#10b981", "#ef4444"
 

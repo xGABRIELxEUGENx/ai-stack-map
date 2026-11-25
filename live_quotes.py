@@ -45,7 +45,7 @@ from zoneinfo import ZoneInfo
 NY = ZoneInfo("America/New_York")
 # rândurile paginii din TV_SPECIAL: pagina le arată mereu din TradingView (indici, futures, petrol cotate ~24h),
 # deci nu intră în quotes.json. La un ticker nou ne-acțiune se adaugă și aici, nu doar în TV_SPECIAL din pagină.
-TV_LIVE = {"NDX", "VIX", "WTI", "BRENT"}
+TV_LIVE = {"NDX", "VIX", "WTI", "BRENT", "XAUUSD"}
 WINDOW = (time(4, 0), time(20, 15))
 
 # ------------------------------------------------------------------------------------------------------------------
