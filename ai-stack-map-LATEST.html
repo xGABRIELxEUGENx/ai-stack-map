@@ -995,7 +995,7 @@
 
     <div class="layer-box" id="box-mf-l1">
         <div class="layer-header" onclick="toggleLayer('box-mf-l1')">
-            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(22)</span></span></div>
+            <div class="layer-header-left"><span class="layer-id" style="color:#ec4899;">M1</span><span class="layer-name">· Indici, ETF-uri & Giganți Financiari<span class="layer-count">(23)</span></span></div>
             <span class="layer-arrow">▼</span>
         </div>
         <div class="ticker-grid" id="grid-mf-l1">
@@ -1108,6 +1108,11 @@
             <div class="ticker-row" onclick="openDetails('BAC','Bank of America','$48.56','+0.87%','#10b981','335.07B','36.9M','11.48',['macro'],'A doua bancă US ca active. Barometru pentru consum/credit și pentru finanțarea prin credit sindicalizat/corporativ a capex-ului AI al hyperscalerilor.')">
                 <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">BAC</span><span class="ticker-company">Bank of America</span><div class="tag-container"><span class="strategy-tag">Money Center Bank</span><span class="strategy-tag">AI Capex Financing</span></div></div>
                 <div class="ticker-perf"><span class="price-badge">$48.56</span><span class="change-badge" style="color:#10b981;">+0.87%</span></div>
+            </div>
+
+            <div class="ticker-row" onclick="openDetails('WFC','Wells Fargo','$81.19','+1.49%','#10b981','243.72B','11.2M','11.45',['macro'],'A patra bancă US ca active, orientată spre retail și consum. Barometru pentru consumatorul american, creditul ipotecar și imobiliarele comerciale. Fed a ridicat în iunie 2025 plafonul de active impus din 2018.')">
+                <div class="ticker-meta"><span class="ticker-symbol" style="color:#ec4899;">WFC</span><span class="ticker-company">Wells Fargo</span><div class="tag-container"><span class="strategy-tag">Money Center Bank</span><span class="strategy-tag">Consumer Credit</span></div></div>
+                <div class="ticker-perf"><span class="price-badge">$81.19</span><span class="change-badge" style="color:#10b981;">+1.49%</span></div>
             </div>
         </div>
     </div>
@@ -1301,6 +1306,7 @@
             'MS':'https://www.morganstanley.com/about-us-ir',
             'SFTBY':'https://group.softbank/en/ir',
             'BAC':'https://investor.bankofamerica.com/',
+'WFC':'https://www.wellsfargo.com/about/investor-relations/',
         };
         const NO_EDGAR = ["NDX", "SPY", "QQQ", "IWM", "VIX", "SOXX", "IGV", "TLT", "GLD", "UUP", "SMH", "XLK", "IBIT", "HYG", "DIA", "CIBR", "BUG", "WTI", "BRENT", "SFTBY"];
         // Petrol: simbolurile WTI/BRENT nu sunt acțiuni (WTI = și W&T Offshore la bursă) → linkuri dedicate
@@ -1583,7 +1589,7 @@
             'GTLB': { date:'2026-12-01', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
             'DDOG': { date:'2027-02-11', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-11-05' },
             'S': { date:'2026-12-03', session:'AMC', status:'estimat', time:'', src:'MarketBeat 27 Sep 2026' },
-            'CRWD': { date:'2026-12-01', session:'AMC', status:'confirmat', time:'', src:'CrowdStrike comunicat (ir.crowdstrike.com) 4 Nov 2026 – după închiderea bursei, call 17:00 ET' },
+            'CRWD': { date:'2026-11-23', session:'?', status:'confirmat', time:'', src:'CrowdStrike comunicat (ir.crowdstrike.com) 23 Nov 2026 – rezultatele T3 FY27 publicate devansat, odată cu acordul de preluare Zscaler; call-ul din 1 Dec anulat, call 08:00 ET' },
             'ZS': { date:'2027-02-25', session:'?', status:'estimat', time:'', src:'Yahoo Finance 2026-11-24' },
             'PANW': { date:'2027-02-16', session:'?', status:'estimat', time:'', src:'Yahoo Finance 2026-11-20' },
             'VEEV': { date:'2026-12-03', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-12 (Yahoo: dată neestimată — verifică IR)' },
@@ -1623,6 +1629,7 @@
             'MA': { date:'2027-01-28', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-10-30' },
             'SFTBY': { date:'2027-02-11', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-11-11' },
             'BAC': { date:'2027-01-15', session:'BMO', status:'estimat', time:'', src:'Yahoo Finance 2026-10-15 (Yahoo: dată neestimată — verifică IR)' },
+'WFC': { date:'2027-01-14', session:'?', status:'confirmat', time:'', src:'Wells Fargo IR (wellsfargo.com/about/investor-relations), Upcoming events: Q4 2026 Quarterly Earnings, citit 25 Nov 2026, call 10:00 ET' },
             'P': { date:'2027-02-24', session:'?', status:'estimat', time:'', src:'Yahoo Finance 2026-11-20' },
             'NNE': { date:'2026-11-30', session:'AMC', status:'estimat', time:'', src:'Yahoo Finance 2026-11-11 (Yahoo: dată neestimată — verifică IR)' },
             'NDX': { date:'', session:'ETF', status:'n/a', time:'', src:'' },
@@ -2116,7 +2123,7 @@
         // ================= TRADINGVIEW LIVE (widget-uri publice, fără cont) =================
         const TV_EX = {
             NASDAQ: 'NVDA AMD AVGO INTC MRVL QCOM AMAT LRCX KLAC ASML TXN ON MPWR SMCI ACLS FORM ALAB CBRS ARM SNPS CDNS CRDO TER AMKR ADI GFS MTSI ENTG NVTS MU WDC STX NTAP NTNX MDB SLAB SNDK SKHY MSFT AMZN GOOGL META SPCX CRWV NBIS AGPU ANT EQIX CEG CSCO FSLR MSTR COIN HOOD CORZ IREN APLD CIFR WULF LITE ADBE WDAY PLTR GTLB DDOG CRWD ZS PANW TTD DUOL UPST AAPL TSLA APP INTU FTNT TEM SOUN NNE TLN QQQ SOXX TLT SMH IBIT OKTA VRNS CIBR BUG',
-            NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC RBRK',
+            NYSE: 'TSM ONTO WOLF P COHR ESTC SNOW IRM DLR VRT ETN NEE ANET OKLO DELL VST CRM NOW ORCL SAP AI PATH S VEEV NET HUBS IBM RDDT CLS CIEN HPE GEV PWR MOD BE XOM CVX COP EQT KMI WMB CCJ SMR BWXT JPM GS V MA MS LEU BAC RBRK WFC',
             AMEX: 'SPY IWM GLD UUP XLK HYG DIA',
             OTC: 'SFTBY'
         };
