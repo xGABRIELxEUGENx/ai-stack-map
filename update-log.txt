@@ -483,3 +483,11 @@
   ZS: 2027-03-04 ? estimat  →  2027-02-25 ? estimat
   AAPL: 2027-01-28 ? estimat  →  2027-01-28 AMC estimat
   trimestriale: 7 reîmprospătate | fără date: -
+
+=== 2026-11-26 03:42 | ai-stack-map-mobile-102.html → ai-stack-map-mobile-103.html | rânduri 162 | fără date: -
+  ADI: 2026-11-24 BMO confirmat  →  2027-02-17 ? estimat
+  NTNX: 2026-11-24 AMC estimat  →  2027-02-24 ? estimat
+  DELL: 2026-11-24 AMC estimat  →  2027-02-25 ? estimat
+  WDAY: 2026-11-24 AMC confirmat  →  2027-02-23 ? estimat
+  CRWD: 2026-11-23 ? confirmat  →  2027-03-02 ? estimat
+  trimestriale: 7 reîmprospătate | fără date: -
