@@ -494,3 +494,6 @@
 
 === 2026-11-27 03:43 | ai-stack-map-mobile-103.html → ai-stack-map-mobile-104.html | rânduri 162 | fără date: -
   trimestriale: 2 reîmprospătate | fără date: -
+
+=== 2026-11-28 03:26 | ai-stack-map-mobile-104.html → ai-stack-map-mobile-105.html | rânduri 162 | fără date: -
+  trimestriale: 7 reîmprospătate | fără date: -
